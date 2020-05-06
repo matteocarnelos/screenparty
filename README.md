@@ -1,2 +1,2 @@
-# screenparty
-Android app for sharing screens between phones.
+# Screen Party
+Share screen across devices.
