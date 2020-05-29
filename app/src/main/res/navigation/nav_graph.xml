@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/startFragment">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="it.unipd.dei.es.screenparty.ui.StartFragment"
+        android:label="fragment_start"
+        tools:layout="@layout/fragment_start" >
+        <action
+            android:id="@+id/actionToHost"
+            app:destination="@id/hostFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/actionToClient"
+            app:destination="@id/clientFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/hostFragment"
+        android:name="it.unipd.dei.es.screenparty.ui.HostFragment"
+        android:label="fragment_host"
+        tools:layout="@layout/fragment_host">
+        <argument
+            android:name="mediaUri"
+            app:argType="android.net.Uri" />
+        <action
+            android:id="@+id/actionToPrepare"
+            app:destination="@id/prepareFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/prepareFragment"
+        android:name="it.unipd.dei.es.screenparty.ui.PrepareFragment"
+        android:label="fragment_prepare"
+        tools:layout="@layout/fragment_prepare" >
+        <action
+            android:id="@+id/actionToMedia"
+            app:destination="@id/mediaFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/mediaFragment"
+        android:name="it.unipd.dei.es.screenparty.ui.MediaFragment"
+        android:label="fragment_media"
+        tools:layout="@layout/fragment_media" />
+    <fragment
+        android:id="@+id/clientFragment"
+        android:name="it.unipd.dei.es.screenparty.ui.ClientFragment"
+        android:label="fragment_client"
+        tools:layout="@layout/fragment_client">
+        <action
+            android:id="@+id/actionToPrepare"
+            app:destination="@id/prepareFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+</navigation>
