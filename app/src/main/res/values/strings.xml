@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ScreenParty</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="host_button_text">Host</string>
+    <string name="join_button_text">Join</string>
+    <string name="invite_label_text">Send the invitation code to your friends!</string>
+    <string name="join_label_text">Enter the invitation code to join</string>
+    <string name="align_label_text">Align devices with the help of the central line</string>
+    <string name="start_button_text">Start!</string>
+    <string name="waiting_label_text1">Starting server…</string>
+    <string name="waiting_label_text2">Waiting for participants…</string>
+    <string name="next_button_text">Next</string>
+    <string name="link_label_text">Enter the video link:</string>
 </resources>
