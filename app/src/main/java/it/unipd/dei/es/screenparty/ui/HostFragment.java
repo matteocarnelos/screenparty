@@ -143,6 +143,6 @@ public class HostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
         if(getArguments() != null)
-            mediaUri = InviteFragmentArgs.fromBundle(getArguments()).getMediaUri();
+            mediaUri = HostFragmentArgs.fromBundle(getArguments()).getMediaUri();
     }
 }
