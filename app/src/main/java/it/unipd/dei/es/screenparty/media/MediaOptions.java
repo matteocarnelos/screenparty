@@ -15,9 +15,9 @@ public class MediaOptions {
     }
 
     // TODO: Update also frameWidth
-    public void update(float videoHeight) {
-        if(videoHeight < this.frameHeight)
-            this.frameHeight = videoHeight;
+    public void update(float height) {
+        if(height < this.frameHeight)
+            this.frameHeight = height;
     }
 
     public Position getPosition() {
