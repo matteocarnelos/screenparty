@@ -30,9 +30,6 @@
         android:name="it.unipd.dei.es.screenparty.ui.HostFragment"
         android:label="fragment_host"
         tools:layout="@layout/fragment_host">
-        <argument
-            android:name="mediaUri"
-            app:argType="android.net.Uri" />
         <action
             android:id="@+id/actionToPrepare"
             app:destination="@id/prepareFragment"

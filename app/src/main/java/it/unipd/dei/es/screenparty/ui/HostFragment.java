@@ -3,14 +3,12 @@ package it.unipd.dei.es.screenparty.ui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.format.Formatter;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,81 +23,78 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import it.unipd.dei.es.screenparty.R;
-import it.unipd.dei.es.screenparty.party.PartyEvents;
+import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class HostFragment extends Fragment {
 
     private TextView waitingLabel;
 
-    private Uri mediaUri;
-
     private NavController navController;
-    private PartyManager manager = PartyManager.getInstance();
+    private PartyManager partyManager = PartyManager.getInstance();
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(Message inputMessage) {
-            switch (inputMessage.what) {
-                case PartyEvents.Host.NOT_STARTED:
+        public void handleMessage(@NonNull Message msg) {
+            switch(msg.what) {
+                case NetworkEvents.Host.NOT_STARTED:
                     new AlertDialog.Builder(getActivity())
-                            .setMessage((String)inputMessage.obj)
                             .setTitle("Could not start the server")
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    manager.stop();
-                                    navController.popBackStack(R.id.startFragment, false);
-                                }
-                            })
+                            .setMessage((String)msg.obj)
                             .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    manager.restart();
+                                    partyManager.restart();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    partyManager.stop();
+                                    navController.popBackStack(R.id.startFragment, false);
                                 }
                             }).show();
                     break;
-                case PartyEvents.Host.WAITING_DEVICES:
+                case NetworkEvents.Host.WAITING_DEVICES:
                     waitingLabel.setText(R.string.waiting_label_text2);
                     break;
-                case PartyEvents.CONNECTION_FAILED:
+                case NetworkEvents.CONNECTION_FAILED:
                     new AlertDialog.Builder(getActivity())
-                            .setMessage((String)inputMessage.obj)
                             .setTitle("Connection failed")
+                            .setMessage((String)msg.obj)
                             .setPositiveButton("OK", null)
                             .show();
                     break;
-                case PartyEvents.JOIN_FAILED:
+                case NetworkEvents.JOIN_FAILED:
                     new AlertDialog.Builder(getActivity())
-                            .setMessage((String)inputMessage.obj)
                             .setTitle("Join failed")
+                            .setMessage((String)msg.obj)
                             .setPositiveButton("OK", null)
                             .show();
                     break;
-                case PartyEvents.Host.CLIENT_JOINED:
+                case NetworkEvents.Host.CLIENT_JOINED:
                     Toast.makeText(getContext(), "A device has joined the party!", Toast.LENGTH_LONG).show();
                     break;
-                case PartyEvents.Host.PARTY_READY:
-                    // TODO: Add partyOptions in arguments to pass
+                case NetworkEvents.Host.PARTY_READY:
                     navController.navigate(R.id.actionToPrepare);
                     break;
-                case PartyEvents.Host.CLIENT_LEFT:
+                case NetworkEvents.Host.CLIENT_LEFT:
                     Toast.makeText(getContext(), "A device has left the party", Toast.LENGTH_LONG).show();
                     break;
-                case PartyEvents.COMMUNICATION_FAILED:
+                case NetworkEvents.COMMUNICATION_FAILED:
                     new AlertDialog.Builder(getActivity())
-                            .setMessage((String)inputMessage.obj)
                             .setTitle("Communication failed")
+                            .setMessage((String)msg.obj)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    manager.stop();
+                                    partyManager.stop();
                                     navController.popBackStack(R.id.startFragment, false);
                                 }
                             })
                             .show();
                     break;
-                default: super.handleMessage(inputMessage);
+                default: super.handleMessage(msg);
             }
         }
     };
@@ -107,11 +102,11 @@ public class HostFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        manager.setEventsHandler(handler);
+        partyManager.setEventsHandler(handler);
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                manager.stop();
+                partyManager.stop();
                 navController.popBackStack();
             }
         };
@@ -121,19 +116,15 @@ public class HostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_host, container, false);
 
         TextView invitationCodeLabel = view.findViewById(R.id.invitationCodeLabel);
         waitingLabel = view.findViewById(R.id.waitingLabel);
 
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) requireActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
-
-        manager.startAsHost(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        partyManager.startAsHost();
 
         invitationCodeLabel.setText(ip);
         return view;
@@ -142,7 +133,5 @@ public class HostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
-        if(getArguments() != null)
-            mediaUri = HostFragmentArgs.fromBundle(getArguments()).getMediaUri();
     }
 }

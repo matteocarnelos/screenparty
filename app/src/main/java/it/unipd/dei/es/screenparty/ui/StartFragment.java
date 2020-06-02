@@ -1,6 +1,11 @@
 package it.unipd.dei.es.screenparty.ui;
 
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +20,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import java.io.IOException;
+
 import it.unipd.dei.es.screenparty.R;
+import it.unipd.dei.es.screenparty.media.MediaParams;
+import it.unipd.dei.es.screenparty.party.PartyManager;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -24,6 +33,8 @@ public class StartFragment extends Fragment {
     private static final int SELECT_MEDIA_REQUEST_CODE = 0;
 
     private NavController navController;
+
+    private Button hostButton;
 
     private View.OnClickListener hostButtonListener = new View.OnClickListener() {
         @Override
@@ -41,14 +52,56 @@ public class StartFragment extends Fragment {
         }
     };
 
+    private void showMediaErrorDialog(String message) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Media error")
+                .setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        hostButton.performClick();
+                    }
+                }).show();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == SELECT_MEDIA_REQUEST_CODE && resultCode == RESULT_OK) {
-            Uri selectedMediaUri = data.getData();
-            if(selectedMediaUri != null) {
-                StartFragmentDirections.ActionToHost action = StartFragmentDirections.actionToHost(selectedMediaUri);
-                navController.navigate(action);
+            Uri selectedUri = data.getData();
+            MediaParams mediaParams = new MediaParams();
+
+            if(selectedUri == null) return;
+            mediaParams.setUri(selectedUri);
+
+            ContentResolver contentResolver = requireContext().getContentResolver();
+            String type = contentResolver.getType(selectedUri);
+            if(type == null || !type.startsWith("image") && !type.startsWith("video")) {
+                showMediaErrorDialog("Invalid media type, please try again with another one");
+                return;
             }
+            MediaParams.Type mediaType = type.startsWith("image") ? MediaParams.Type.IMAGE : MediaParams.Type.VIDEO;
+            mediaParams.setType(mediaType);
+
+            Bitmap bitmap;
+            if(mediaType == MediaParams.Type.VIDEO) {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(getContext(), selectedUri);
+                bitmap = retriever.getFrameAtTime();
+                retriever.release();
+            } else {
+                try { bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedUri); }
+                catch (IOException ignored) {
+                    showMediaErrorDialog("An error occurred during file reading, please try again");
+                    return;
+                }
+            }
+
+            float aspectRatio = (float)bitmap.getWidth() / (float)bitmap.getHeight();
+            mediaParams.setAspectRatio(aspectRatio);
+            
+            PartyManager.getInstance().getPartyParams().setMediaParams(mediaParams);
+
+            navController.navigate(R.id.actionToHost);
         }
     }
 
@@ -67,7 +120,7 @@ public class StartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
 
-        Button hostButton = view.findViewById(R.id.hostButton);
+        hostButton = view.findViewById(R.id.hostButton);
         Button joinButton = view.findViewById(R.id.joinButton);
 
         hostButton.setOnClickListener(hostButtonListener);
