@@ -1,14 +1,11 @@
 package it.unipd.dei.es.screenparty.ui;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +25,7 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class HostFragment extends Fragment {
 
+    private TextView invitationCodeLabel;
     private TextView waitingLabel;
 
     private NavController navController;
@@ -56,6 +54,7 @@ public class HostFragment extends Fragment {
                             }).show();
                     break;
                 case NetworkEvents.Host.WAITING_DEVICES:
+                    invitationCodeLabel.setText((String)msg.obj);
                     waitingLabel.setText(R.string.waiting_label_text2);
                     break;
                 case NetworkEvents.CONNECTION_FAILED:
@@ -118,15 +117,11 @@ public class HostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_host, container, false);
 
-        TextView invitationCodeLabel = view.findViewById(R.id.invitationCodeLabel);
+        invitationCodeLabel = view.findViewById(R.id.invitationCodeLabel);
         waitingLabel = view.findViewById(R.id.waitingLabel);
-
-        WifiManager wifiManager = (WifiManager) requireActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
 
         partyManager.startAsHost();
 
-        invitationCodeLabel.setText(ip);
         return view;
     }
 

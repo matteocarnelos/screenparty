@@ -63,8 +63,10 @@ public class NetworkHost extends Thread {
             InputStream inputStream;
             NetworkMessage request;
 
-            if(clients.size() < MAX_CLIENTS)
-                handler.obtainMessage(NetworkEvents.Host.WAITING_DEVICES).sendToTarget();
+            if(clients.size() < MAX_CLIENTS) {
+                String ip = NetworkUtils.getIPAddress(true);
+                handler.obtainMessage(NetworkEvents.Host.WAITING_DEVICES, ip).sendToTarget();
+            }
 
             try {
                 socket = serverSocket.accept();
