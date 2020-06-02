@@ -82,7 +82,7 @@ public class NetworkClient extends Thread {
         }
 
         if(response.getCommand().equals(NetworkCommands.Host.OK)) {
-            PartyParams.Position position = PartyParams.Position.valueOf(request.getArgument(0));
+            PartyParams.Position position = PartyParams.Position.valueOf(response.getArgument(0));
             float frameWidth = Float.parseFloat(response.getArgument(1));
             float frameHeight = Float.parseFloat(response.getArgument(2));
 
