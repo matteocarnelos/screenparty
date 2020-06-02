@@ -66,8 +66,8 @@ public class NetworkClient extends Thread {
 
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
-                .addArgument(String.valueOf(partyManager.getPartyParams().getScreenWidth()))
-                .addArgument(String.valueOf(partyManager.getPartyParams().getScreenHeight()))
+                .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getWidth()))
+                .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getHeight()))
                 .build();
         NetworkUtils.send(request, host, handler);
 

@@ -12,6 +12,14 @@ public class MediaParams {
     private float frameWidth;
     private float frameHeight;
 
+    public MediaParams() { }
+
+    public MediaParams(Uri uri, Type type, float aspectRatio) {
+        this.uri = uri;
+        this.type = type;
+        this.aspectRatio = aspectRatio;
+    }
+
     public Uri getUri() {
         return uri;
     }
@@ -30,18 +38,6 @@ public class MediaParams {
 
     public float getFrameHeight() {
         return frameHeight;
-    }
-
-    public void setUri(Uri uri) {
-        this.uri = uri;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setAspectRatio(float aspectRatio) {
-        this.aspectRatio = aspectRatio;
     }
 
     public void setFrameWidth(float frameWidth) {

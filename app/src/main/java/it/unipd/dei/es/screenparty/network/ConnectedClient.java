@@ -2,16 +2,18 @@ package it.unipd.dei.es.screenparty.network;
 
 import java.net.Socket;
 
+import it.unipd.dei.es.screenparty.media.MediaParams;
 import it.unipd.dei.es.screenparty.party.PartyParams;
+import it.unipd.dei.es.screenparty.party.ScreenParams;
 
 public class ConnectedClient extends PartyParams {
 
     private Socket socket;
 
     ConnectedClient(Socket socket, PartyParams.Position position, float width, float height) {
+        super(new ScreenParams(width, height));
+        setMediaParams(new MediaParams());
         setPosition(position);
-        setScreenWidth(width);
-        setScreenHeight(height);
         this.socket = socket;
     }
 

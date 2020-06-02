@@ -68,10 +68,7 @@ public class StartFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == SELECT_MEDIA_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri selectedUri = data.getData();
-            MediaParams mediaParams = new MediaParams();
-
             if(selectedUri == null) return;
-            mediaParams.setUri(selectedUri);
 
             ContentResolver contentResolver = requireContext().getContentResolver();
             String type = contentResolver.getType(selectedUri);
@@ -80,7 +77,6 @@ public class StartFragment extends Fragment {
                 return;
             }
             MediaParams.Type mediaType = type.startsWith("image") ? MediaParams.Type.IMAGE : MediaParams.Type.VIDEO;
-            mediaParams.setType(mediaType);
 
             Bitmap bitmap;
             if(mediaType == MediaParams.Type.VIDEO) {
@@ -95,11 +91,12 @@ public class StartFragment extends Fragment {
                     return;
                 }
             }
-
             float aspectRatio = (float)bitmap.getWidth() / (float)bitmap.getHeight();
-            mediaParams.setAspectRatio(aspectRatio);
-            
-            PartyManager.getInstance().getPartyParams().setMediaParams(mediaParams);
+
+            MediaParams mediaParams = new MediaParams(selectedUri, mediaType, aspectRatio);
+
+            PartyManager partyManager = PartyManager.getInstance();
+            partyManager.getPartyParams().setMediaParams(mediaParams);
 
             navController.navigate(R.id.actionToHost);
         }
