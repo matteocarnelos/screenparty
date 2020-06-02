@@ -1,6 +1,6 @@
-package it.unipd.dei.es.screenparty.party;
+package it.unipd.dei.es.screenparty.network;
 
-public final class PartyCommands {
+public final class NetworkCommands {
 
     public static final String EXIT = "EXIT";
 

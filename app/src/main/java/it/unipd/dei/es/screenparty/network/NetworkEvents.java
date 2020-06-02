@@ -1,6 +1,6 @@
-package it.unipd.dei.es.screenparty.party;
+package it.unipd.dei.es.screenparty.network;
 
-public final class PartyEvents {
+public final class NetworkEvents {
 
     public static final int CONNECTION_FAILED = 1;
     public static final int JOIN_FAILED = 2;

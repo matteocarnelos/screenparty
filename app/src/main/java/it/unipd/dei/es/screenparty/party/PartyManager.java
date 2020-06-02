@@ -2,23 +2,23 @@ package it.unipd.dei.es.screenparty.party;
 
 import android.os.Handler;
 
-import it.unipd.dei.es.screenparty.party.client.PartyClient;
-import it.unipd.dei.es.screenparty.party.host.PartyHost;
+import it.unipd.dei.es.screenparty.network.NetworkClient;
+import it.unipd.dei.es.screenparty.network.NetworkHost;
+import it.unipd.dei.es.screenparty.network.NetworkMessage;
 
 // TODO: Add streaming server
 
 public class PartyManager {
 
-    public static final String LOG_TAG = "SCREENPARTY_NET";
-
-    private enum Role { HOST, CLIENT }
+    public static final String LOG_TAG = "SCREENPARTY";
 
     private static PartyManager instance = null;
     private Handler handler = null;
 
-    private Role role;
-    private PartyHost host = null;
-    private PartyClient client = null;
+    private NetworkHost host = null;
+    private NetworkClient client = null;
+
+    private PartyParams partyParams = new PartyParams();
 
     private PartyManager() { }
 
@@ -31,47 +31,52 @@ public class PartyManager {
         this.handler = handler;
     }
 
-    public void startAsHost(float width, float height) {
-        if(client != null && client.isAlive()) client.interrupt();
-        if(host != null && host.isAlive()) return;
-        host = new PartyHost(handler);
-        host.start(width, height);
-        role = Role.HOST;
+    public PartyParams getPartyParams() {
+        return partyParams;
     }
 
-    public void startAsClient(String serverIp, float width, float height) {
+    public void init(float width, float height, float xdpi, float ydpi) {
+        partyParams.setScreenWidth(width);
+        partyParams.setScreenHeight(height);
+        partyParams.setScreenXdpi(xdpi);
+        partyParams.setScreenYdpi(ydpi);
+    }
+
+    public void startAsHost() {
+        if(client != null && client.isAlive()) client.interrupt();
+        if(host != null && host.isAlive()) return;
+        partyParams.setRole(PartyParams.Role.HOST);
+        host = new NetworkHost(handler);
+        host.start();
+    }
+
+    public void startAsClient(String hostIp) {
         if(host != null && host.isAlive()) host.interrupt();
         if(client != null && client.isAlive()) return;
-        client = new PartyClient(handler);
-        client.start(serverIp, width, height);
-        role = Role.CLIENT;
+        partyParams.setRole(PartyParams.Role.CLIENT);
+        client = new NetworkClient(handler);
+        client.start(hostIp);
     }
 
     public void restart() {
-        if(role == Role.HOST) {
+        if(partyParams.getRole() == PartyParams.Role.HOST) {
             host.interrupt();
-            float width = host.getWidth();
-            float height = host.getHeight();
-            host = new PartyHost(handler);
-            host.start(width, height);
+            startAsHost();
         } else {
             client.interrupt();
-            String serverIp = client.getHostIp();
-            float width = client.getWidth();
-            float height = client.getHeight();
-            client = new PartyClient(handler);
-            client.start(serverIp, width, height);
+            startAsClient(client.getHostIp());
         }
     }
 
     public void stop() {
-        if(role == Role.HOST) host.interrupt();
-        else client.interrupt();
+        if(partyParams.getRole() == PartyParams.Role.HOST && host != null)
+            host.interrupt();
+        else if(partyParams.getRole() == PartyParams.Role.CLIENT && client != null)
+            client.interrupt();
     }
 
-    public void sendMessage(PartyMessage message) {
-        if(role == Role.HOST) host.broadcast(message);
+    public void sendMessage(NetworkMessage message) {
+        if(partyParams.getRole() == PartyParams.Role.HOST) host.broadcast(message);
         else client.send(message);
     }
-
 }
