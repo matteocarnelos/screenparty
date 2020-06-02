@@ -13,18 +13,19 @@ public class PartyManager {
     public static final String LOG_TAG = "SCREENPARTY";
 
     private static PartyManager instance = null;
-    private Handler handler = null;
 
-    private NetworkHost host = null;
-    private NetworkClient client = null;
+    private Handler handler;
 
-    private PartyParams partyParams = new PartyParams();
+    private NetworkHost host;
+    private NetworkClient client;
+
+    private PartyParams partyParams;
 
     private PartyManager() { }
 
     public static PartyManager getInstance() {
-        if(instance == null) return new PartyManager();
-        else return instance;
+        if(instance == null) instance = new PartyManager();
+        return instance;
     }
 
     public void setEventsHandler(Handler handler) {
@@ -35,11 +36,8 @@ public class PartyManager {
         return partyParams;
     }
 
-    public void init(float width, float height, float xdpi, float ydpi) {
-        partyParams.setScreenWidth(width);
-        partyParams.setScreenHeight(height);
-        partyParams.setScreenXdpi(xdpi);
-        partyParams.setScreenYdpi(ydpi);
+    public void init(ScreenParams screenParams) {
+        partyParams = new PartyParams(screenParams);
     }
 
     public void startAsHost() {

@@ -9,11 +9,12 @@ public class PartyParams {
 
     private Role role;
     private Position position;
-    private float screenWidth;
-    private float screenHeight;
-    private float screenXdpi;
-    private float screenYdpi;
-    private MediaParams mediaParams;
+    private ScreenParams screenParams;
+    private MediaParams mediaParams = new MediaParams();
+
+    public PartyParams(ScreenParams screenParams) {
+        this.screenParams = screenParams;
+    }
 
     public Role getRole() {
         return role;
@@ -23,20 +24,8 @@ public class PartyParams {
         return position;
     }
 
-    public float getScreenWidth() {
-        return screenWidth;
-    }
-
-    public float getScreenHeight() {
-        return screenHeight;
-    }
-
-    public float getXdpi() {
-        return screenXdpi;
-    }
-
-    public float getYdpi() {
-        return screenYdpi;
+    public ScreenParams getScreenParams() {
+        return screenParams;
     }
 
     public MediaParams getMediaParams() {
@@ -50,22 +39,6 @@ public class PartyParams {
 
     public void setPosition(Position position) {
         this.position = position;
-    }
-
-    public void setScreenWidth(float screenWidth) {
-        this.screenWidth = screenWidth;
-    }
-
-    public void setScreenHeight(float screenHeight) {
-        this.screenHeight = screenHeight;
-    }
-
-    public void setScreenXdpi(float screenXdpi) {
-        this.screenXdpi = screenXdpi;
-    }
-
-    public void setScreenYdpi(float screenYdpi) {
-        this.screenYdpi = screenYdpi;
     }
 
     public void setMediaParams(MediaParams mediaParams) {

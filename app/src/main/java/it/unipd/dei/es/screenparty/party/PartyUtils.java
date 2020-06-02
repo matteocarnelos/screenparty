@@ -6,20 +6,20 @@ import java.util.List;
 
 public class PartyUtils {
 
-    public static void computeFrameDimensions(PartyParams host, List<? extends PartyParams> clients) {
+    public static void computeFrameDimensions(PartyParams hostParam, List<? extends PartyParams> clientParams) {
         // TODO: Check cases (if sum of widths < computed video width -> reverse calculation)
         List<Float> heights = new ArrayList<>();
-        heights.add(host.getScreenHeight());
-        for(PartyParams clientParams : clients) heights.add(clientParams.getScreenHeight());
+        heights.add(hostParam.getScreenParams().getHeight());
+        for(PartyParams clientParam : clientParams) heights.add(clientParam.getScreenParams().getHeight());
         float videoHeight = Collections.min(heights);
-        host.getMediaParams().setFrameHeight(videoHeight);
-        for(PartyParams clientParams : clients) clientParams.getMediaParams().setFrameHeight(videoHeight);
+        hostParam.getMediaParams().setFrameHeight(videoHeight);
+        for(PartyParams clientParam : clientParams) clientParam.getMediaParams().setFrameHeight(videoHeight);
 
         float videoAspectRatio = PartyManager.getInstance().getPartyParams().getMediaParams().getAspectRatio();
 
         float videoWidth = videoAspectRatio * videoHeight;
-        host.getMediaParams().setFrameWidth(host.getScreenWidth());
-        for(PartyParams clientParams : clients)
-            clientParams.getMediaParams().setFrameWidth((videoWidth - host.getMediaParams().getFrameWidth()) / 2);
+        hostParam.getMediaParams().setFrameWidth(hostParam.getScreenParams().getWidth());
+        for(PartyParams clientParam : clientParams)
+            clientParam.getMediaParams().setFrameWidth((videoWidth - hostParam.getMediaParams().getFrameWidth()) / 2);
     }
 }
