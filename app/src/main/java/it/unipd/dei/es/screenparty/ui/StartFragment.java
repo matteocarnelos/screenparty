@@ -39,9 +39,13 @@ public class StartFragment extends Fragment {
     private View.OnClickListener hostButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*");
-            startActivityForResult(intent, SELECT_MEDIA_REQUEST_CODE);
+            Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            getIntent.setType("video/*");
+            Intent pickIntent = new Intent(Intent.ACTION_PICK);
+            pickIntent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*");
+            Intent chooserIntent = Intent.createChooser(getIntent, "Select the media you want to display");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+            startActivityForResult(chooserIntent, SELECT_MEDIA_REQUEST_CODE);
         }
     };
 
