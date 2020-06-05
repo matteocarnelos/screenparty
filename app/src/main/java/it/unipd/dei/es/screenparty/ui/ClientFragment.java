@@ -10,15 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
@@ -26,10 +28,18 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
 
-    private EditText invitationCodeText;
+    private TextInputLayout hostIpField;
 
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
+
+    OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            partyManager.stop();
+            navController.popBackStack();
+        }
+    };
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -98,14 +108,7 @@ public class ClientFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                partyManager.stop();
-                navController.popBackStack();
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
     }
 
     @Override
@@ -113,15 +116,15 @@ public class ClientFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_client, container, false);
 
-        Button nextButton = view.findViewById(R.id.nextButton);
-        invitationCodeText = view.findViewById(R.id.invitationCodeText);
+        Button connectButton = view.findViewById(R.id.connect_button);
+        hostIpField = view.findViewById(R.id.host_ip_field);
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(invitationCodeText.getText().toString().isEmpty()) {
+                if(hostIpField.getEditText().getText().toString().isEmpty()) {
                     Toast.makeText(getContext(), "Please insert a valid ip", Toast.LENGTH_LONG).show();
-                } else partyManager.startAsClient(invitationCodeText.getText().toString());
+                } else partyManager.startAsClient(hostIpField.getEditText().getText().toString());
             }
         });
 
@@ -131,5 +134,6 @@ public class ClientFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
+        ((AppCompatActivity)requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

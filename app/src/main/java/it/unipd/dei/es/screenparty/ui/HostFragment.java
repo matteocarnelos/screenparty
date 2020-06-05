@@ -25,11 +25,18 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class HostFragment extends Fragment {
 
-    private TextView invitationCodeLabel;
-    private TextView waitingLabel;
+    private TextView hostIpLabel;
 
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
+
+    OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            partyManager.stop();
+            navController.popBackStack();
+        }
+    };
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -54,8 +61,7 @@ public class HostFragment extends Fragment {
                             }).show();
                     break;
                 case NetworkEvents.Host.WAITING_DEVICES:
-                    invitationCodeLabel.setText((String)msg.obj);
-                    waitingLabel.setText(R.string.waiting_label_text2);
+                    hostIpLabel.setText((String)msg.obj);
                     break;
                 case NetworkEvents.CONNECTION_FAILED:
                     new AlertDialog.Builder(getActivity())
@@ -102,14 +108,7 @@ public class HostFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                partyManager.stop();
-                navController.popBackStack();
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
     }
 
     @Override
@@ -117,8 +116,7 @@ public class HostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_host, container, false);
 
-        invitationCodeLabel = view.findViewById(R.id.invitationCodeLabel);
-        waitingLabel = view.findViewById(R.id.waitingLabel);
+        hostIpLabel = view.findViewById(R.id.host_ip_label);
 
         partyManager.startAsHost();
 

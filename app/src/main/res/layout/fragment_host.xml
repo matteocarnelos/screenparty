@@ -4,68 +4,402 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrayBackground"
     tools:context=".ui.HostFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/host_step1_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/keyline_5"
+            android:layout_marginTop="@dimen/keyline_5"
+            android:layout_marginEnd="@dimen/keyline_5"
+            android:text="@string/step1_text"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/host_instructions_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/host_instructions_label_text"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="@color/material_on_background_emphasis_medium"
+            app:layout_constraintEnd_toEndOf="@+id/host_step1_label"
+            app:layout_constraintStart_toStartOf="@+id/host_step1_label"
+            app:layout_constraintTop_toBottomOf="@+id/host_step1_label" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/keyline_5"
+            android:layout_marginEnd="@dimen/keyline_5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_container_width">
 
             <TextView
-                android:id="@+id/inviteLabel"
-                android:layout_width="match_parent"
+                android:id="@+id/host_ip_info_label"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/invite_label_text"
-                android:textColor="@color/buttonText"
-                android:textSize="18sp"
+                android:text="@string/host_ip_info_label_text"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceOverline"
+                android:textColor="@color/material_on_background_emphasis_medium"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/invitationCodeLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bordered_button"
-                android:gravity="center"
-                android:textColor="@color/buttonText"
-                android:textSize="36sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inviteLabel"
-                tools:text="123" />
-
-            <ProgressBar
-                android:id="@+id/waitingSpinner"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/invitationCodeLabel" />
-
-            <TextView
-                android:id="@+id/waitingLabel"
+                android:id="@+id/host_ip_label"
+                style="@style/Widget.ScreenParty.TextViewOutlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="@string/waiting_label_text1"
-                android:textColor="@color/buttonText"
-                app:layout_constraintBottom_toBottomOf="@+id/waitingSpinner"
-                app:layout_constraintStart_toEndOf="@+id/waitingSpinner"
-                app:layout_constraintTop_toTopOf="@+id/waitingSpinner" />
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:hint="@string/host_ip_label_hint"
+                android:textAppearance="?attr/textAppearanceHeadline4"
+                android:textColor="@color/material_on_surface_emphasis_high_type"
+                android:textColorHint="@color/material_on_background_disabled"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/host_ip_info_label"
+                tools:text="192.168.1.130" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/host_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_4"
+                app:contentPaddingBottom="16dp"
+                app:contentPaddingTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/host_ip_label"
+                tools:layout_editor_absoluteX="-16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/host_connected_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/connected_icon_description"
+                        android:src="@drawable/ic_baseline_check_circle_24"
+                        android:tint="?attr/colorAccent"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/host_icon"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:contentDescription="@string/device_icon_description"
+                            android:src="@drawable/ic_baseline_phone_android_24"
+                            android:tint="@color/material_on_surface_emphasis_high_type"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="@+id/host_waiting_spinner"
+                            app:layout_constraintEnd_toEndOf="@+id/host_waiting_spinner"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/host_waiting_spinner" />
+
+                        <ProgressBar
+                            android:id="@+id/host_waiting_spinner"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="40dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/host_role_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/host_role_label_text"
+                        android:textAppearance="?attr/textAppearanceOverline"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        app:layout_constraintEnd_toEndOf="@+id/host_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/host_name_label"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/host_name_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/host_name_label_hint"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="@color/material_on_surface_emphasis_high_type"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toStartOf="@+id/host_connected_icon"
+                        app:layout_constraintStart_toEndOf="@+id/constraintLayout2"
+                        app:layout_constraintTop_toBottomOf="@+id/host_role_label" />
+
+                    <TextView
+                        android:id="@+id/host_info_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toEndOf="@+id/host_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/host_name_label"
+                        app:layout_constraintTop_toBottomOf="@+id/host_name_label" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/client1_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_4"
+                app:contentPaddingBottom="16dp"
+                app:contentPaddingTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/host_card"
+                tools:layout_editor_absoluteX="0dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/client1_connected_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/connected_icon_description"
+                        android:src="@drawable/ic_baseline_check_circle_24"
+                        android:tint="?attr/colorAccent"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/client1_icon"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:contentDescription="@string/device_icon_description"
+                            android:src="@drawable/ic_baseline_phone_android_24"
+                            android:tint="@color/material_on_surface_emphasis_high_type"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="@+id/client1_waiting_spinner"
+                            app:layout_constraintEnd_toEndOf="@+id/client1_waiting_spinner"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/client1_waiting_spinner" />
+
+                        <ProgressBar
+                            android:id="@+id/client1_waiting_spinner"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="40dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/client1_role_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/client1_role_label_text"
+                        android:textAppearance="?attr/textAppearanceOverline"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        app:layout_constraintEnd_toEndOf="@+id/client1_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/client1_name_label"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/client1_name_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/client_name_label_hint"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="@color/material_on_surface_emphasis_high_type"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toStartOf="@+id/client1_connected_icon"
+                        app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
+                        app:layout_constraintTop_toBottomOf="@+id/client1_role_label" />
+
+                    <TextView
+                        android:id="@+id/client1_info_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toEndOf="@+id/client1_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/client1_name_label"
+                        app:layout_constraintTop_toBottomOf="@+id/client1_name_label" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/client2_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_4"
+                app:contentPaddingBottom="16dp"
+                app:contentPaddingTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/client1_card"
+                tools:layout_editor_absoluteX="0dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/client2_connected_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/connected_icon_description"
+                        android:src="@drawable/ic_baseline_check_circle_24"
+                        android:tint="?attr/colorAccent"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/client2_icon"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:contentDescription="@string/device_icon_description"
+                            android:src="@drawable/ic_baseline_phone_android_24"
+                            android:tint="@color/material_on_surface_emphasis_high_type"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="@+id/client2_waiting_spinner"
+                            app:layout_constraintEnd_toEndOf="@+id/client2_waiting_spinner"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/client2_waiting_spinner" />
+
+                        <ProgressBar
+                            android:id="@+id/client2_waiting_spinner"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="40dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/client2_role_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/client2_role_label_text"
+                        android:textAppearance="?attr/textAppearanceOverline"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        app:layout_constraintEnd_toEndOf="@+id/client2_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/client2_name_label"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/client2_name_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/client_name_label_hint"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="@color/material_on_surface_emphasis_high_type"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toStartOf="@+id/client2_connected_icon"
+                        app:layout_constraintStart_toEndOf="@+id/constraintLayout4"
+                        app:layout_constraintTop_toBottomOf="@+id/client2_role_label" />
+
+                    <TextView
+                        android:id="@+id/client2_info_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="@color/material_on_surface_emphasis_medium"
+                        android:textColorHint="@color/material_on_surface_disabled"
+                        app:layout_constraintEnd_toEndOf="@+id/client2_name_label"
+                        app:layout_constraintStart_toStartOf="@+id/client2_name_label"
+                        app:layout_constraintTop_toBottomOf="@+id/client2_name_label" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/select_media_button"
+            style="@style/Widget.ScreenParty.LargeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/keyline_5"
+            android:layout_marginEnd="@dimen/keyline_5"
+            android:layout_marginBottom="@dimen/keyline_5"
+            android:enabled="false"
+            android:text="@string/select_media_button_text"
+            app:icon="@drawable/ic_baseline_keyboard_arrow_right_24"
+            app:iconGravity="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>
