@@ -1,11 +1,13 @@
 <resources>
     <!-- App strings -->
-    <string name="app_name">ScreenParty</string>
+    <string name="app_name">Screen Party</string>
     <string name="step1_text">Step 1</string>
     <string name="step2_text">Step 2</string>
+    <string name="device_icon_description">[device icon]</string>
+    <string name="connected_icon_description">[connected icon]</string>
 
     <!-- StartFragment strings -->
-    <string name="welcome_label_text">Welcome to ScreenParty!</string>
+    <string name="welcome_label_text">Welcome to Screen Party!</string>
     <string name="description_label_text">With ScreenParty you can watch images and videos with your friends by sharing the screen of your phones.</string>
     <string name="instructions_label_text">To get started, you can select a media and create a new party or join an existent one.</string>
     <string name="host_button_text">Host a new party</string>
@@ -18,9 +20,6 @@
     <string name="host_ip_info_label_text">Your IP address</string>
     <string name="host_ip_label_hint">Starting…</string>
 
-    <string name="device_icon_description">[device icon]</string>
-    <string name="connected_icon_description">[connected icon]</string>
-
     <string name="host_name_label_hint">Loading…</string>
     <string name="host_role_label_text">Host (this device)</string>
 
@@ -28,7 +27,7 @@
     <string name="client1_role_label_text">Client 1</string>
     <string name="client2_role_label_text">Client 2</string>
 
-    <string name="select_media_button_text">Select media</string>
+    <string name="next_button_text">Next</string>
 
     <!-- ClientFragment strings -->
     <string name="client_fragment_label">Join a party</string>
