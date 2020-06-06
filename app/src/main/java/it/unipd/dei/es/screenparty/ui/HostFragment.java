@@ -26,6 +26,7 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import it.unipd.dei.es.screenparty.R;
@@ -76,6 +77,9 @@ public class HostFragment extends Fragment {
                 case NetworkEvents.Host.PARTY_READY:
                     navController.navigate(R.id.actionToPrepare);
                     break;
+                case NetworkEvents.FILE_TRANSFER_FAILED:
+                    dialogs.showFileTransferFailedDialog((String)msg.obj);
+                    break;
                 case NetworkEvents.Host.CLIENT_LEFT:
                     Toast.makeText(getContext(), "A device has left the party", Toast.LENGTH_LONG).show();
                     break;
@@ -93,6 +97,12 @@ public class HostFragment extends Fragment {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Could not start the server")
                     .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -111,7 +121,7 @@ public class HostFragment extends Fragment {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Connection failed")
                     .setMessage(message)
-                    .setPositiveButton("OK", null)
+                    .setPositiveButton("Ok", null)
                     .show();
         }
 
@@ -119,15 +129,39 @@ public class HostFragment extends Fragment {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Join failed")
                     .setMessage(message)
-                    .setPositiveButton("OK", null)
+                    .setPositiveButton("Ok", null)
                     .show();
+        }
+
+        private void showFileTransferFailedDialog(String message) {
+            new MaterialAlertDialogBuilder((requireContext()))
+                    .setTitle("File trasfer failed")
+                    .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    }).show();
         }
 
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Communication failed")
                     .setMessage(message)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             backPressedCallback.handleOnBackPressed();
@@ -228,6 +262,12 @@ public class HostFragment extends Fragment {
                 float aspectRatio = (float)bitmap.getWidth() / (float)bitmap.getHeight();
 
                 MediaParams mediaParams = new MediaParams(selectedUri, mediaType, aspectRatio);
+
+                try {
+                    mediaParams.setInputStream(requireContext().getContentResolver().openInputStream(selectedUri));
+                } catch(FileNotFoundException e) {
+                    dialogs.showMediaErrorDialog("An error occurred during file processing, please try again");
+                }
 
                 PartyManager partyManager = PartyManager.getInstance();
                 partyManager.getPartyParams().setMediaParams(mediaParams);
