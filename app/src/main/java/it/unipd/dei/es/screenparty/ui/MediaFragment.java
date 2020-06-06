@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -36,10 +37,10 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private MyMediaController mMediaController;
     private MediaModifier mediaModifier;
     private PartyManager partyManager;
-    private final int maxHeight=1920;
     private float mediaHeight;
     private float mediaWidth;
     private float statusBarHeight;
+    public final int notchMinimumHeight=24;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,8 +77,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             }
         });
         Rect rectangle = new Rect();
-        Window window = requireActivity().getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
         statusBarHeight = rectangle.top/partyManager.getPartyParams().getScreenParams().getYdpi();
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
         return view;
@@ -119,11 +119,12 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mediaHeight = mp.getVideoHeight();
                 mediaWidth = mp.getVideoWidth();
-                if (partyManager.getPartyParams().getScreenParams().getHeight() > maxHeight/partyManager.getPartyParams().getScreenParams().getYdpi())
+                if (statusBarHeight*partyManager.getPartyParams().getScreenParams().getYdpi()>notchMinimumHeight)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
