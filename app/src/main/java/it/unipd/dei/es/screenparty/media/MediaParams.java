@@ -2,12 +2,15 @@ package it.unipd.dei.es.screenparty.media;
 
 import android.net.Uri;
 
+import java.io.InputStream;
+
 public class MediaParams {
 
     public enum Type { IMAGE, VIDEO }
 
     private Uri uri;
     private Type type;
+    private InputStream inputStream;
     private float aspectRatio;
     private float frameWidth;
     private float frameHeight;
@@ -28,6 +31,10 @@ public class MediaParams {
         return type;
     }
 
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
     public float getAspectRatio() {
         return aspectRatio;
     }
@@ -38,6 +45,10 @@ public class MediaParams {
 
     public float getFrameHeight() {
         return frameHeight;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
     public void setFrameWidth(float frameWidth) {

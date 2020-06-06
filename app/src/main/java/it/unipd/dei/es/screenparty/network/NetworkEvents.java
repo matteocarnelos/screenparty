@@ -5,6 +5,7 @@ public final class NetworkEvents {
     public static final int CONNECTION_FAILED = 1;
     public static final int JOIN_FAILED = 2;
     public static final int COMMUNICATION_FAILED = 3;
+    public static final int FILE_TRANSFER_FAILED = 4;
 
     public static final class Host {
         public static final int NOT_STARTED = 10;
