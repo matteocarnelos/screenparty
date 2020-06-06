@@ -1,11 +1,12 @@
 package it.unipd.dei.es.screenparty.ui;
 
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Telephony;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -13,6 +14,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.MediaController;
 
 import androidx.annotation.RequiresApi;
@@ -27,11 +29,17 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
-
+    private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
     private TextureView textureView;
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
     private MyMediaController mMediaController;
+    private MediaModifier mediaModifier;
+    private PartyManager partyManager;
+    private final int maxHeight=1920;
+    private float mediaHeight;
+    private float mediaWidth;
+    private float statusBarHeight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +51,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_media, container, false);
-        PartyManager partyManager= PartyManager.getInstance();
+        partyManager = PartyManager.getInstance();
+        mediaModifier=new MediaModifier();
         textureView = view.findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
         mediaPlayer = new MediaPlayer();
@@ -59,33 +68,29 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         view.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null){
+                if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null) {
                     toggleMediaControlsVisibility();
 
                 }
                 return true;
             }
         });
-        MediaModifier mediaModifier = new MediaModifier();
-        textureView.setTransform(mediaModifier.scaleTexture(3));
-        textureView.setTransform(mediaModifier.translateTexture(2160));
+        Rect rectangle = new Rect();
+        Window window = requireActivity().getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        statusBarHeight = rectangle.top/partyManager.getPartyParams().getScreenParams().getYdpi();
+        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
         return view;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = requireActivity().getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
@@ -116,6 +121,15 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                mediaHeight = mp.getVideoHeight();
+                mediaWidth = mp.getVideoWidth();
+                if (partyManager.getPartyParams().getScreenParams().getHeight() > maxHeight/partyManager.getPartyParams().getScreenParams().getYdpi())
+                    partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
+                Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
+                Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
+                Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
+                Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
+                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
                 mediaPlayer.start();
                 mMediaControllerEnable();
             }
