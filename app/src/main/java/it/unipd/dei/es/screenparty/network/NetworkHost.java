@@ -102,11 +102,11 @@ public class NetworkHost extends Thread {
                     handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, connectedClient).sendToTarget();
 
                     if(clients.size() == MAX_CLIENTS) {
-                        handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
-
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
 
+                        List<Socket> sockets = new ArrayList<>();
                         for(ConnectedClient client : clients) {
+                            sockets.add(client.getSocket());
                             NetworkMessage message = new NetworkMessage.Builder()
                                     .setCommand(NetworkCommands.Host.OK)
                                     .addArgument(String.valueOf(client.getPosition()))
@@ -115,6 +115,17 @@ public class NetworkHost extends Thread {
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
+
+                        try {
+                            NetworkUtils.transferFile(sockets, partyManager.getPartyParams().getMediaParams().getInputStream());
+                        }
+                        catch(IOException e) {
+                            if(!isInterrupted())
+                                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
+                            return;
+                        }
+
+                        handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
                     }
                 } else {
                     NetworkMessage response = new NetworkMessage(NetworkCommands.Host.FULL);

@@ -58,6 +58,9 @@ public class ClientFragment extends Fragment {
                 case NetworkEvents.Client.HOST_LEFT:
                     dialogs.showHostLeftDialog();
                     break;
+                case NetworkEvents.FILE_TRANSFER_FAILED:
+                    dialogs.showFileTransferFailedDialog((String)msg.obj);
+                    break;
                 case NetworkEvents.COMMUNICATION_FAILED:
                     dialogs.showCommunicationFailedDialog((String)msg.obj);
                     break;
@@ -70,8 +73,8 @@ public class ClientFragment extends Fragment {
 
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(message)
                     .setTitle("Join failed")
+                    .setMessage(message)
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -88,34 +91,62 @@ public class ClientFragment extends Fragment {
 
         private void showPartyFullDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setMessage("The party you are trying to connect is full")
                     .setTitle("Party full")
-                    .setPositiveButton("OK", null)
+                    .setMessage("The party you are trying to connect is full")
+                    .setPositiveButton("Ok", null)
                     .show();
         }
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setMessage("The host has left the party")
                     .setTitle("You are alone")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setMessage("The host has left the party")
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            partyManager.stop();
-                            navController.popBackStack(R.id.startFragment, false);
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    }).show();
+        }
+
+        private void showFileTransferFailedDialog(String message) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("File transfer failed")
+                    .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            backPressedCallback.handleOnBackPressed();
                         }
                     }).show();
         }
 
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(message)
                     .setTitle("Communication failed")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            backPressedCallback.handleOnBackPressed();
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            partyManager.stop();
-                            navController.popBackStack(R.id.startFragment, false);
+                            backPressedCallback.handleOnBackPressed();
                         }
                     }).show();
         }

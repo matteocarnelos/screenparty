@@ -96,6 +96,13 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        try { NetworkUtils.receiveFile(host); }
+        catch(IOException e) {
+            if(!interrupted())
+                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
+            return;
+        }
+
         while(true) {
             NetworkMessage message;
             try { message = NetworkMessage.parseString(reader.readLine()); }
