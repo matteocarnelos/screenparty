@@ -71,6 +71,8 @@ public class NetworkClient extends Thread {
                 .build();
         NetworkUtils.send(request, host, handler);
 
+        handler.obtainMessage(NetworkEvents.Client.PARTY_CONNECTING).sendToTarget();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try { response = NetworkMessage.parseString(reader.readLine()); }
         catch(IOException e) {

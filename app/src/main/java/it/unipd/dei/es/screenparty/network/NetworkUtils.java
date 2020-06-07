@@ -15,6 +15,8 @@ import java.util.List;
 
 public class NetworkUtils {
 
+    private final static int CHUNK_SIZE = 8192;
+
     public static void send(NetworkMessage message, Socket socket, Handler handler) {
         try { socket.getOutputStream().write(message.toString().getBytes()); }
         catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
@@ -48,7 +50,7 @@ public class NetworkUtils {
         List<OutputStream> outputStreams = new ArrayList<>();
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
 
-        byte[] chunk = new byte[4096];
+        byte[] chunk = new byte[CHUNK_SIZE];
         while(fileInputStream.read(chunk) != -1)
             for(OutputStream outputStream : outputStreams)
                 outputStream.write(chunk);
@@ -57,7 +59,7 @@ public class NetworkUtils {
     public static void receiveFile(Socket socket) throws IOException {
         InputStream inputStream = socket.getInputStream();
         FileOutputStream fileOutputStream = new FileOutputStream("data");
-        byte[] chunk = new byte[4096];
+        byte[] chunk = new byte[CHUNK_SIZE];
         while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
     }
 }

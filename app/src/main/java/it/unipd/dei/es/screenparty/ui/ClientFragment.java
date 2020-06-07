@@ -45,7 +45,9 @@ public class ClientFragment extends Fragment {
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
+            switch(msg.what) {
+                case NetworkEvents.Client.PARTY_CONNECTING:
+                    break;
                 case NetworkEvents.JOIN_FAILED:
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
