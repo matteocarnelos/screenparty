@@ -58,7 +58,7 @@ public class NetworkUtils {
 
     public static void receiveFile(Socket socket) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream("data");
+        FileOutputStream fileOutputStream = new FileOutputStream("data.raw");
         byte[] chunk = new byte[CHUNK_SIZE];
         while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
     }
