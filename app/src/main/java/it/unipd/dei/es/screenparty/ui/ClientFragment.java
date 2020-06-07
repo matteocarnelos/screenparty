@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -20,7 +23,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.regex.Pattern;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
@@ -28,7 +34,13 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
 
+    private final String ipPatternString = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
     private TextInputLayout hostIpField;
+    private TextView clientConnectedLabel;
+    private ProgressBar clientSpinner;
+    private ImageView clientConnectedIcon;
+    private Snackbar invalidIpSnackbar;
     private Dialogs dialogs = new Dialogs();
 
     private NavController navController;
@@ -47,23 +59,49 @@ public class ClientFragment extends Fragment {
         public void handleMessage(Message msg) {
             switch(msg.what) {
                 case NetworkEvents.Client.PARTY_CONNECTING:
+                    clientConnectedLabel.setText("Connecting...");
+                    clientSpinner.setVisibility(View.VISIBLE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     break;
                 case NetworkEvents.JOIN_FAILED:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.Client.PARTY_JOINED:
+                    clientConnectedLabel.setText("Connected!");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.VISIBLE);
+                    break;
+                case NetworkEvents.Client.HOST_NEXT:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     navController.navigate(R.id.actionToPrepare);
                     break;
                 case NetworkEvents.Client.PARTY_FULL:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     dialogs.showPartyFullDialog();
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.FILE_TRANSFER_FAILED:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     dialogs.showFileTransferFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
+                    clientConnectedLabel.setText("");
+                    clientSpinner.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.GONE);
                     dialogs.showCommunicationFailedDialog((String)msg.obj);
                     break;
                 default: super.handleMessage(msg);
@@ -164,19 +202,28 @@ public class ClientFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_client, container, false);
+        final View view = inflater.inflate(R.layout.fragment_client, container, false);
 
         Button connectButton = view.findViewById(R.id.connect_button);
         hostIpField = view.findViewById(R.id.host_ip_field);
 
+        clientConnectedLabel = view.findViewById(R.id.client_connected_label);
+        clientConnectedIcon = view.findViewById(R.id.client1_connected_icon);
+        clientSpinner = view.findViewById(R.id.client_spinner);
+        invalidIpSnackbar = Snackbar.make(view, "Please insert a valid IP", Snackbar.LENGTH_SHORT);
+
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hostIpField.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(getContext(), "Please insert a valid ip", Toast.LENGTH_LONG).show();
-                } else partyManager.startAsClient(hostIpField.getEditText().getText().toString());
+                if(!((hostIpField.getEditText().getText().toString()).matches(ipPatternString))) {
+                    invalidIpSnackbar.show();
+                } else {
+                    partyManager.startAsClient(hostIpField.getEditText().getText().toString());
+                }
             }
         });
+
+
 
         return view;
     }

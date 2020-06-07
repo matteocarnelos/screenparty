@@ -34,6 +34,8 @@
     <string name="client_instructions_label_text">Enter the IP address of the host and wait to be accepted.</string>
     <string name="host_ip_field_hint">Host IP address</string>
     <string name="connect_button_text">Connect</string>
+    <string name="wait_host_label_text">Wait host to continue</string>
+
 
     <!-- PrepareFragment strings -->
     <string name="prepare_fragment_label">Device alignment</string>
