@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
-import it.unipd.dei.es.screenparty.network.NetworkUtils;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
@@ -74,6 +73,12 @@ public class ClientFragment extends Fragment {
                     clientConnectedLabel.setText("Connected!");
                     clientSpinner.setVisibility(View.GONE);
                     clientConnectedIcon.setVisibility(View.VISIBLE);
+                    try {
+                        partyManager.getClient().startFileTransfer(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE));
+                        partyManager.getClient().notify();
+                    } catch (FileNotFoundException e) {
+                        dialogs.showFileTransferFailedDialog(e.getLocalizedMessage());
+                    }
                     break;
                 case NetworkEvents.Client.HOST_NEXT:
                     clientConnectedLabel.setText("");
@@ -228,9 +233,6 @@ public class ClientFragment extends Fragment {
                 }
             }
         });
-
-        try { NetworkUtils.setFileOutputStream(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE)); }
-        catch (FileNotFoundException ignored) { }
 
         return view;
     }

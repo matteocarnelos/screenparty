@@ -17,12 +17,6 @@ public class NetworkUtils {
 
     private final static int CHUNK_SIZE = 8192;
 
-    private static FileOutputStream fileOutputStream;
-
-    public static void setFileOutputStream(FileOutputStream fileOutputStream) {
-        NetworkUtils.fileOutputStream = fileOutputStream;
-    }
-
     public static void send(NetworkMessage message, Socket socket, Handler handler) {
         try { socket.getOutputStream().write(message.toString().getBytes()); }
         catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
@@ -62,8 +56,7 @@ public class NetworkUtils {
                 outputStream.write(chunk);
     }
 
-    public static void receiveFile(Socket socket) throws IOException {
-        if(fileOutputStream == null) throw new IOException("An error occurred during file opening.");
+    public static void receiveFile(Socket socket, FileOutputStream fileOutputStream) throws IOException {
         InputStream inputStream = socket.getInputStream();
         byte[] chunk = new byte[CHUNK_SIZE];
         while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
