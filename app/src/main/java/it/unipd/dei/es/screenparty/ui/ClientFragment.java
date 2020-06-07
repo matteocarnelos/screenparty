@@ -1,5 +1,6 @@
 package it.unipd.dei.es.screenparty.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,10 +26,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
+import it.unipd.dei.es.screenparty.network.NetworkUtils;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
@@ -223,7 +225,8 @@ public class ClientFragment extends Fragment {
             }
         });
 
-
+        try { NetworkUtils.setFileOutputStream(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE)); }
+        catch (FileNotFoundException ignored) { }
 
         return view;
     }
@@ -231,6 +234,5 @@ public class ClientFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
-        ((AppCompatActivity)requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }
