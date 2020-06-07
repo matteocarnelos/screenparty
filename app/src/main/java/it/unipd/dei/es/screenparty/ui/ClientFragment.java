@@ -63,17 +63,17 @@ public class ClientFragment extends Fragment {
                 case NetworkEvents.Client.PARTY_CONNECTING:
                     clientConnectedLabel.setText("Connecting...");
                     clientSpinner.setVisibility(View.VISIBLE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     break;
                 case NetworkEvents.JOIN_FAILED:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.Client.PARTY_JOINED:
                     clientConnectedLabel.setText("Connected!");
-                    clientSpinner.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
                     clientConnectedIcon.setVisibility(View.VISIBLE);
                     try {
                         partyManager.getClient().startFileTransfer(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE));
@@ -86,32 +86,32 @@ public class ClientFragment extends Fragment {
                     break;
                 case NetworkEvents.Client.HOST_NEXT:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     navController.navigate(R.id.actionToPrepare);
                     break;
                 case NetworkEvents.Client.PARTY_FULL:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     dialogs.showPartyFullDialog();
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.FILE_TRANSFER_FAILED:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     dialogs.showFileTransferFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
                     clientConnectedLabel.setText("");
-                    clientSpinner.setVisibility(View.GONE);
-                    clientConnectedIcon.setVisibility(View.GONE);
+                    clientSpinner.setVisibility(View.INVISIBLE);
+                    clientConnectedIcon.setVisibility(View.INVISIBLE);
                     dialogs.showCommunicationFailedDialog((String)msg.obj);
                     break;
                 default: super.handleMessage(msg);
@@ -218,7 +218,7 @@ public class ClientFragment extends Fragment {
         hostIpField = view.findViewById(R.id.host_ip_field);
 
         clientConnectedLabel = view.findViewById(R.id.client_connected_label);
-        clientConnectedIcon = view.findViewById(R.id.client1_connected_icon);
+        clientConnectedIcon = view.findViewById(R.id.client_connected_icon);
         clientSpinner = view.findViewById(R.id.client_spinner);
         invalidIpSnackbar = Snackbar.make(view, "Please insert a valid IP", Snackbar.LENGTH_SHORT);
         View snackbarView = invalidIpSnackbar.getView();
