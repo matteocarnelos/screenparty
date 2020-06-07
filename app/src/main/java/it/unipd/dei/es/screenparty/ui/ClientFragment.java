@@ -1,6 +1,5 @@
 package it.unipd.dei.es.screenparty.ui;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
@@ -75,14 +73,6 @@ public class ClientFragment extends Fragment {
                     clientConnectedLabel.setText("Connected!");
                     clientSpinner.setVisibility(View.INVISIBLE);
                     clientConnectedIcon.setVisibility(View.VISIBLE);
-                    try {
-                        partyManager.getClient().startFileTransfer(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE));
-                        Uri fileUri = Uri.fromFile(new File(requireContext().getFilesDir(), "data.raw"));
-                        partyManager.getPartyParams().getMediaParams().setUri(fileUri);
-                        partyManager.getClient().notify();
-                    } catch (FileNotFoundException e) {
-                        dialogs.showFileTransferFailedDialog(e.getLocalizedMessage());
-                    }
                     break;
                 case NetworkEvents.Client.HOST_NEXT:
                     clientConnectedLabel.setText("");
@@ -207,6 +197,8 @@ public class ClientFragment extends Fragment {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
         requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+        Uri fileUri = Uri.fromFile(new File(requireContext().getFilesDir(), "data.raw"));
+        partyManager.getPartyParams().getMediaParams().setUri(fileUri);
     }
 
     @Override

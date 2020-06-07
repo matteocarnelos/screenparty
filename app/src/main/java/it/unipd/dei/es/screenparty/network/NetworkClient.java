@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,7 +19,6 @@ public class NetworkClient extends Thread {
 
     private Socket host;
     private String hostIp;
-    private FileOutputStream fileOutputStream;
 
     public NetworkClient(Handler handler) {
         this.handler = handler;
@@ -28,11 +26,6 @@ public class NetworkClient extends Thread {
 
     public String getHostIp() {
         return hostIp;
-    }
-
-    public void startFileTransfer(FileOutputStream fileOutputStream) {
-        this.fileOutputStream = fileOutputStream;
-        notify();
     }
 
     public void send(NetworkMessage message) {
@@ -105,10 +98,7 @@ public class NetworkClient extends Thread {
             return;
         }
 
-        try { wait(); }
-        catch(InterruptedException e) { return; }
-
-        try { NetworkUtils.receiveFile(host, fileOutputStream); }
+        try { NetworkUtils.receiveFile(host, partyManager.getPartyParams().getMediaParams().getUri()); }
         catch(IOException e) {
             if(!interrupted())
                 handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
