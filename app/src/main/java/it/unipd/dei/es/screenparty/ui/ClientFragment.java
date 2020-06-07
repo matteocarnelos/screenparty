@@ -1,5 +1,6 @@
 package it.unipd.dei.es.screenparty.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,8 +23,11 @@ import androidx.navigation.Navigation;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
+
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
+import it.unipd.dei.es.screenparty.network.NetworkUtils;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
@@ -52,6 +56,11 @@ public class ClientFragment extends Fragment {
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.Client.PARTY_JOINED:
+                    try {
+                        NetworkUtils.setFileOutputStream(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE));
+                    } catch (FileNotFoundException e) {
+                        dialogs.showFileTransferFailedDialog(e.getLocalizedMessage());
+                    }
                     navController.navigate(R.id.actionToPrepare);
                     break;
                 case NetworkEvents.Client.PARTY_FULL:
