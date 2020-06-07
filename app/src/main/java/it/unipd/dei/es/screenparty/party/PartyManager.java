@@ -28,6 +28,14 @@ public class PartyManager {
         return instance;
     }
 
+    public NetworkClient getClient() {
+        return client;
+    }
+
+    public NetworkHost getHost() {
+        return host;
+    }
+
     public void setEventsHandler(Handler handler) {
         this.handler = handler;
     }
