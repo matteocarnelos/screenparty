@@ -47,6 +47,10 @@ public class MediaParams {
         return frameHeight;
     }
 
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
+
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
     }
