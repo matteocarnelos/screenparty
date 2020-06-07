@@ -2,6 +2,7 @@ package it.unipd.dei.es.screenparty.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -27,7 +27,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.FileNotFoundException;
-import java.util.regex.Pattern;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
@@ -213,6 +212,11 @@ public class ClientFragment extends Fragment {
         clientConnectedIcon = view.findViewById(R.id.client1_connected_icon);
         clientSpinner = view.findViewById(R.id.client_spinner);
         invalidIpSnackbar = Snackbar.make(view, "Please insert a valid IP", Snackbar.LENGTH_SHORT);
+        View snackbarView = invalidIpSnackbar.getView();
+        int snackbarTextId = com.google.android.material.R.id.snackbar_text ;
+        TextView textView = (TextView)snackbarView.findViewById(snackbarTextId);
+        textView.setTextColor(getResources().getColor(R.color.white_50));
+        snackbarView.setBackground(new ColorDrawable(getResources().getColor(R.color.black_800)));
 
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
