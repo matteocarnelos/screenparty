@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -56,11 +55,6 @@ public class ClientFragment extends Fragment {
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.Client.PARTY_JOINED:
-                    try {
-                        NetworkUtils.setFileOutputStream(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE));
-                    } catch (FileNotFoundException e) {
-                        dialogs.showFileTransferFailedDialog(e.getLocalizedMessage());
-                    }
                     navController.navigate(R.id.actionToPrepare);
                     break;
                 case NetworkEvents.Client.PARTY_FULL:
@@ -187,12 +181,14 @@ public class ClientFragment extends Fragment {
             }
         });
 
+        try { NetworkUtils.setFileOutputStream(requireContext().openFileOutput("data.raw", Context.MODE_PRIVATE)); }
+        catch (FileNotFoundException ignored) { }
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
-        ((AppCompatActivity)requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

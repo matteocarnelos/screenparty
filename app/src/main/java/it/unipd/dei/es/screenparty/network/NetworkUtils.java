@@ -63,6 +63,7 @@ public class NetworkUtils {
     }
 
     public static void receiveFile(Socket socket) throws IOException {
+        if(fileOutputStream == null) throw new IOException("An error occurred during file opening.");
         InputStream inputStream = socket.getInputStream();
         byte[] chunk = new byte[CHUNK_SIZE];
         while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
