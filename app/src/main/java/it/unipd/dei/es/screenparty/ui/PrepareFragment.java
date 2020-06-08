@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -141,6 +143,18 @@ public class PrepareFragment extends Fragment {
         }
     }
 
+    public int getStatusBarHeight() {
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if(resourceId > 0) return getResources().getDimensionPixelSize(resourceId);
+        return 0;
+    }
+
+    public int getNavigationBarHeight() {
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if(resourceId > 0) return getResources().getDimensionPixelSize(resourceId);
+        return 0;
+    }
+
     private void goBack() {
         partyManager.stop();
         navController.popBackStack();
@@ -169,6 +183,25 @@ public class PrepareFragment extends Fragment {
             rightArrowIcon.setVisibility(View.INVISIBLE);
         if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT)
             leftArrowIcon.setVisibility(View.INVISIBLE);
+
+        ConstraintLayout.LayoutParams leftArrowLayoutParams = (ConstraintLayout.LayoutParams)leftArrowIcon.getLayoutParams();
+        leftArrowLayoutParams.bottomMargin += getStatusBarHeight();
+        leftArrowLayoutParams.topMargin += getNavigationBarHeight();
+        //leftArrowIcon.setLayoutParams(leftArrowLayoutParams);
+
+        ConstraintLayout.LayoutParams rightArrowLayoutParams = (ConstraintLayout.LayoutParams)rightArrowIcon.getLayoutParams();
+        rightArrowLayoutParams.bottomMargin += getStatusBarHeight();
+        rightArrowLayoutParams.topMargin += getNavigationBarHeight();
+        //rightArrowIcon.setLayoutParams(rightArrowLayoutParams);
+
+        Log.d("SCREENPARTY_DIMENS", "Nav bar dimen: " + getNavigationBarHeight());
+        Log.d("SCREENPARTY_DIMENS", "Stat bar dimen: " + getStatusBarHeight());
+
+        Log.d("SCREENPARTY_DIMENS", "Left arrow layout params (bottom margin): " + leftArrowLayoutParams.bottomMargin);
+        Log.d("SCREENPARTY_DIMENS", "Left arrow layout params (top margin): " + leftArrowLayoutParams.topMargin);
+
+        Log.d("SCREENPARTY_DIMENS", "Right arrow layout params (bottom margin): " + rightArrowLayoutParams.bottomMargin);
+        Log.d("SCREENPARTY_DIMENS", "Right arrow layout params (top margin): " + rightArrowLayoutParams.topMargin);
 
         return view;
     }
