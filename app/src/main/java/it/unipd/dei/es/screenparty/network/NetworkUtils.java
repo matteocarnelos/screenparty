@@ -16,9 +16,15 @@ public class NetworkUtils {
 
     private final static int CHUNK_SIZE = 8192;
 
-    public static void send(NetworkMessage message, Socket socket, Handler handler) {
-        try { socket.getOutputStream().write(message.toString().getBytes()); }
-        catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
+    public static void send(final NetworkMessage message, final Socket socket, final Handler handler) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try { socket.getOutputStream().write(message.toString().getBytes()); }
+                catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
+            }
+        }).start();
+
     }
 
     public static String getIPAddress(boolean useIPv4) {
