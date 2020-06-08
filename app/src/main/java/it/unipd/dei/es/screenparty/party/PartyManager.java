@@ -1,9 +1,6 @@
 package it.unipd.dei.es.screenparty.party;
 
-import android.content.ContentResolver;
 import android.os.Handler;
-
-import java.io.File;
 
 import it.unipd.dei.es.screenparty.network.NetworkClient;
 import it.unipd.dei.es.screenparty.network.NetworkHost;
@@ -18,8 +15,6 @@ public class PartyManager {
     private static PartyManager instance = null;
 
     private Handler handler;
-    private ContentResolver contentResolver;
-    private File filesDir;
 
     private NetworkHost host;
     private NetworkClient client;
@@ -41,17 +36,15 @@ public class PartyManager {
         return partyParams;
     }
 
-    public void init(ScreenParams screenParams, ContentResolver contentResolver, File filesDir) {
+    public void init(ScreenParams screenParams) {
         partyParams = new PartyParams(screenParams);
-        this.contentResolver = contentResolver;
-        this.filesDir = filesDir;
     }
 
     public void startAsHost() {
         if(client != null && client.isAlive()) client.interrupt();
         if(host != null && host.isAlive()) return;
         partyParams.setRole(PartyParams.Role.HOST);
-        host = new NetworkHost(handler, contentResolver);
+        host = new NetworkHost(handler);
         host.start();
     }
 
@@ -59,7 +52,7 @@ public class PartyManager {
         if(host != null && host.isAlive()) host.interrupt();
         if(client != null && client.isAlive()) return;
         partyParams.setRole(PartyParams.Role.CLIENT);
-        client = new NetworkClient(handler, filesDir);
+        client = new NetworkClient(handler);
         client.start(hostIp);
     }
 

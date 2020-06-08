@@ -1,10 +1,6 @@
 package it.unipd.dei.es.screenparty.network;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Handler;
-import android.provider.OpenableColumns;
 import android.util.Log;
 
 import java.io.IOException;
@@ -27,15 +23,13 @@ public class NetworkHost extends Thread {
 
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
-    private ContentResolver contentResolver;
 
     private ServerSocket serverSocket = null;
     private List<ConnectedClient> clients = new ArrayList<>();
     private List<ClientWorker> workers = new ArrayList<>();
 
-    public NetworkHost(Handler handler, ContentResolver contentResolver) {
+    public NetworkHost(Handler handler) {
         this.handler = handler;
-        this.contentResolver = contentResolver;
     }
 
     public void broadcast(NetworkMessage message) {
@@ -53,6 +47,7 @@ public class NetworkHost extends Thread {
         try { serverSocket.close(); }
         catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
         for(ClientWorker worker : workers) worker.interrupt();
+        workers.clear();
     }
 
     @Override
@@ -111,42 +106,15 @@ public class NetworkHost extends Thread {
 
                     if(clients.size() == MAX_CLIENTS) {
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
-                        Uri fileUri = partyManager.getPartyParams().getMediaParams().getUri();
-
-                        String type = contentResolver.getType(fileUri);
-                        String extension = type.split("/")[1];
-                        Cursor cursor = contentResolver.query(fileUri, null, null, null, null);
-                        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                        cursor.moveToFirst();
-                        String size = Long.toString(cursor.getLong(sizeIndex));
-                        cursor.close();
-
-                        List<Socket> sockets = new ArrayList<>();
                         for(ConnectedClient client : clients) {
-                            sockets.add(client.getSocket());
                             NetworkMessage message = new NetworkMessage.Builder()
                                     .setCommand(NetworkCommands.Host.OK)
                                     .addArgument(String.valueOf(client.getPosition()))
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameWidth()))
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameHeight()))
-                                    .addArgument(extension)
-                                    .addArgument(size)
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
-
-                        handler.obtainMessage(NetworkEvents.Host.FILE_TRANSFER_STARTED).sendToTarget();
-
-                        try {
-                            InputStream fileInputStream = contentResolver.openInputStream(fileUri);
-                            NetworkUtils.transferFile(sockets, fileInputStream);
-                        }
-                        catch(IOException e) {
-                            if(!isInterrupted())
-                                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
-                            return;
-                        }
-
                         handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
                     }
                 } else {
@@ -178,7 +146,6 @@ public class NetworkHost extends Thread {
             try { client.getSocket().close(); }
             catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
             clients.remove(client);
-            workers.remove(this);
         }
 
         @Override

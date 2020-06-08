@@ -1,7 +1,6 @@
 package it.unipd.dei.es.screenparty.network;
 
 import android.os.Handler;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,11 +50,10 @@ public class NetworkUtils {
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
 
         byte[] chunk = new byte[CHUNK_SIZE];
-        int bytes, k;
-        for(bytes = 0; (k = fileInputStream.read(chunk)) != -1; bytes += k)
+        int k;
+        while((k = fileInputStream.read(chunk)) != -1)
             for(OutputStream outputStream : outputStreams)
                 outputStream.write(chunk, 0, k);
-        Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
         fileInputStream.close();
     }
 
@@ -64,10 +62,8 @@ public class NetworkUtils {
         byte[] chunk = new byte[CHUNK_SIZE];
         int bytes, k;
         for(bytes = 0; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k) {
-            Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
             fileOutputStream.write(chunk, 0, k);
         }
-        Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
         fileOutputStream.close();
     }
 }

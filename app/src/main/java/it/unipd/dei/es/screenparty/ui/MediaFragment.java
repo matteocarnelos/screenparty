@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -15,10 +14,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.MediaController;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
@@ -80,6 +79,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
         statusBarHeight = rectangle.top/partyManager.getPartyParams().getScreenParams().getYdpi();
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
+        ((AppCompatActivity)requireActivity()).getSupportActionBar().hide();
         return view;
     }
 
@@ -110,8 +110,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) throws IllegalArgumentException {
         Surface surfaceTexture = new Surface(surface);
         try {
-            String videoPath = "android.resource://" + requireActivity().getPackageName() + "/" + R.raw.video;
-            Uri uri = Uri.parse(videoPath);
+            Uri uri = partyManager.getPartyParams().getMediaParams().getUri();
             mediaPlayer.setDataSource(requireContext(), uri);
             mediaPlayer.setSurface(surfaceTexture);
         } catch (IOException e) {

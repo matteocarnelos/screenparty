@@ -4,12 +4,9 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import it.unipd.dei.es.screenparty.party.PartyManager;
@@ -19,14 +16,12 @@ public class NetworkClient extends Thread {
 
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
-    private File filesDir;
 
     private Socket host;
     private String hostIp;
 
-    public NetworkClient(Handler handler, File filesDir) {
+    public NetworkClient(Handler handler) {
         this.handler = handler;
-        this.filesDir = filesDir;
     }
 
     public String getHostIp() {
@@ -69,7 +64,7 @@ public class NetworkClient extends Thread {
             return;
         }
 
-        String deviceName = partyManager.getPartyParams().getDeviceName().trim().replaceAll("\\s", "%20");
+        String deviceName = partyManager.getPartyParams().getDeviceName().replaceAll("\\s", "%20");
 
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
@@ -79,10 +74,18 @@ public class NetworkClient extends Thread {
                 .build();
         NetworkUtils.send(request, host, handler);
 
-        handler.obtainMessage(NetworkEvents.Client.PARTY_CONNECTING).sendToTarget();
+        handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try { response = NetworkMessage.parseString(reader.readLine()); }
+        try { String line = reader.readLine();
+            if(line == null) {
+                if(!isInterrupted()) {
+                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                    closeConnection();
+                }
+                return;
+            }
+            response = NetworkMessage.parseString(line); }
         catch(IOException e) {
             if(!isInterrupted()) {
                 handler.obtainMessage(NetworkEvents.JOIN_FAILED, e.getLocalizedMessage()).sendToTarget();
@@ -95,24 +98,10 @@ public class NetworkClient extends Thread {
             PartyParams.Position position = PartyParams.Position.valueOf(response.getArgument(0));
             float frameWidth = Float.parseFloat(response.getArgument(1));
             float frameHeight = Float.parseFloat(response.getArgument(2));
-            String extension = response.getArgument(3);
-            long size = Long.parseLong(response.getArgument(4));
 
             partyManager.getPartyParams().setPosition(position);
             partyManager.getPartyParams().getMediaParams().setFrameWidth(frameWidth);
             partyManager.getPartyParams().getMediaParams().setFrameHeight(frameHeight);
-
-            handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
-
-            try {
-                OutputStream outputStream = new FileOutputStream(new File(filesDir, "data." + extension), false);
-                NetworkUtils.receiveFile(host, outputStream, size);
-            }
-            catch(IOException e) {
-                if(!interrupted())
-                    handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
-                return;
-            }
         } else {
             handler.obtainMessage(NetworkEvents.Client.PARTY_FULL).sendToTarget();
             return;
@@ -120,11 +109,20 @@ public class NetworkClient extends Thread {
 
         while(true) {
             NetworkMessage message;
-            try { message = NetworkMessage.parseString(reader.readLine()); }
+            try {
+                String line = reader.readLine();
+                if(line == null) {
+                    if(!isInterrupted()) {
+                        handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                        closeConnection();
+                    }
+                    return;
+                }
+                message = NetworkMessage.parseString(line);
+            }
             catch(IOException e) {
                 if(!isInterrupted()) {
-                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
-                    closeConnection();
+                    handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e.getLocalizedMessage()).sendToTarget();
                 }
                 return;
             }

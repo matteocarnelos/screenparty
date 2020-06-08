@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         ScreenParams screenParams = new ScreenParams(width, height, displayMetrics.xdpi, displayMetrics.ydpi);
 
         PartyManager partyManager = PartyManager.getInstance();
-        partyManager.init(screenParams, getContentResolver(), getFilesDir());
+        partyManager.init(screenParams);
     }
 
     @Override

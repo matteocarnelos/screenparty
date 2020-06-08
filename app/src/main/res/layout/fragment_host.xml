@@ -47,7 +47,8 @@
             app:layout_constraintBottom_toTopOf="@+id/next_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/host_instructions_label">
+            app:layout_constraintTop_toBottomOf="@+id/host_instructions_label"
+            app:layout_constraintWidth_max="@dimen/max_container_width">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout1"

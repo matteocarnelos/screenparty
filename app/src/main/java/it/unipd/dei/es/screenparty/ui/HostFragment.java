@@ -55,6 +55,8 @@ public class HostFragment extends Fragment {
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
 
+    private boolean partyReady = false;
+
     private View.OnClickListener nextButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -66,10 +68,15 @@ public class HostFragment extends Fragment {
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            partyManager.stop();
-            navController.popBackStack();
+            if(partyReady) dialogs.showBackConfirmationDialog();
+            else goBack();
         }
     };
+
+    private void goBack() {
+        partyManager.stop();
+        navController.popBackStack();
+    }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -87,22 +94,11 @@ public class HostFragment extends Fragment {
                 case NetworkEvents.JOIN_FAILED:
                     dialogs.showJoinFailedDialog((String)msg.obj);
                     break;
-                case NetworkEvents.Host.CLIENT_LEFT:
                 case NetworkEvents.Host.CLIENT_JOINED:
-                    resetClientList();
-                    List<ConnectedClient> clients = (List<ConnectedClient>)msg.obj;
-                    for(int i = 0; i < clients.size(); i++) {
-                        deviceNameLabels.get(i+1).setText(clients.get(i).getDeviceName());
-                        deviceInfoLabels.get(i+1).setText("Waiting other client...");
-                        deviceSpinners.get(i+1).setVisibility(View.INVISIBLE);
-                        deviceIcons.get(i+1).setVisibility(View.VISIBLE);
-                    }
-                    break;
-                case NetworkEvents.Host.FILE_TRANSFER_STARTED:
-                    deviceInfoLabels.get(1).setText("Transferring file...");
-                    deviceInfoLabels.get(2).setText("Transferring file...");
+                    clientListChanged((List<ConnectedClient>)msg.obj);
                     break;
                 case NetworkEvents.Host.PARTY_READY:
+                    partyReady = true;
                     for(ImageView deviceIcon : deviceIcons)
                         deviceIcon.setVisibility(View.VISIBLE);
                     for(ProgressBar deviceSpinner : deviceSpinners)
@@ -113,8 +109,10 @@ public class HostFragment extends Fragment {
                         deviceConnectedIcon.setVisibility(View.VISIBLE);
                     nextButton.setEnabled(true);
                     break;
-                case NetworkEvents.FILE_TRANSFER_FAILED:
-                    dialogs.showFileTransferFailedDialog((String)msg.obj);
+                case NetworkEvents.Host.CLIENT_LEFT:
+                    nextButton.setEnabled(false);
+                    if(partyReady) dialogs.showClientLeftDialog();
+                    else clientListChanged((List<ConnectedClient>)msg.obj);
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
                     dialogs.showCommunicationFailedDialog((String)msg.obj);
@@ -133,7 +131,7 @@ public class HostFragment extends Fragment {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     })
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -145,7 +143,7 @@ public class HostFragment extends Fragment {
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     }).show();
         }
@@ -166,20 +164,22 @@ public class HostFragment extends Fragment {
                     .show();
         }
 
-        private void showFileTransferFailedDialog(String message) {
-            new MaterialAlertDialogBuilder((requireContext()))
-                    .setTitle("File trasfer failed")
-                    .setMessage(message)
+        private void showClientLeftDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Client left")
+                    .setMessage("A client left the party, unfortunately you have to start again")
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            backPressedCallback.handleOnBackPressed();
+                            partyManager.restart();
+                            clientListChanged(new ArrayList<ConnectedClient>());
                         }
                     })
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            backPressedCallback.handleOnBackPressed();
+                            partyManager.restart();
+                            clientListChanged(new ArrayList<ConnectedClient>());
                         }
                     }).show();
         }
@@ -191,50 +191,52 @@ public class HostFragment extends Fragment {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     })
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     })
                     .show();
         }
 
-        private void showMediaErrorDialog(String message) {
+        private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Media error")
-                    .setMessage(message)
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            backPressedCallback.handleOnBackPressed();
-                        }
-                    })
-                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    .setTitle("Warning")
+                    .setMessage("Are you sure you want to go back? You'll have to start again")
+                    .setPositiveButton("Cancel", null)
+                    .setNegativeButton("Go back", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            openMediaPicker();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     }).show();
         }
     }
 
-    private void resetClientList() {
-        for(int i = 1; i <= 2; i++) {
-            deviceNameLabels.get(i).setText("");
-            deviceInfoLabels.get(i).setText("");
-            deviceSpinners.get(i).setVisibility(View.VISIBLE);
-            deviceIcons.get(i).setVisibility(View.INVISIBLE);
-        }
+    private void clientListChanged(List<ConnectedClient> clients) {
+        for(int i = 1; i <= 2; i++) setCardWaiting(i);
+        for(int i = 0; i < clients.size(); i++)
+            setCardReady(i + 1, clients.get(i).getDeviceName());
+    }
+
+    private void setCardReady(int index, String name) {
+        deviceNameLabels.get(index).setText(name);
+        deviceInfoLabels.get(index).setText("Ready");
+        deviceSpinners.get(index).setVisibility(View.INVISIBLE);
+        deviceIcons.get(index).setVisibility(View.VISIBLE);
+        deviceConnectedIcons.get(index).setVisibility(View.VISIBLE);
+    }
+
+    private void setCardWaiting(int index) {
+        deviceNameLabels.get(index).setText("");
+        deviceInfoLabels.get(index).setText("");
+        deviceSpinners.get(index).setVisibility(View.VISIBLE);
+        deviceIcons.get(index).setVisibility(View.INVISIBLE);
+        deviceConnectedIcons.get(index).setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -277,11 +279,7 @@ public class HostFragment extends Fragment {
         nextButton = view.findViewById(R.id.next_button);
         nextButton.setOnClickListener(nextButtonClickListener);
         String deviceName = Settings.Secure.getString(requireActivity().getContentResolver(), "bluetooth_name");
-        deviceNameLabels.get(0).setText(deviceName);
-        deviceSpinners.get(0).setVisibility(View.INVISIBLE);
-        deviceIcons.get(0).setVisibility(View.VISIBLE);
-        deviceInfoLabels.get(0).setText("Ready");
-        deviceConnectedIcons.get(0).setVisibility(View.VISIBLE);
+        setCardReady(0, deviceName);
         return view;
     }
 
