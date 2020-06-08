@@ -32,6 +32,10 @@ public class NetworkHost extends Thread {
         this.handler = handler;
     }
 
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
     public void broadcast(NetworkMessage message) {
         for(ConnectedClient client : clients)
             NetworkUtils.send(message, client.getSocket(), handler);

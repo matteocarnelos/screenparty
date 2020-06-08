@@ -83,6 +83,14 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         return view;
     }
 
+    private void showSystemUI() {
+        View decorView = requireActivity().getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
         View decorView = requireActivity().getWindow().getDecorView();
@@ -203,6 +211,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        showSystemUI();
+        ((AppCompatActivity)requireActivity()).getSupportActionBar().show();
         super.onDestroy();
     }
 
