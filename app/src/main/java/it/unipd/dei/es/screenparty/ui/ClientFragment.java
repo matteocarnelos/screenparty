@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,15 +26,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.File;
-
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 public class ClientFragment extends Fragment {
 
-    private final String ipPatternString = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+    private static final String IP_PATTERN_STRING = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
     private TextInputLayout hostIpField;
     private TextView clientConnectedLabel;
@@ -196,8 +195,6 @@ public class ClientFragment extends Fragment {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
         requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
-        File file = new File(requireContext().getFilesDir(), "data");
-        partyManager.getPartyParams().getMediaParams().setFile(file);
     }
 
     @Override
@@ -221,13 +218,16 @@ public class ClientFragment extends Fragment {
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!((hostIpField.getEditText().getText().toString()).matches(ipPatternString))) {
+                if(!((hostIpField.getEditText().getText().toString()).matches(IP_PATTERN_STRING))) {
                     invalidIpSnackbar.show();
                 } else {
                     partyManager.startAsClient(hostIpField.getEditText().getText().toString());
                 }
             }
         });
+
+        String deviceName = Settings.Secure.getString(requireActivity().getContentResolver(), "bluetooth_name");
+        partyManager.getPartyParams().setDeviceName(deviceName);
 
         return view;
     }

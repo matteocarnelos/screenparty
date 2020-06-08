@@ -129,13 +129,13 @@
                                 android:src="@drawable/ic_baseline_phone_android_24"
                                 android:tint="@color/material_on_surface_emphasis_high_type"
                                 android:visibility="invisible"
-                                app:layout_constraintBottom_toBottomOf="@+id/host_waiting_spinner"
-                                app:layout_constraintEnd_toEndOf="@+id/host_waiting_spinner"
+                                app:layout_constraintBottom_toBottomOf="@+id/host_spinner"
+                                app:layout_constraintEnd_toEndOf="@+id/host_spinner"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/host_waiting_spinner" />
+                                app:layout_constraintTop_toTopOf="@+id/host_spinner" />
 
                             <ProgressBar
-                                android:id="@+id/host_waiting_spinner"
+                                android:id="@+id/host_spinner"
                                 style="?android:attr/progressBarStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
@@ -231,13 +231,13 @@
                                 android:src="@drawable/ic_baseline_phone_android_24"
                                 android:tint="@color/material_on_surface_emphasis_high_type"
                                 android:visibility="invisible"
-                                app:layout_constraintBottom_toBottomOf="@+id/client1_waiting_spinner"
-                                app:layout_constraintEnd_toEndOf="@+id/client1_waiting_spinner"
+                                app:layout_constraintBottom_toBottomOf="@+id/client1_spinner"
+                                app:layout_constraintEnd_toEndOf="@+id/client1_spinner"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/client1_waiting_spinner" />
+                                app:layout_constraintTop_toTopOf="@+id/client1_spinner" />
 
                             <ProgressBar
-                                android:id="@+id/client1_waiting_spinner"
+                                android:id="@+id/client1_spinner"
                                 style="?android:attr/progressBarStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
@@ -333,13 +333,13 @@
                                 android:src="@drawable/ic_baseline_phone_android_24"
                                 android:tint="@color/material_on_surface_emphasis_high_type"
                                 android:visibility="invisible"
-                                app:layout_constraintBottom_toBottomOf="@+id/client2_waiting_spinner"
-                                app:layout_constraintEnd_toEndOf="@+id/client2_waiting_spinner"
+                                app:layout_constraintBottom_toBottomOf="@+id/client2_spinner"
+                                app:layout_constraintEnd_toEndOf="@+id/client2_spinner"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/client2_waiting_spinner" />
+                                app:layout_constraintTop_toTopOf="@+id/client2_spinner" />
 
                             <ProgressBar
-                                android:id="@+id/client2_waiting_spinner"
+                                android:id="@+id/client2_spinner"
                                 style="?android:attr/progressBarStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"

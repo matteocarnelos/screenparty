@@ -9,8 +9,9 @@ public class PartyParams {
 
     private Role role;
     private Position position;
+    private String deviceName;
     private ScreenParams screenParams;
-    private MediaParams mediaParams;
+    private MediaParams mediaParams = new MediaParams();
 
     public PartyParams(ScreenParams screenParams) {
         this.screenParams = screenParams;
@@ -22,6 +23,10 @@ public class PartyParams {
 
     public Position getPosition() {
         return position;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
     }
 
     public ScreenParams getScreenParams() {
@@ -39,6 +44,10 @@ public class PartyParams {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public void setMediaParams(MediaParams mediaParams) {

@@ -1,6 +1,10 @@
 package it.unipd.dei.es.screenparty.network;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import java.io.IOException;
@@ -13,8 +17,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import it.unipd.dei.es.screenparty.party.PartyManager;
-import it.unipd.dei.es.screenparty.party.PartyUtils;
 import it.unipd.dei.es.screenparty.party.PartyParams;
+import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 public class NetworkHost extends Thread {
 
@@ -23,13 +27,15 @@ public class NetworkHost extends Thread {
 
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
+    private ContentResolver contentResolver;
 
     private ServerSocket serverSocket = null;
     private List<ConnectedClient> clients = new ArrayList<>();
     private List<ClientWorker> workers = new ArrayList<>();
 
-    public NetworkHost(Handler handler) {
+    public NetworkHost(Handler handler, ContentResolver contentResolver) {
         this.handler = handler;
+        this.contentResolver = contentResolver;
     }
 
     public void broadcast(NetworkMessage message) {
@@ -90,24 +96,30 @@ public class NetworkHost extends Thread {
                 if(clients.size() < MAX_CLIENTS) {
                     float width = Float.parseFloat(request.getArgument(0));
                     float height = Float.parseFloat(request.getArgument(1));
+                    String deviceName = request.getArgument(2).replaceAll("%20", " ");
 
                     PartyParams.Position position = PartyParams.Position.values()[2*clients.size()];
                     ConnectedClient connectedClient = new ConnectedClient(socket, position, width, height);
+                    connectedClient.setDeviceName(deviceName);
 
                     clients.add(connectedClient);
                     ClientWorker clientWorker = new ClientWorker(connectedClient);
                     clientWorker.start();
                     workers.add(clientWorker);
 
-                    handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, connectedClient).sendToTarget();
+                    handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, clients).sendToTarget();
 
                     if(clients.size() == MAX_CLIENTS) {
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
+                        Uri fileUri = partyManager.getPartyParams().getMediaParams().getUri();
 
-                        String extension = "";
-                        String fileName = partyManager.getPartyParams().getMediaParams().getFile().getAbsolutePath();
-                        int i = fileName.lastIndexOf('.');
-                        if (i > 0) extension = fileName.substring(i+1);
+                        String type = contentResolver.getType(fileUri);
+                        String extension = type.split("/")[1];
+                        Cursor cursor = contentResolver.query(fileUri, null, null, null, null);
+                        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                        cursor.moveToFirst();
+                        String size = Long.toString(cursor.getLong(sizeIndex));
+                        cursor.close();
 
                         List<Socket> sockets = new ArrayList<>();
                         for(ConnectedClient client : clients) {
@@ -118,13 +130,16 @@ public class NetworkHost extends Thread {
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameWidth()))
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameHeight()))
                                     .addArgument(extension)
-                                    .addArgument(Long.toString(partyManager.getPartyParams().getMediaParams().getFile().length()))
+                                    .addArgument(size)
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
 
+                        handler.obtainMessage(NetworkEvents.Host.FILE_TRANSFER_STARTED).sendToTarget();
+
                         try {
-                            NetworkUtils.transferFile(sockets, partyManager.getPartyParams().getMediaParams().getFile());
+                            InputStream fileInputStream = contentResolver.openInputStream(fileUri);
+                            NetworkUtils.transferFile(sockets, fileInputStream);
                         }
                         catch(IOException e) {
                             if(!isInterrupted())
@@ -180,14 +195,14 @@ public class NetworkHost extends Thread {
                 }
                 catch(IOException | NoSuchElementException e) {
                     if(!isInterrupted()) {
-                        handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, client).sendToTarget();
+                        handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
                         closeConnection();
                     }
                     return;
                 }
 
                 if(message.getCommand().equals(NetworkCommands.EXIT)) {
-                    handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, client).sendToTarget();
+                    handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
                     closeConnection();
                     return;
                 } else {

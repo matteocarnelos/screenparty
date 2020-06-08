@@ -5,9 +5,11 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import it.unipd.dei.es.screenparty.party.PartyManager;
@@ -17,12 +19,14 @@ public class NetworkClient extends Thread {
 
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
+    private File filesDir;
 
     private Socket host;
     private String hostIp;
 
-    public NetworkClient(Handler handler) {
+    public NetworkClient(Handler handler, File filesDir) {
         this.handler = handler;
+        this.filesDir = filesDir;
     }
 
     public String getHostIp() {
@@ -65,10 +69,13 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        String deviceName = partyManager.getPartyParams().getDeviceName().trim().replaceAll("\\s", "%20");
+
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getWidth()))
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getHeight()))
+                .addArgument(deviceName)
                 .build();
         NetworkUtils.send(request, host, handler);
 
@@ -97,10 +104,10 @@ public class NetworkClient extends Thread {
 
             handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
 
-            File oldFile = partyManager.getPartyParams().getMediaParams().getFile();
-            partyManager.getPartyParams().getMediaParams().setFile(new File(oldFile.getAbsolutePath() + "." + extension));
-
-            try { NetworkUtils.receiveFile(host, partyManager.getPartyParams().getMediaParams().getFile(), size); }
+            try {
+                OutputStream outputStream = new FileOutputStream(new File(filesDir, "data." + extension), false);
+                NetworkUtils.receiveFile(host, outputStream, size);
+            }
             catch(IOException e) {
                 if(!interrupted())
                     handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();

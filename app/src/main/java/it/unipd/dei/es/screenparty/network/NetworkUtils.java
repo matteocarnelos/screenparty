@@ -1,10 +1,8 @@
 package it.unipd.dei.es.screenparty.network;
 
 import android.os.Handler;
+import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,22 +46,28 @@ public class NetworkUtils {
         return "0.0.0.0";
     }
 
-    public static void transferFile(List<Socket> sockets, File file) throws IOException {
+    public static void transferFile(List<Socket> sockets, InputStream fileInputStream) throws IOException {
         List<OutputStream> outputStreams = new ArrayList<>();
-        FileInputStream fileInputStream = new FileInputStream(file);
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
 
         byte[] chunk = new byte[CHUNK_SIZE];
-        while(fileInputStream.read(chunk) != -1)
+        int bytes, k;
+        for(bytes = 0; (k = fileInputStream.read(chunk)) != -1; bytes += k)
             for(OutputStream outputStream : outputStreams)
-                outputStream.write(chunk);
+                outputStream.write(chunk, 0, k);
+        Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
+        fileInputStream.close();
     }
 
-    public static void receiveFile(Socket socket, File outputFile, long size) throws IOException {
+    public static void receiveFile(Socket socket, OutputStream fileOutputStream, long size) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
         byte[] chunk = new byte[CHUNK_SIZE];
-        for(int bytes = 0, k; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k)
-            fileOutputStream.write(chunk);
+        int bytes, k;
+        for(bytes = 0; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k) {
+            Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
+            fileOutputStream.write(chunk, 0, k);
+        }
+        Log.d("SCREENPARTY_FILE", String.valueOf(bytes));
+        fileOutputStream.close();
     }
 }
