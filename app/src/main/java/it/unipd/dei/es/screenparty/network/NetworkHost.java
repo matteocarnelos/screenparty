@@ -104,6 +104,11 @@ public class NetworkHost extends Thread {
                     if(clients.size() == MAX_CLIENTS) {
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
 
+                        String extension = "";
+                        String fileName = partyManager.getPartyParams().getMediaParams().getFile().getAbsolutePath();
+                        int i = fileName.lastIndexOf('.');
+                        if (i > 0) extension = fileName.substring(i+1);
+
                         List<Socket> sockets = new ArrayList<>();
                         for(ConnectedClient client : clients) {
                             sockets.add(client.getSocket());
@@ -112,12 +117,14 @@ public class NetworkHost extends Thread {
                                     .addArgument(String.valueOf(client.getPosition()))
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameWidth()))
                                     .addArgument(String.valueOf(client.getMediaParams().getFrameHeight()))
+                                    .addArgument(extension)
+                                    .addArgument(Long.toString(partyManager.getPartyParams().getMediaParams().getFile().length()))
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
 
                         try {
-                            NetworkUtils.transferFile(sockets, partyManager.getPartyParams().getMediaParams().getInputStream());
+                            NetworkUtils.transferFile(sockets, partyManager.getPartyParams().getMediaParams().getFile());
                         }
                         catch(IOException e) {
                             if(!isInterrupted())

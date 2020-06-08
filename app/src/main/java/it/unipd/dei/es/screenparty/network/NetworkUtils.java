@@ -1,8 +1,9 @@
 package it.unipd.dei.es.screenparty.network;
 
-import android.net.Uri;
 import android.os.Handler;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,8 +48,9 @@ public class NetworkUtils {
         return "0.0.0.0";
     }
 
-    public static void transferFile(List<Socket> sockets, InputStream fileInputStream) throws IOException {
+    public static void transferFile(List<Socket> sockets, File file) throws IOException {
         List<OutputStream> outputStreams = new ArrayList<>();
+        FileInputStream fileInputStream = new FileInputStream(file);
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
 
         byte[] chunk = new byte[CHUNK_SIZE];
@@ -57,10 +59,11 @@ public class NetworkUtils {
                 outputStream.write(chunk);
     }
 
-    public static void receiveFile(Socket socket, Uri uri) throws IOException {
+    public static void receiveFile(Socket socket, File outputFile, long size) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream(uri.getPath());
+        FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
         byte[] chunk = new byte[CHUNK_SIZE];
-        while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
+        for(int bytes = 0, k; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k)
+            fileOutputStream.write(chunk);
     }
 }

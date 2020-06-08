@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -87,21 +88,26 @@ public class NetworkClient extends Thread {
             PartyParams.Position position = PartyParams.Position.valueOf(response.getArgument(0));
             float frameWidth = Float.parseFloat(response.getArgument(1));
             float frameHeight = Float.parseFloat(response.getArgument(2));
+            String extension = response.getArgument(3);
+            long size = Long.parseLong(response.getArgument(4));
 
             partyManager.getPartyParams().setPosition(position);
             partyManager.getPartyParams().getMediaParams().setFrameWidth(frameWidth);
             partyManager.getPartyParams().getMediaParams().setFrameHeight(frameHeight);
 
             handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
+
+            File oldFile = partyManager.getPartyParams().getMediaParams().getFile();
+            partyManager.getPartyParams().getMediaParams().setFile(new File(oldFile.getAbsolutePath() + "." + extension));
+
+            try { NetworkUtils.receiveFile(host, partyManager.getPartyParams().getMediaParams().getFile(), size); }
+            catch(IOException e) {
+                if(!interrupted())
+                    handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
+                return;
+            }
         } else {
             handler.obtainMessage(NetworkEvents.Client.PARTY_FULL).sendToTarget();
-            return;
-        }
-
-        try { NetworkUtils.receiveFile(host, partyManager.getPartyParams().getMediaParams().getUri()); }
-        catch(IOException e) {
-            if(!interrupted())
-                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
             return;
         }
 

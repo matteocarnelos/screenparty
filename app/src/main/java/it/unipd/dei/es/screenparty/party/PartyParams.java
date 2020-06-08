@@ -10,7 +10,7 @@ public class PartyParams {
     private Role role;
     private Position position;
     private ScreenParams screenParams;
-    private MediaParams mediaParams = new MediaParams();
+    private MediaParams mediaParams;
 
     public PartyParams(ScreenParams screenParams) {
         this.screenParams = screenParams;

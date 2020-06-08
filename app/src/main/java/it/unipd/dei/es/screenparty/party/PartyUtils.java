@@ -35,7 +35,7 @@ public class PartyUtils {
             for (PartyParams clientParams : clientsParams)
                 clientParams.getMediaParams().setFrameWidth(0);
         }
-        //Invoked when the calculated width of the video it's grater than width of the 3 screens.
+        //Invoked when the calculated width of the video it's greater than width of the 3 screens.
         else if (videoWidth > hostParam.getScreenParams().getWidth() + clientsTotalWidth) {
             videoWidth = hostParam.getScreenParams().getWidth() + clientsTotalWidth;
             videoHeight = videoWidth / videoAspectRatio;

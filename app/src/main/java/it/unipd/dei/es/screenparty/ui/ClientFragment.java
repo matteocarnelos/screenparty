@@ -2,7 +2,6 @@ package it.unipd.dei.es.screenparty.ui;
 
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -197,8 +196,8 @@ public class ClientFragment extends Fragment {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
         requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
-        Uri fileUri = Uri.fromFile(new File(requireContext().getFilesDir(), "data.raw"));
-        partyManager.getPartyParams().getMediaParams().setUri(fileUri);
+        File file = new File(requireContext().getFilesDir(), "data");
+        partyManager.getPartyParams().getMediaParams().setFile(file);
     }
 
     @Override
