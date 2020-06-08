@@ -3,7 +3,6 @@ package it.unipd.dei.es.screenparty.ui;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +25,7 @@ import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MyMediaController;
 import it.unipd.dei.es.screenparty.party.PartyManager;
+import it.unipd.dei.es.screenparty.party.PartyParams;
 
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
@@ -39,7 +39,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private float mediaHeight;
     private float mediaWidth;
     private float statusBarHeight;
-    public final int notchMinimumHeight=24;
+    public final int notchMinimumHeight = 24;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_media, container, false);
         partyManager = PartyManager.getInstance();
-        mediaModifier=new MediaModifier();
+        mediaModifier = new MediaModifier();
         textureView = view.findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
         mediaPlayer = new MediaPlayer();
@@ -77,9 +77,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         });
         Rect rectangle = new Rect();
         requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
-        statusBarHeight = rectangle.top/partyManager.getPartyParams().getScreenParams().getYdpi();
+        statusBarHeight = rectangle.top / partyManager.getPartyParams().getScreenParams().getYdpi();
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
-        ((AppCompatActivity)requireActivity()).getSupportActionBar().hide();
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
         return view;
     }
 
@@ -130,7 +130,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             public void onPrepared(MediaPlayer mp) {
                 mediaHeight = mp.getVideoHeight();
                 mediaWidth = mp.getVideoWidth();
-                if (statusBarHeight*partyManager.getPartyParams().getScreenParams().getYdpi()>notchMinimumHeight)
+                if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > notchMinimumHeight)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
@@ -138,7 +138,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
                 mediaPlayer.start();
-                mMediaControllerEnable();
+                if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                    mMediaControllerEnable();
             }
         });
     }
@@ -211,7 +212,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer = null;
         }
         showSystemUI();
-        ((AppCompatActivity)requireActivity()).getSupportActionBar().show();
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().show();
         super.onDestroy();
     }
 
