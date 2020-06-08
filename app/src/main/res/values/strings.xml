@@ -46,6 +46,7 @@
     <string name="prepare_instructions_label_text">We are almost ready, align devices with the help of the arrows.</string>
     <string name="left_arrow_icon_description">&lt;-[left arrow]</string>
     <string name="right_arrow_icon_description">[right arrow]-&gt;</string>
+    <string name="alignment_icon_description">[][][]&gt;</string>
     <string name="align_label_text">Align devices with the help of the central line</string>
     <string name="start_button_text">Start!</string>
 
