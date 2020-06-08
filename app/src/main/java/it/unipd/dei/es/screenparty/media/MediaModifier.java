@@ -34,7 +34,8 @@ public class MediaModifier {
                 Matrix leftMatrix = new Matrix();
                 scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, leftMatrix);
                 scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, leftMatrix);
-                return xTranslateTexture((screenWidth - frameWidth) * xDpi, leftMatrix);
+                Log.d(MEDIA_MODIFIER_TAG, "translation: " + ((-frameHeight * aspectRatio) + frameWidth));
+                return xTranslateTexture(((-frameHeight * aspectRatio) + frameWidth) * xDpi, leftMatrix);
             case CENTER:
                 Matrix centralMatrix = new Matrix();
                 scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, centralMatrix);
@@ -44,8 +45,8 @@ public class MediaModifier {
                 Matrix rightMatrix = new Matrix();
                 scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, rightMatrix);
                 scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, rightMatrix);
-                Log.d(MEDIA_MODIFIER_TAG, "translation: " + ((-frameHeight * aspectRatio) + frameWidth));
-                return xTranslateTexture(((-frameHeight * aspectRatio) + frameWidth) * xDpi, rightMatrix);
+                return xTranslateTexture((screenWidth - frameWidth) * xDpi, rightMatrix);
+
         }
         return matrix;
     }
