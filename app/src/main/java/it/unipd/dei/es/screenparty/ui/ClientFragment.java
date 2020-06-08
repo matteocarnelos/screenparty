@@ -228,6 +228,7 @@ public class ClientFragment extends Fragment {
         connectButton.setOnClickListener(nextButtonListener);
 
         String deviceName = Settings.Secure.getString(requireActivity().getContentResolver(), "bluetooth_name");
+        if(deviceName == null) deviceName = "Unknown";
         partyManager.getPartyParams().setDeviceName(deviceName);
 
         return view;
