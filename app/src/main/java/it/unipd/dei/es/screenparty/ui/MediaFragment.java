@@ -110,9 +110,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) throws IllegalArgumentException {
         Surface surfaceTexture = new Surface(surface);
         try {
-            String videoPath = "android.resource://" + requireActivity().getPackageName() + "/" + R.raw.video;
-            Uri uri = Uri.parse(videoPath);
-            mediaPlayer.setDataSource(requireContext(), uri);
+            mediaPlayer.setDataSource(requireContext(), partyManager.getPartyParams().getMediaParams().getUri());
             mediaPlayer.setSurface(surfaceTexture);
         } catch (IOException e) {
             e.printStackTrace();
