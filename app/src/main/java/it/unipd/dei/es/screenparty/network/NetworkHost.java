@@ -156,13 +156,12 @@ public class NetworkHost extends Thread {
         public void run() {
             Socket socket = client.getSocket();
             InputStream inputStream;
-            NetworkMessage message;
 
             while(true) {
                 try {
                     inputStream = socket.getInputStream();
                     Scanner scanner = new Scanner(inputStream);
-                    message = NetworkMessage.parseString(scanner.nextLine());
+                    NetworkMessage.parseString(scanner.nextLine());
                 }
                 catch(IOException | NoSuchElementException e) {
                     if(!isInterrupted()) {
@@ -172,14 +171,8 @@ public class NetworkHost extends Thread {
                     return;
                 }
 
-                if(message.getCommand().equals(NetworkCommands.EXIT)) {
-                    handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
-                    closeConnection();
-                    return;
-                } else {
-                    NetworkMessage response = new NetworkMessage(NetworkCommands.Host.UNKNOWN);
-                    NetworkUtils.send(response, socket, handler);
-                }
+                NetworkMessage response = new NetworkMessage(NetworkCommands.Host.UNKNOWN);
+                NetworkUtils.send(response, socket, handler);
             }
         }
     }

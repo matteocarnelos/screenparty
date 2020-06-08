@@ -140,14 +140,9 @@ public class NetworkClient extends Thread {
                 case NetworkCommands.Host.PAUSE:
                     handler.obtainMessage(NetworkEvents.Client.HOST_PAUSE).sendToTarget();
                     break;
-                case NetworkCommands.Host.RESUME:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_RESUME).sendToTarget();
-                    break;
-                case NetworkCommands.Host.STOP:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_STOP).sendToTarget();
-                    break;
-                case NetworkCommands.EXIT:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_EXIT).sendToTarget();
+                case NetworkCommands.Host.SEEK:
+                    int pos = Integer.parseInt(message.getArgument(0));
+                    handler.obtainMessage(NetworkEvents.Client.HOST_SEEK, pos).sendToTarget();
                     break;
             }
         }

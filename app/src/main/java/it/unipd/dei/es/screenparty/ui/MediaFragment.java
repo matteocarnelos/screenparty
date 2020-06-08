@@ -1,10 +1,14 @@
 package it.unipd.dei.es.screenparty.ui;
 
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,17 +19,24 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.MediaController;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MyMediaController;
+import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.party.PartyManager;
-import it.unipd.dei.es.screenparty.party.PartyParams;
 
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
@@ -35,15 +46,131 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private MediaController mediaController;
     private MyMediaController mMediaController;
     private MediaModifier mediaModifier;
-    private PartyManager partyManager;
+    private PartyManager partyManager = PartyManager.getInstance();
     private float mediaHeight;
     private float mediaWidth;
     private float statusBarHeight;
     public final int notchMinimumHeight = 24;
 
+    private NavController navController;
+    private Dialogs dialogs = new Dialogs();
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch(msg.what) {
+                case NetworkEvents.Client.HOST_PLAY:
+                    mediaPlayer.start();
+                    break;
+                case NetworkEvents.Client.HOST_PAUSE:
+                    mediaPlayer.pause();
+                    break;
+                case NetworkEvents.Client.HOST_SEEK:
+                    int pos = (int)msg.obj;
+                    mediaPlayer.seekTo(pos);
+                    break;
+                case NetworkEvents.Host.CLIENT_LEFT:
+                    dialogs.showClientLeftDialog();
+                    break;
+                case NetworkEvents.Client.HOST_LEFT:
+                    dialogs.showHostLeftDialog();
+                    break;
+                case NetworkEvents.COMMUNICATION_FAILED:
+                    dialogs.showCommunicationFailedDialog((String)msg.obj);
+                    break;
+                default: super.handleMessage(msg);
+            }
+        }
+    };
+
+    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            dialogs.showBackConfirmationDialog();
+        }
+    };
+
+    private void goBack() {
+        partyManager.stop();
+        navController.popBackStack(R.id.startFragment, false);
+    }
+
+    private class Dialogs {
+
+        private void showBackConfirmationDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_warning)
+                    .setMessage(R.string.dialog_message_warning)
+                    .setPositiveButton(R.string.dialog_button_cancel, null)
+                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
+
+        private void showClientLeftDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_client_left)
+                    .setMessage(R.string.dialog_message_client_left)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
+
+        private void showHostLeftDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_party_no_longer_exists)
+                    .setMessage(R.string.dialog_message_party_no_longer_exists)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
+
+        private void showCommunicationFailedDialog(String message) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_communication_failed)
+                    .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    })
+                    .show();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        partyManager.setEventsHandler(handler);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -51,7 +178,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_media, container, false);
-        partyManager = PartyManager.getInstance();
         mediaModifier = new MediaModifier();
         textureView = view.findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
@@ -83,12 +209,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         return view;
     }
 
-    private void showSystemUI() {
-        View decorView = requireActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        navController = Navigation.findNavController(view);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -101,6 +224,14 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    private void showSystemUI() {
+        View decorView = requireActivity().getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     /**
@@ -138,7 +269,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
                 mediaPlayer.start();
-                if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                //if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     mMediaControllerEnable();
             }
         });

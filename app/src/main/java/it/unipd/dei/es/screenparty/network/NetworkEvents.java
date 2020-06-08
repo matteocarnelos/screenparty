@@ -15,15 +15,12 @@ public final class NetworkEvents {
     }
 
     public static final class Client {
-        public static final int PARTY_CONNECTING = 20;
         public static final int PARTY_JOINED = 21;
         public static final int PARTY_FULL = 22;
         public static final int HOST_NEXT = 23;
         public static final int HOST_PLAY = 24;
         public static final int HOST_PAUSE = 25;
-        public static final int HOST_RESUME = 26;
-        public static final int HOST_STOP = 27;
-        public static final int HOST_EXIT = 28;
-        public static final int HOST_LEFT = 29;
+        public static final int HOST_SEEK = 26;
+        public static final int HOST_LEFT = 27;
     }
 }

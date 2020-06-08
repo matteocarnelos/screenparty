@@ -4,10 +4,16 @@ package it.unipd.dei.es.screenparty.media;
 import android.media.MediaPlayer;
 import android.widget.MediaController;
 
+import it.unipd.dei.es.screenparty.network.NetworkCommands;
+import it.unipd.dei.es.screenparty.network.NetworkMessage;
+import it.unipd.dei.es.screenparty.party.PartyManager;
+
 /**
  * Modified version of the MediaController class.
  */
 public class MyMediaController implements MediaController.MediaPlayerControl {
+
+    private PartyManager partyManager = PartyManager.getInstance();
     private MediaPlayer mMediaPlayer;
 
     public MyMediaController(MediaPlayer mMediaPlayer) {
@@ -17,11 +23,13 @@ public class MyMediaController implements MediaController.MediaPlayerControl {
     //For every overridden methods check the superclass documentation
     @Override
     public void start() {
+        partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
         mMediaPlayer.start();
     }
 
     @Override
     public void pause() {
+        partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
         mMediaPlayer.pause();
     }
 
@@ -37,6 +45,11 @@ public class MyMediaController implements MediaController.MediaPlayerControl {
 
     @Override
     public void seekTo(int pos) {
+        NetworkMessage message = new NetworkMessage.Builder()
+                .setCommand(NetworkCommands.Host.SEEK)
+                .addArgument(String.valueOf(pos))
+                .build();
+        partyManager.sendMessage(message);
         mMediaPlayer.seekTo(pos);
     }
 
