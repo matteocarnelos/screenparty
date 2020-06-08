@@ -179,10 +179,17 @@ public class PrepareFragment extends Fragment {
 
         ImageView leftArrowIcon = view.findViewById(R.id.left_arrow_icon);
         ImageView rightArrowIcon = view.findViewById(R.id.right_arrow_icon);
-        if(partyManager.getPartyParams().getPosition() == PartyParams.Position.LEFT)
+        ImageView alignmentIcon = view.findViewById(R.id.alignment_icon);
+
+        alignmentIcon.setImageResource(R.drawable.alignment_center);
+        if(partyManager.getPartyParams().getPosition() == PartyParams.Position.LEFT) {
             rightArrowIcon.setVisibility(View.INVISIBLE);
-        if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT)
+            alignmentIcon.setImageResource(R.drawable.alignment_left);
+        }
+        if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT) {
             leftArrowIcon.setVisibility(View.INVISIBLE);
+            alignmentIcon.setImageResource(R.drawable.alignment_right);
+        }
 
         ConstraintLayout.LayoutParams leftArrowLayoutParams = (ConstraintLayout.LayoutParams)leftArrowIcon.getLayoutParams();
         leftArrowLayoutParams.bottomMargin += getStatusBarHeight();
