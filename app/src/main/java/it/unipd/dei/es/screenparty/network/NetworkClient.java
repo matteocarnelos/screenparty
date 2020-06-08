@@ -24,6 +24,10 @@ public class NetworkClient extends Thread {
         this.handler = handler;
     }
 
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
     public String getHostIp() {
         return hostIp;
     }

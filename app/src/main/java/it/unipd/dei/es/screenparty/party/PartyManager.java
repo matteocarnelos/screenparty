@@ -6,8 +6,6 @@ import it.unipd.dei.es.screenparty.network.NetworkClient;
 import it.unipd.dei.es.screenparty.network.NetworkHost;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
 
-// TODO: Add streaming server
-
 public class PartyManager {
 
     public static final String LOG_TAG = "SCREENPARTY";
@@ -30,6 +28,8 @@ public class PartyManager {
 
     public void setEventsHandler(Handler handler) {
         this.handler = handler;
+        if(host != null) host.setHandler(handler);
+        if(client != null) client.setHandler(handler);
     }
 
     public PartyParams getPartyParams() {
