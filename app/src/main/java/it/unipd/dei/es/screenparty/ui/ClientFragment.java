@@ -121,14 +121,14 @@ public class ClientFragment extends Fragment {
     }
 
     private void setStateConnecting() {
-        clientConnectedLabel.setText("Connecting...");
+        clientConnectedLabel.setText(R.string.client_connected_label_connecting);
         clientSpinner.setVisibility(View.VISIBLE);
         clientConnectedIcon.setVisibility(View.INVISIBLE);
         waitHostLabel.setVisibility(View.INVISIBLE);
     }
 
     private void setStateConnected() {
-        clientConnectedLabel.setText("Connected!");
+        clientConnectedLabel.setText(R.string.client_connected_label_connected);
         clientSpinner.setVisibility(View.INVISIBLE);
         clientConnectedIcon.setVisibility(View.VISIBLE);
         waitHostLabel.setVisibility(View.VISIBLE);
@@ -138,15 +138,15 @@ public class ClientFragment extends Fragment {
 
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Join failed")
+                    .setTitle(R.string.dialog_title_join_failed)
                     .setMessage(message)
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             partyManager.stop();
                         }
                     })
-                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_retry, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             connectButton.performClick();
@@ -156,23 +156,23 @@ public class ClientFragment extends Fragment {
 
         private void showPartyFullDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Party full")
-                    .setMessage("The party you are trying to connect is full")
-                    .setPositiveButton("Ok", null)
+                    .setTitle(R.string.dialog_title_party_full)
+                    .setMessage(R.string.dialog_message_party_full)
+                    .setPositiveButton(R.string.dialog_button_ok, null)
                     .show();
         }
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Party no long exists")
-                    .setMessage("The host has left the party")
+                    .setTitle(R.string.dialog_title_party_no_longer_exists)
+                    .setMessage(R.string.dialog_message_party_no_longer_exists)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             resetState();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             resetState();
@@ -182,7 +182,7 @@ public class ClientFragment extends Fragment {
 
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Communication failed")
+                    .setTitle(R.string.dialog_title_communication_failed)
                     .setMessage(message)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
@@ -190,7 +190,7 @@ public class ClientFragment extends Fragment {
                             backPressedCallback.handleOnBackPressed();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             backPressedCallback.handleOnBackPressed();
@@ -217,7 +217,7 @@ public class ClientFragment extends Fragment {
         clientConnectedLabel = view.findViewById(R.id.client_connected_label);
         clientConnectedIcon = view.findViewById(R.id.client_connected_icon);
         clientSpinner = view.findViewById(R.id.client_spinner);
-        invalidIpSnackbar = Snackbar.make(view, "Please insert a valid IP", Snackbar.LENGTH_SHORT);
+        invalidIpSnackbar = Snackbar.make(view, R.string.snackbar_text_invalid_ip, Snackbar.LENGTH_SHORT);
         waitHostLabel = view.findViewById(R.id.wait_host_label);
         View snackbarView = invalidIpSnackbar.getView();
         int snackbarTextId = com.google.android.material.R.id.snackbar_text ;

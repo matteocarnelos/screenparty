@@ -104,7 +104,7 @@ public class HostFragment extends Fragment {
                     for(ProgressBar deviceSpinner : deviceSpinners)
                         deviceSpinner.setVisibility(View.INVISIBLE);
                     for(TextView deviceInfoLabel : deviceInfoLabels)
-                        deviceInfoLabel.setText("Ready");
+                        deviceInfoLabel.setText(R.string.device_info_label_ready);
                     for(ImageView deviceConnectedIcon : deviceConnectedIcons)
                         deviceConnectedIcon.setVisibility(View.VISIBLE);
                     nextButton.setEnabled(true);
@@ -134,13 +134,13 @@ public class HostFragment extends Fragment {
                             goBack();
                         }
                     })
-                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_retry, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             partyManager.restart();
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -150,24 +150,24 @@ public class HostFragment extends Fragment {
 
         private void showConnectionFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Connection failed")
+                    .setTitle(R.string.dialog_title_communication_failed)
                     .setMessage(message)
-                    .setPositiveButton("Ok", null)
+                    .setPositiveButton(R.string.dialog_button_ok, null)
                     .show();
         }
 
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Join failed")
+                    .setTitle(R.string.dialog_title_join_failed)
                     .setMessage(message)
-                    .setPositiveButton("Ok", null)
+                    .setPositiveButton(R.string.dialog_button_ok, null)
                     .show();
         }
 
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Client left")
-                    .setMessage("A client left the party, unfortunately you have to start again")
+                    .setTitle(R.string.dialog_title_client_left)
+                    .setMessage(R.string.dialog_message_client_left)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
@@ -175,7 +175,7 @@ public class HostFragment extends Fragment {
                             clientListChanged(new ArrayList<ConnectedClient>());
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             partyManager.restart();
@@ -186,7 +186,7 @@ public class HostFragment extends Fragment {
 
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Communication failed")
+                    .setTitle(R.string.dialog_title_communication_failed)
                     .setMessage(message)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
@@ -194,7 +194,7 @@ public class HostFragment extends Fragment {
                             goBack();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -205,10 +205,10 @@ public class HostFragment extends Fragment {
 
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Warning")
-                    .setMessage("Are you sure you want to go back? You'll have to start again")
-                    .setPositiveButton("Cancel", null)
-                    .setNegativeButton("Go back", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.dialog_title_warning)
+                    .setMessage(R.string.dialog_message_warning)
+                    .setPositiveButton(R.string.dialog_button_cancel, null)
+                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -225,7 +225,7 @@ public class HostFragment extends Fragment {
 
     private void setCardReady(int index, String name) {
         deviceNameLabels.get(index).setText(name);
-        deviceInfoLabels.get(index).setText("Ready");
+        deviceInfoLabels.get(index).setText(R.string.device_info_label_ready);
         deviceSpinners.get(index).setVisibility(View.INVISIBLE);
         deviceIcons.get(index).setVisibility(View.VISIBLE);
         deviceConnectedIcons.get(index).setVisibility(View.VISIBLE);

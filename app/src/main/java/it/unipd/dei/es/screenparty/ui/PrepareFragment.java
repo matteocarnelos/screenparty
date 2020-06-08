@@ -74,10 +74,10 @@ public class PrepareFragment extends Fragment {
 
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Warning")
-                    .setMessage("Are you sure you want to go back? You'll have to start again")
-                    .setPositiveButton("Cancel", null)
-                    .setNegativeButton("Go back", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.dialog_title_warning)
+                    .setMessage(R.string.dialog_message_warning)
+                    .setPositiveButton(R.string.dialog_button_cancel, null)
+                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -87,15 +87,15 @@ public class PrepareFragment extends Fragment {
 
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Client left")
-                    .setMessage("A client left the party, unfortunately you have to start again")
+                    .setTitle(R.string.dialog_title_client_left)
+                    .setMessage(R.string.dialog_message_client_left)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             goBack();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -105,15 +105,15 @@ public class PrepareFragment extends Fragment {
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Party no long exists")
-                    .setMessage("The host has left the party")
+                    .setTitle(R.string.dialog_title_party_no_longer_exists)
+                    .setMessage(R.string.dialog_message_party_no_longer_exists)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             goBack();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -123,7 +123,7 @@ public class PrepareFragment extends Fragment {
 
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Communication failed")
+                    .setTitle(R.string.dialog_title_communication_failed)
                     .setMessage(message)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
@@ -131,7 +131,7 @@ public class PrepareFragment extends Fragment {
                             goBack();
                         }
                     })
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();

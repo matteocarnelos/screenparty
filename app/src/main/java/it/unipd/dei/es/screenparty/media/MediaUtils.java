@@ -8,6 +8,8 @@ import android.net.Uri;
 
 import androidx.fragment.app.Fragment;
 
+import it.unipd.dei.es.screenparty.R;
+
 public class MediaUtils {
 
     public static final int SELECT_MEDIA_REQUEST_CODE = 0;
@@ -29,7 +31,7 @@ public class MediaUtils {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*");
 
-        Intent chooserIntent = Intent.createChooser(fileIntent, "Select the media you want to play");
+        Intent chooserIntent = Intent.createChooser(fileIntent, fragment.getResources().getString(R.string.media_utils_intent_select_video));
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { galleryIntent });
 
         fragment.startActivityForResult(chooserIntent, SELECT_MEDIA_REQUEST_CODE);
