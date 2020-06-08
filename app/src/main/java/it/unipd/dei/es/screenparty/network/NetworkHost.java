@@ -13,8 +13,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import it.unipd.dei.es.screenparty.party.PartyManager;
-import it.unipd.dei.es.screenparty.party.PartyUtils;
 import it.unipd.dei.es.screenparty.party.PartyParams;
+import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 public class NetworkHost extends Thread {
 
@@ -29,6 +29,10 @@ public class NetworkHost extends Thread {
     private List<ClientWorker> workers = new ArrayList<>();
 
     public NetworkHost(Handler handler) {
+        this.handler = handler;
+    }
+
+    public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
@@ -47,6 +51,7 @@ public class NetworkHost extends Thread {
         try { serverSocket.close(); }
         catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
         for(ClientWorker worker : workers) worker.interrupt();
+        workers.clear();
     }
 
     @Override
@@ -90,23 +95,22 @@ public class NetworkHost extends Thread {
                 if(clients.size() < MAX_CLIENTS) {
                     float width = Float.parseFloat(request.getArgument(0));
                     float height = Float.parseFloat(request.getArgument(1));
+                    String deviceName = request.getArgument(2).replaceAll("%20", " ");
 
                     PartyParams.Position position = PartyParams.Position.values()[2*clients.size()];
                     ConnectedClient connectedClient = new ConnectedClient(socket, position, width, height);
+                    connectedClient.setDeviceName(deviceName);
 
                     clients.add(connectedClient);
                     ClientWorker clientWorker = new ClientWorker(connectedClient);
                     clientWorker.start();
                     workers.add(clientWorker);
 
-                    handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, connectedClient).sendToTarget();
+                    handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, clients).sendToTarget();
 
                     if(clients.size() == MAX_CLIENTS) {
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
-
-                        List<Socket> sockets = new ArrayList<>();
                         for(ConnectedClient client : clients) {
-                            sockets.add(client.getSocket());
                             NetworkMessage message = new NetworkMessage.Builder()
                                     .setCommand(NetworkCommands.Host.OK)
                                     .addArgument(String.valueOf(client.getPosition()))
@@ -115,16 +119,6 @@ public class NetworkHost extends Thread {
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
-
-                        try {
-                            NetworkUtils.transferFile(sockets, partyManager.getPartyParams().getMediaParams().getInputStream());
-                        }
-                        catch(IOException e) {
-                            if(!isInterrupted())
-                                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
-                            return;
-                        }
-
                         handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
                     }
                 } else {
@@ -156,7 +150,6 @@ public class NetworkHost extends Thread {
             try { client.getSocket().close(); }
             catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
             clients.remove(client);
-            workers.remove(this);
         }
 
         @Override
@@ -173,14 +166,14 @@ public class NetworkHost extends Thread {
                 }
                 catch(IOException | NoSuchElementException e) {
                     if(!isInterrupted()) {
-                        handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, client).sendToTarget();
+                        handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
                         closeConnection();
                     }
                     return;
                 }
 
                 if(message.getCommand().equals(NetworkCommands.EXIT)) {
-                    handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, client).sendToTarget();
+                    handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
                     closeConnection();
                     return;
                 } else {

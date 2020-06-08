@@ -8,10 +8,10 @@
 
     <!-- StartFragment strings -->
     <string name="welcome_label_text">Welcome to Screen Party!</string>
-    <string name="description_label_text">With ScreenParty you can watch images and videos with your friends by sharing the screen of your phones.</string>
-    <string name="instructions_label_text">To get started, you can select a media and create a new party or join an existent one.</string>
+    <string name="description_label_text">With ScreenParty you can watch videos with your friends by sharing the screen of your phones.</string>
+    <string name="instructions_label_text">To get started, select a video and create a new party, or join an existing one.</string>
     <string name="host_button_text">Host a new party</string>
-    <string name="join_button_text">Join an existent party</string>
+    <string name="join_button_text">Join an existing party</string>
     <string name="credits_label_text">Università degli Studi di Padova\nProgrammazione di Sistemi Embedded - A.A. 2019/2020\nMatteo Carnelos - Pardeep Kumar - Alessandro Fano</string>
 
     <!-- HostFragment strings -->
@@ -27,6 +27,8 @@
     <string name="client1_role_label_text">Client 1</string>
     <string name="client2_role_label_text">Client 2</string>
 
+    <string name="device_info_label_ready">Ready</string>
+
     <string name="next_button_text">Next</string>
 
     <!-- ClientFragment strings -->
@@ -35,6 +37,8 @@
     <string name="host_ip_field_hint">Host IP address</string>
     <string name="connect_button_text">Connect</string>
     <string name="wait_host_label_text">Wait host to continue</string>
+    <string name="client_connected_label_connecting">Connecting…</string>
+    <string name="client_connected_label_connected">Connected!</string>
 
 
     <!-- PrepareFragment strings -->
@@ -44,4 +48,29 @@
     <string name="right_arrow_icon_description">[right arrow]-&gt;</string>
     <string name="align_label_text">Align devices with the help of the central line</string>
     <string name="start_button_text">Start!</string>
+
+    <!-- MediaUtils strings -->
+    <string name="media_utils_intent_select_video">Select the video you want to play</string>
+
+    <!-- Dialog strings -->
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_retry">Retry</string>
+    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_button_go_back">Go back</string>
+
+    <string name="dialog_title_join_failed">Join failed</string>
+    <string name="dialog_title_party_full">Party full</string>
+    <string name="dialog_title_party_no_longer_exists">Party no longer exists</string>
+    <string name="dialog_title_communication_failed">Communication failed</string>
+    <string name="dialog_title_client_left">Client left</string>
+    <string name="dialog_title_warning">Warning</string>
+
+    <string name="dialog_message_party_full">The party you are trying to connect is full</string>
+    <string name="dialog_message_party_no_longer_exists">The host has left the party</string>
+    <string name="dialog_message_client_left">A client left the party, unfortunately you have to start again</string>
+    <string name="dialog_message_warning">Are you sure you want to go back? You\'ll have to start again</string>
+
+    <!-- Snackbar strings -->
+    <string name="snackbar_text_invalid_ip">Please insert a valid IP address</string>
+
 </resources>

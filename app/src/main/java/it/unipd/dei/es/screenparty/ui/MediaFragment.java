@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -15,10 +14,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.MediaController;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
@@ -80,7 +79,16 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
         statusBarHeight = rectangle.top/partyManager.getPartyParams().getScreenParams().getYdpi();
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
+        ((AppCompatActivity)requireActivity()).getSupportActionBar().hide();
         return view;
+    }
+
+    private void showSystemUI() {
+        View decorView = requireActivity().getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -202,6 +210,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        showSystemUI();
+        ((AppCompatActivity)requireActivity()).getSupportActionBar().show();
         super.onDestroy();
     }
 

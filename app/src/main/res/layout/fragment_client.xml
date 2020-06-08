@@ -42,10 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/keyline_5"
             android:layout_marginEnd="@dimen/keyline_5"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/wait_host_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
             app:layout_constraintWidth_max="@dimen/max_container_width">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -60,7 +60,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,7 +95,6 @@
                     android:text=""
                     android:textAppearance="?attr/textAppearanceBody1"
                     android:textColor="@color/material_on_background_emphasis_medium"
-                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/constraintLayout"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -150,5 +150,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

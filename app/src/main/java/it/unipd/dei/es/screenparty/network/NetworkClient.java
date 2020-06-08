@@ -24,6 +24,10 @@ public class NetworkClient extends Thread {
         this.handler = handler;
     }
 
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
     public String getHostIp() {
         return hostIp;
     }
@@ -64,17 +68,28 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        String deviceName = partyManager.getPartyParams().getDeviceName().replaceAll("\\s", "%20");
+
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getWidth()))
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getHeight()))
+                .addArgument(deviceName)
                 .build();
         NetworkUtils.send(request, host, handler);
 
-        handler.obtainMessage(NetworkEvents.Client.PARTY_CONNECTING).sendToTarget();
+        handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try { response = NetworkMessage.parseString(reader.readLine()); }
+        try { String line = reader.readLine();
+            if(line == null) {
+                if(!isInterrupted()) {
+                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                    closeConnection();
+                }
+                return;
+            }
+            response = NetworkMessage.parseString(line); }
         catch(IOException e) {
             if(!isInterrupted()) {
                 handler.obtainMessage(NetworkEvents.JOIN_FAILED, e.getLocalizedMessage()).sendToTarget();
@@ -91,27 +106,27 @@ public class NetworkClient extends Thread {
             partyManager.getPartyParams().setPosition(position);
             partyManager.getPartyParams().getMediaParams().setFrameWidth(frameWidth);
             partyManager.getPartyParams().getMediaParams().setFrameHeight(frameHeight);
-
-            handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
         } else {
             handler.obtainMessage(NetworkEvents.Client.PARTY_FULL).sendToTarget();
             return;
         }
 
-        try { NetworkUtils.receiveFile(host, partyManager.getPartyParams().getMediaParams().getUri()); }
-        catch(IOException e) {
-            if(!interrupted())
-                handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
-            return;
-        }
-
         while(true) {
             NetworkMessage message;
-            try { message = NetworkMessage.parseString(reader.readLine()); }
+            try {
+                String line = reader.readLine();
+                if(line == null) {
+                    if(!isInterrupted()) {
+                        handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                        closeConnection();
+                    }
+                    return;
+                }
+                message = NetworkMessage.parseString(line);
+            }
             catch(IOException e) {
                 if(!isInterrupted()) {
-                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
-                    closeConnection();
+                    handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e.getLocalizedMessage()).sendToTarget();
                 }
                 return;
             }

@@ -1,9 +1,7 @@
 package it.unipd.dei.es.screenparty.network;
 
-import android.net.Uri;
 import android.os.Handler;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,9 +16,15 @@ public class NetworkUtils {
 
     private final static int CHUNK_SIZE = 8192;
 
-    public static void send(NetworkMessage message, Socket socket, Handler handler) {
-        try { socket.getOutputStream().write(message.toString().getBytes()); }
-        catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
+    public static void send(final NetworkMessage message, final Socket socket, final Handler handler) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try { socket.getOutputStream().write(message.toString().getBytes()); }
+                catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
+            }
+        }).start();
+
     }
 
     public static String getIPAddress(boolean useIPv4) {
@@ -52,15 +56,20 @@ public class NetworkUtils {
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
 
         byte[] chunk = new byte[CHUNK_SIZE];
-        while(fileInputStream.read(chunk) != -1)
+        int k;
+        while((k = fileInputStream.read(chunk)) != -1)
             for(OutputStream outputStream : outputStreams)
-                outputStream.write(chunk);
+                outputStream.write(chunk, 0, k);
+        fileInputStream.close();
     }
 
-    public static void receiveFile(Socket socket, Uri uri) throws IOException {
+    public static void receiveFile(Socket socket, OutputStream fileOutputStream, long size) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream(uri.getPath());
         byte[] chunk = new byte[CHUNK_SIZE];
-        while(inputStream.read(chunk) != -1) fileOutputStream.write(chunk);
+        int bytes, k;
+        for(bytes = 0; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k) {
+            fileOutputStream.write(chunk, 0, k);
+        }
+        fileOutputStream.close();
     }
 }
