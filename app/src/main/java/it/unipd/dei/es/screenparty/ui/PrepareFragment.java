@@ -22,6 +22,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
@@ -29,25 +31,32 @@ import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
+// TODO: Center arrows in screen
+
 public class PrepareFragment extends Fragment {
+
+    private Dialogs dialogs = new Dialogs();
 
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
 
-    private Dialogs dialogs = new Dialogs();
+    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            dialogs.showBackConfirmationDialog();
+        }
+    };
+
+    private void goToStart() {
+        partyManager.stop();
+        navController.popBackStack(R.id.startFragment, false);
+    }
 
     private View.OnClickListener startButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.NEXT));
             navController.navigate(R.id.actionToMedia);
-        }
-    };
-
-    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
-        @Override
-        public void handleOnBackPressed() {
-            dialogs.showBackConfirmationDialog();
         }
     };
 
@@ -74,19 +83,6 @@ public class PrepareFragment extends Fragment {
 
     private class Dialogs {
 
-        private void showBackConfirmationDialog() {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_warning)
-                    .setMessage(R.string.dialog_message_warning)
-                    .setPositiveButton(R.string.dialog_button_cancel, null)
-                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            goBack();
-                        }
-                    }).show();
-        }
-
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_left)
@@ -94,31 +90,31 @@ public class PrepareFragment extends Fragment {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     }).show();
         }
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_party_no_longer_exists)
-                    .setMessage(R.string.dialog_message_party_no_longer_exists)
+                    .setTitle(R.string.dialog_title_party_closed)
+                    .setMessage(R.string.dialog_message_party_closed)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     }).show();
         }
@@ -130,16 +126,29 @@ public class PrepareFragment extends Fragment {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .show();
+        }
+
+        private void showBackConfirmationDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_back_confirmation)
+                    .setMessage(R.string.dialog_message_back_confirmation)
+                    .setPositiveButton(R.string.dialog_button_cancel, null)
+                    .setNegativeButton(R.string.dialog_button_quit, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goToStart();
+                        }
+                    }).show();
         }
     }
 
@@ -155,11 +164,6 @@ public class PrepareFragment extends Fragment {
         return 0;
     }
 
-    private void goBack() {
-        partyManager.stop();
-        navController.popBackStack();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,7 +172,7 @@ public class PrepareFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_prepare, container, false);
 

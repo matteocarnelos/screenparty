@@ -2,6 +2,8 @@ package it.unipd.dei.es.screenparty.network;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,6 +30,7 @@ public class NetworkMessage {
         this.arguments = arguments;
     }
 
+    @NotNull
     public static NetworkMessage parseString(String message) {
         message = message.replace(TERMINATOR, "");
         String command = message.split(SEP)[0];

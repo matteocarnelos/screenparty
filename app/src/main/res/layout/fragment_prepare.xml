@@ -12,16 +12,16 @@
 
         <ImageView
             android:id="@+id/alignment_icon"
-            android:contentDescription="@string/alignment_icon_description"
-            android:src="@drawable/alignment_center"
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:layout_marginBottom="?attr/actionBarSize"
+            android:contentDescription="@string/alignment_icon_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/alignment_center"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:scaleType="centerCrop"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/step2_label"

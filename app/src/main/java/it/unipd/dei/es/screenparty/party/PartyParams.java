@@ -44,6 +44,8 @@ public class PartyParams {
 
     public void setPosition(Position position) {
         this.position = position;
+        if(position == Position.CENTER) this.role = Role.HOST;
+        else this.role = Role.CLIENT;
     }
 
     public void setDeviceName(String deviceName) {

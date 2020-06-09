@@ -14,6 +14,8 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
 
 public class NetworkClient extends Thread {
 
+    private static final String NETWORK_CLIENT_TAG = "NETWORK_CLIENT";
+
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
 
@@ -24,12 +26,12 @@ public class NetworkClient extends Thread {
         this.handler = handler;
     }
 
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
     public String getHostIp() {
         return hostIp;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 
     public void send(NetworkMessage message) {
@@ -41,15 +43,15 @@ public class NetworkClient extends Thread {
         super.start();
     }
 
+    private void closeConnection() {
+        try { if(host != null) host.close(); }
+        catch(IOException e) { Log.w(NETWORK_CLIENT_TAG, e.toString()); }
+    }
+
     @Override
     public void interrupt() {
         super.interrupt();
         closeConnection();
-    }
-
-    private void closeConnection() {
-        try { if(host != null) host.close(); }
-        catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
     }
 
     @Override
@@ -68,7 +70,7 @@ public class NetworkClient extends Thread {
             return;
         }
 
-        String deviceName = partyManager.getPartyParams().getDeviceName().replaceAll("\\s", "%20");
+        String deviceName = NetworkUtils.encodeDeviceName(partyManager.getPartyParams().getDeviceName());
 
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)

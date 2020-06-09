@@ -3,15 +3,18 @@ package it.unipd.dei.es.screenparty.media;
 import android.graphics.Matrix;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
 /**
  * Class made to modify the content of a TextureView.
  */
 public class MediaModifier {
-    private final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
 
-    public Matrix prepareScreen(PartyParams partyParams, float aspectRatio) {
+    private static final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
+
+    public Matrix prepareScreen(@NotNull PartyParams partyParams, float aspectRatio) {
         Matrix matrix = new Matrix();
         PartyParams.Position position = partyParams.getPosition();
         float screenWidth = partyParams.getScreenParams().getWidth();
@@ -20,6 +23,7 @@ public class MediaModifier {
         float frameWidth = partyParams.getMediaParams().getFrameWidth();
         float xDpi = partyParams.getScreenParams().getXdpi();
         float yDpi = partyParams.getScreenParams().getYdpi();
+
         Log.d(MEDIA_MODIFIER_TAG, "Role: " + partyParams.getPosition());
         Log.d(MEDIA_MODIFIER_TAG, "Screen Height: " + screenHeight);
         Log.d(MEDIA_MODIFIER_TAG, "Screen width: " + screenWidth);
@@ -28,7 +32,8 @@ public class MediaModifier {
         Log.d(MEDIA_MODIFIER_TAG, "Dpi x: " + xDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Dpi y: " + yDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Video aspect ratio: " + aspectRatio);
-//        scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight,matrix);
+        //scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight,matrix);
+
         switch (position) {
             case LEFT:
                 Matrix leftMatrix = new Matrix();
@@ -46,11 +51,9 @@ public class MediaModifier {
                 scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, rightMatrix);
                 scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, rightMatrix);
                 return xTranslateTexture((screenWidth - frameWidth) * xDpi, rightMatrix);
-
         }
         return matrix;
     }
-
 
     /**
      * @param frameHeight  Number of inches to be shown.
@@ -74,7 +77,7 @@ public class MediaModifier {
      * @param scaleX The time to multiply the width of the video.
      * @return The modified Matrix.
      */
-    public Matrix scaleTextureWidth(float scaleX, Matrix matrix) {
+    public Matrix scaleTextureWidth(float scaleX, @NotNull Matrix matrix) {
         matrix.preScale(scaleX, 1);
         return matrix;
     }
@@ -85,20 +88,19 @@ public class MediaModifier {
      * @param scaleY The time to multiply the width of the video.
      * @return The modified Matrix.
      */
-    public Matrix scaleTextureHeight(float scaleY, Matrix matrix) {
+    public Matrix scaleTextureHeight(float scaleY, @NotNull Matrix matrix) {
         matrix.preScale(1, scaleY);
         return matrix;
     }
 
-
-    public Matrix yTranslateTexture(float pyTranslation, Matrix matrix) {
-        //The "-" it's used because it make the translation from bottom to top.
+    public Matrix yTranslateTexture(float pyTranslation, @NotNull Matrix matrix) {
+        // The "-" it's used because it makes the translation from bottom to top
         matrix.postTranslate(0, pyTranslation);
         return matrix;
     }
 
-    public Matrix xTranslateTexture(float pxTranslation, Matrix matrix) {
-        //Use -pxTranslation to translate from left to right
+    public Matrix xTranslateTexture(float pxTranslation, @NotNull Matrix matrix) {
+        // Use -pxTranslation to translate from left to right
         matrix.postTranslate(pxTranslation, 0);
         return matrix;
     }

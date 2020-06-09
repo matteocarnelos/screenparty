@@ -18,10 +18,6 @@ public class ScreenParams {
         this.ydpi = ydpi;
     }
 
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
     public float getWidth() {
         return width;
     }
@@ -36,5 +32,9 @@ public class ScreenParams {
 
     public float getYdpi() {
         return ydpi;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

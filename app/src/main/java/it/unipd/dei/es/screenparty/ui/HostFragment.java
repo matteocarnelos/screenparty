@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,7 @@ import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
+import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -57,14 +59,6 @@ public class HostFragment extends Fragment {
 
     private boolean partyReady = false;
 
-    private View.OnClickListener nextButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.NEXT));
-            navController.navigate(R.id.actionToPrepare);
-        }
-    };
-
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -78,6 +72,14 @@ public class HostFragment extends Fragment {
         navController.popBackStack();
     }
 
+    private View.OnClickListener nextButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.NEXT));
+            navController.navigate(R.id.actionToPrepare);
+        }
+    };
+
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -86,7 +88,9 @@ public class HostFragment extends Fragment {
                     dialogs.showNotStartedDialog((String)msg.obj);
                     break;
                 case NetworkEvents.Host.WAITING_DEVICES:
-                    hostIpLabel.setText((String)msg.obj);
+                    String ip = (String)msg.obj;
+                    if(ip == null) dialogs.showInvalidIPDialog();
+                    else hostIpLabel.setText((String)msg.obj);
                     break;
                 case NetworkEvents.CONNECTION_FAILED:
                     dialogs.showConnectionFailedDialog((String)msg.obj);
@@ -124,6 +128,30 @@ public class HostFragment extends Fragment {
 
     private class Dialogs {
 
+        private void showInvalidUriDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_media_error)
+                    .setMessage(R.string.dialog_message_invalid_uri)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_retry, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            openMediaPicker();
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
+
         private void showNotStartedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Could not start the server")
@@ -141,6 +169,24 @@ public class HostFragment extends Fragment {
                         }
                     })
                     .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
+
+        private void showInvalidIPDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_invalid_ip)
+                    .setMessage(R.string.dialog_message_invalid_ip)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -205,10 +251,10 @@ public class HostFragment extends Fragment {
 
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_warning)
-                    .setMessage(R.string.dialog_message_warning)
+                    .setTitle(R.string.dialog_title_back_confirmation)
+                    .setMessage(R.string.dialog_message_back_confirmation)
                     .setPositiveButton(R.string.dialog_button_cancel, null)
-                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.dialog_button_quit, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             goBack();
@@ -247,7 +293,7 @@ public class HostFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_host, container, false);
         hostIpLabel = view.findViewById(R.id.host_ip_label);
@@ -278,8 +324,10 @@ public class HostFragment extends Fragment {
         }));
         nextButton = view.findViewById(R.id.next_button);
         nextButton.setOnClickListener(nextButtonClickListener);
-        String deviceName = Settings.Secure.getString(requireActivity().getContentResolver(), "bluetooth_name");
+
+        String deviceName = PartyUtils.getDeviceName(requireActivity().getContentResolver());
         setCardReady(0, deviceName);
+
         return view;
     }
 
@@ -299,7 +347,7 @@ public class HostFragment extends Fragment {
             if(resultCode == RESULT_CANCELED) backPressedCallback.handleOnBackPressed();
             else if(resultCode == RESULT_OK) {
                 Uri selectedUri = data.getData();
-                if(selectedUri == null) return;
+                if(selectedUri == null) dialogs.showInvalidUriDialog();
 
                 MediaParams mediaParams = MediaUtils.analyzeMedia(requireContext(), selectedUri);
 
