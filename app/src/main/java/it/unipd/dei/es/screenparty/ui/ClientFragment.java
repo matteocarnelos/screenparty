@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +29,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaParams;
 import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.party.PartyManager;
+import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -49,7 +51,7 @@ public class ClientFragment extends Fragment {
     private ImageView clientConnectedIcon;
     private Snackbar invalidIpSnackbar;
     private TextView waitHostLabel;
-    Button connectButton;
+    private Button connectButton;
     private Dialogs dialogs = new Dialogs();
 
     private NavController navController;
@@ -58,32 +60,36 @@ public class ClientFragment extends Fragment {
     OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            partyManager.stop();
-            navController.popBackStack();
+            goBack();
         }
     };
+
+    private void goBack() {
+        partyManager.stop();
+        navController.popBackStack();
+    }
 
     View.OnClickListener nextButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             View view = requireActivity().getCurrentFocus();
-            if (view != null) {
+            if(view != null) {
                 InputMethodManager imm = (InputMethodManager)requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-            if(!((hostIpField.getEditText().getText().toString()).matches(IP_PATTERN_STRING))) {
-                invalidIpSnackbar.show();
-            } else {
+            String ip = hostIpField.getEditText().getText().toString();
+            if(!ip.matches(IP_PATTERN_STRING)) invalidIpSnackbar.show();
+            else {
                 connectButton.setEnabled(false);
                 setStateConnecting();
-                partyManager.startAsClient(hostIpField.getEditText().getText().toString());
+                partyManager.startAsClient(ip);
             }
         }
     };
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NotNull Message msg) {
             switch(msg.what) {
                 case NetworkEvents.JOIN_FAILED:
                     resetState();
@@ -112,29 +118,31 @@ public class ClientFragment extends Fragment {
         }
     };
 
-    private void resetState() {
-        connectButton.setEnabled(true);
-        clientConnectedLabel.setText("");
-        clientSpinner.setVisibility(View.INVISIBLE);
-        clientConnectedIcon.setVisibility(View.INVISIBLE);
-        waitHostLabel.setVisibility(View.INVISIBLE);
-    }
-
-    private void setStateConnecting() {
-        clientConnectedLabel.setText(R.string.client_connected_label_connecting);
-        clientSpinner.setVisibility(View.VISIBLE);
-        clientConnectedIcon.setVisibility(View.INVISIBLE);
-        waitHostLabel.setVisibility(View.INVISIBLE);
-    }
-
-    private void setStateConnected() {
-        clientConnectedLabel.setText(R.string.client_connected_label_connected);
-        clientSpinner.setVisibility(View.INVISIBLE);
-        clientConnectedIcon.setVisibility(View.VISIBLE);
-        waitHostLabel.setVisibility(View.VISIBLE);
-    }
-
     private class Dialogs {
+
+        private void showInvalidUriDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_media_error)
+                    .setMessage(R.string.dialog_message_invalid_uri)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goBack();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_retry, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            openMediaPicker();
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goBack();
+                        }
+                    }).show();
+        }
 
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
@@ -164,8 +172,8 @@ public class ClientFragment extends Fragment {
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_party_no_longer_exists)
-                    .setMessage(R.string.dialog_message_party_no_longer_exists)
+                    .setTitle(R.string.dialog_title_party_closed)
+                    .setMessage(R.string.dialog_message_party_closed)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
@@ -187,16 +195,38 @@ public class ClientFragment extends Fragment {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            backPressedCallback.handleOnBackPressed();
+                            goBack();
                         }
                     }).show();
         }
+    }
+
+    private void resetState() {
+        connectButton.setEnabled(true);
+        clientConnectedLabel.setText("");
+        clientSpinner.setVisibility(View.INVISIBLE);
+        clientConnectedIcon.setVisibility(View.INVISIBLE);
+        waitHostLabel.setVisibility(View.INVISIBLE);
+    }
+
+    private void setStateConnecting() {
+        clientConnectedLabel.setText(R.string.client_connected_label_connecting);
+        clientSpinner.setVisibility(View.VISIBLE);
+        clientConnectedIcon.setVisibility(View.INVISIBLE);
+        waitHostLabel.setVisibility(View.INVISIBLE);
+    }
+
+    private void setStateConnected() {
+        clientConnectedLabel.setText(R.string.client_connected_label_connected);
+        clientSpinner.setVisibility(View.INVISIBLE);
+        clientConnectedIcon.setVisibility(View.VISIBLE);
+        waitHostLabel.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -207,28 +237,27 @@ public class ClientFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_client, container, false);
+        View view = inflater.inflate(R.layout.fragment_client, container, false);
 
         connectButton = view.findViewById(R.id.connect_button);
         hostIpField = view.findViewById(R.id.host_ip_field);
-
         clientConnectedLabel = view.findViewById(R.id.client_connected_label);
         clientConnectedIcon = view.findViewById(R.id.client_connected_icon);
         clientSpinner = view.findViewById(R.id.client_spinner);
         invalidIpSnackbar = Snackbar.make(view, R.string.snackbar_text_invalid_ip, Snackbar.LENGTH_SHORT);
         waitHostLabel = view.findViewById(R.id.wait_host_label);
+
         View snackbarView = invalidIpSnackbar.getView();
         int snackbarTextId = com.google.android.material.R.id.snackbar_text ;
-        TextView textView = (TextView)snackbarView.findViewById(snackbarTextId);
+        TextView textView = snackbarView.findViewById(snackbarTextId);
         textView.setTextColor(getResources().getColor(R.color.white_50));
         snackbarView.setBackground(new ColorDrawable(getResources().getColor(R.color.black_800)));
 
         connectButton.setOnClickListener(nextButtonListener);
 
-        String deviceName = Settings.Secure.getString(requireActivity().getContentResolver(), "bluetooth_name");
-        if(deviceName == null) deviceName = "Unknown";
+        String deviceName = PartyUtils.getDeviceName(requireActivity().getContentResolver());
         partyManager.getPartyParams().setDeviceName(deviceName);
 
         return view;
@@ -247,10 +276,10 @@ public class ClientFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == MediaUtils.SELECT_MEDIA_REQUEST_CODE) {
-            if(resultCode == RESULT_CANCELED) backPressedCallback.handleOnBackPressed();
+            if(resultCode == RESULT_CANCELED) goBack();
             else if(resultCode == RESULT_OK) {
                 Uri selectedUri = data.getData();
-                if(selectedUri == null) return;
+                if(selectedUri == null) dialogs.showInvalidUriDialog();
 
                 MediaParams mediaParams = MediaUtils.analyzeMedia(requireContext(), selectedUri);
 

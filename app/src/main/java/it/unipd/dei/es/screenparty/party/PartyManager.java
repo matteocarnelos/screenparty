@@ -8,15 +8,12 @@ import it.unipd.dei.es.screenparty.network.NetworkMessage;
 
 public class PartyManager {
 
-    public static final String LOG_TAG = "SCREENPARTY";
-
     private static PartyManager instance = null;
 
     private Handler handler;
 
     private NetworkHost host;
     private NetworkClient client;
-
     private PartyParams partyParams;
 
     private PartyManager() { }
@@ -26,14 +23,14 @@ public class PartyManager {
         return instance;
     }
 
+    public PartyParams getPartyParams() {
+        return partyParams;
+    }
+
     public void setEventsHandler(Handler handler) {
         this.handler = handler;
         if(host != null) host.setHandler(handler);
         if(client != null) client.setHandler(handler);
-    }
-
-    public PartyParams getPartyParams() {
-        return partyParams;
     }
 
     public void init(ScreenParams screenParams) {

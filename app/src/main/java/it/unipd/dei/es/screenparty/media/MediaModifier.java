@@ -10,7 +10,7 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
  * It uses the matrix's transformation to modify the media.
  */
 public class MediaModifier {
-    private final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
+    private static final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
 
     /**
      * Sets the matrix transformation given the party parameters.
@@ -28,6 +28,7 @@ public class MediaModifier {
         float frameWidth = partyParams.getMediaParams().getFrameWidth();
         float xDpi = partyParams.getScreenParams().getXdpi();
         float yDpi = partyParams.getScreenParams().getYdpi();
+
         Log.d(MEDIA_MODIFIER_TAG, "Role: " + partyParams.getPosition());
         Log.d(MEDIA_MODIFIER_TAG, "Screen Height: " + screenHeight);
         Log.d(MEDIA_MODIFIER_TAG, "Screen width: " + screenWidth);
@@ -36,6 +37,7 @@ public class MediaModifier {
         Log.d(MEDIA_MODIFIER_TAG, "Dpi x: " + xDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Dpi y: " + yDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Video aspect ratio: " + aspectRatio);
+
         switch (position) {
             case LEFT:
                 Matrix leftMatrix = new Matrix();
@@ -55,7 +57,6 @@ public class MediaModifier {
         }
         return matrix;
     }
-
 
     /**
      * Scales and translates the matrix keeping the media centered to the screen.

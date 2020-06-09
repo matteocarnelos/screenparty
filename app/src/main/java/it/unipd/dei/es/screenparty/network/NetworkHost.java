@@ -18,6 +18,8 @@ import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 public class NetworkHost extends Thread {
 
+    private static final String NETWORK_HOST_TAG = "NETWORK_HOST";
+
     public static final int SERVER_PORT = 1310;
     private static final int MAX_CLIENTS = 2;
 
@@ -41,22 +43,21 @@ public class NetworkHost extends Thread {
             NetworkUtils.send(message, client.getSocket(), handler);
     }
 
+    private void closeConnections() {
+        try { serverSocket.close(); }
+        catch(IOException e) { Log.w(NETWORK_HOST_TAG, e.toString()); }
+        for(ClientWorker worker : workers) worker.interrupt();
+        workers.clear();
+    }
+
     @Override
     public void interrupt() {
         super.interrupt();
         closeConnections();
     }
 
-    private void closeConnections() {
-        try { serverSocket.close(); }
-        catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
-        for(ClientWorker worker : workers) worker.interrupt();
-        workers.clear();
-    }
-
     @Override
     public void run() {
-
         try { serverSocket = new ServerSocket(SERVER_PORT); }
         catch(IOException e) {
             handler.obtainMessage(NetworkEvents.Host.NOT_STARTED, e.getLocalizedMessage()).sendToTarget();
@@ -70,6 +71,7 @@ public class NetworkHost extends Thread {
 
             if(clients.size() < MAX_CLIENTS) {
                 String ip = NetworkUtils.getIPAddress(true);
+                if(ip.equals(NetworkUtils.INVALID_IP)) ip = null;
                 handler.obtainMessage(NetworkEvents.Host.WAITING_DEVICES, ip).sendToTarget();
             }
 
@@ -95,7 +97,7 @@ public class NetworkHost extends Thread {
                 if(clients.size() < MAX_CLIENTS) {
                     float width = Float.parseFloat(request.getArgument(0));
                     float height = Float.parseFloat(request.getArgument(1));
-                    String deviceName = request.getArgument(2).replaceAll("%20", " ");
+                    String deviceName = NetworkUtils.decodeDeviceName(request.getArgument(2));
 
                     PartyParams.Position position = PartyParams.Position.values()[2*clients.size()];
                     ConnectedClient connectedClient = new ConnectedClient(socket, position, width, height);
@@ -148,7 +150,7 @@ public class NetworkHost extends Thread {
 
         private void closeConnection() {
             try { client.getSocket().close(); }
-            catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
+            catch(IOException e) { Log.w(NETWORK_HOST_TAG, e.toString()); }
             clients.remove(client);
         }
 
@@ -166,8 +168,8 @@ public class NetworkHost extends Thread {
                 }
                 catch(IOException | NoSuchElementException e) {
                     if(!isInterrupted()) {
+                        closeConnections();
                         handler.obtainMessage(NetworkEvents.Host.CLIENT_LEFT, clients).sendToTarget();
-                        closeConnection();
                     }
                     return;
                 }

@@ -1,6 +1,5 @@
 package it.unipd.dei.es.screenparty.media;
 
-
 import android.media.MediaPlayer;
 import android.widget.MediaController;
 
@@ -14,37 +13,26 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 public class MediaSyncController implements MediaController.MediaPlayerControl {
 
     private PartyManager partyManager = PartyManager.getInstance();
-    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mediaPlayer;
 
-    public MediaSyncController(MediaPlayer mMediaPlayer) {
-        this.mMediaPlayer = mMediaPlayer;
+    public MediaSyncController(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
     }
 
-    //For every overridden methods check the superclass documentation
     @Override
     public void start() {
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
-        mMediaPlayer.start();
+        mediaPlayer.start();
     }
 
     @Override
     public void pause() {
-        mMediaPlayer.pause();
+        mediaPlayer.pause();
         NetworkMessage message = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Host.PAUSE)
                 .addArgument(String.valueOf(getCurrentPosition()))
                 .build();
         partyManager.sendMessage(message);
-    }
-
-    @Override
-    public int getDuration() {
-        return mMediaPlayer.getDuration();
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
     }
 
     @Override
@@ -54,17 +42,32 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
                 .addArgument(String.valueOf(pos))
                 .build();
         partyManager.sendMessage(message);
-        mMediaPlayer.seekTo(pos);
+        mediaPlayer.seekTo(pos);
     }
 
     @Override
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
+    public int getDuration() {
+        return mediaPlayer.getDuration();
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
     }
 
     @Override
     public int getBufferPercentage() {
         return 0;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
     }
 
     @Override
@@ -81,11 +84,4 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     public boolean canSeekForward() {
         return true;
     }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
-
 }
-

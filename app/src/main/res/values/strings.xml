@@ -9,7 +9,7 @@
     <!-- StartFragment strings -->
     <string name="welcome_label_text">Welcome to Screen Party!</string>
     <string name="description_label_text">With ScreenParty you can watch videos with your friends by sharing the screen of your phones.</string>
-    <string name="instructions_label_text">To get started, select a video and create a new party, or join an existing one.</string>
+    <string name="instructions_label_text">To get started, you can either create a new party or join an existing one.</string>
     <string name="host_button_text">Host a new party</string>
     <string name="join_button_text">Join an existing party</string>
     <string name="credits_label_text">Università degli Studi di Padova\nProgrammazione di Sistemi Embedded - A.A. 2019/2020\nMatteo Carnelos - Pardeep Kumar - Alessandro Fano</string>
@@ -19,16 +19,12 @@
     <string name="host_instructions_label_text">Give the IP address to your friends and wait them to join.</string>
     <string name="host_ip_info_label_text">Your IP address</string>
     <string name="host_ip_label_hint">Starting…</string>
-
     <string name="host_name_label_hint">Loading…</string>
     <string name="host_role_label_text">Host (this device)</string>
-
     <string name="client_name_label_hint">Waiting…</string>
     <string name="client1_role_label_text">Client 1</string>
     <string name="client2_role_label_text">Client 2</string>
-
     <string name="device_info_label_ready">Ready</string>
-
     <string name="next_button_text">Next</string>
 
     <!-- ClientFragment strings -->
@@ -40,14 +36,12 @@
     <string name="client_connected_label_connecting">Connecting…</string>
     <string name="client_connected_label_connected">Connected!</string>
 
-
     <!-- PrepareFragment strings -->
     <string name="prepare_fragment_label">Device alignment</string>
-    <string name="prepare_instructions_label_text">We are almost ready, align devices with the help of the arrows.</string>
+    <string name="prepare_instructions_label_text">We are almost ready, align devices with the help of the arrows as shown in the picture.</string>
     <string name="left_arrow_icon_description">&lt;-[left arrow]</string>
     <string name="right_arrow_icon_description">[right arrow]-&gt;</string>
-    <string name="alignment_icon_description">[][][]&gt;</string>
-    <string name="align_label_text">Align devices with the help of the central line</string>
+    <string name="alignment_icon_description">[Alignment icon]</string>
     <string name="start_button_text">Start!</string>
 
     <!-- MediaUtils strings -->
@@ -56,22 +50,26 @@
     <!-- Dialog strings -->
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_button_retry">Retry</string>
-    <string name="dialog_button_ok">Ok</string>
-    <string name="dialog_button_go_back">Go back</string>
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_quit">Quit</string>
 
     <string name="dialog_title_join_failed">Join failed</string>
     <string name="dialog_title_party_full">Party full</string>
-    <string name="dialog_title_party_no_longer_exists">Party no longer exists</string>
+    <string name="dialog_title_party_closed">Party closed</string>
     <string name="dialog_title_communication_failed">Communication failed</string>
     <string name="dialog_title_client_left">Client left</string>
-    <string name="dialog_title_warning">Warning</string>
+    <string name="dialog_title_back_confirmation">Are you sure?</string>
+    <string name="dialog_title_media_error">Media error</string>
+    <string name="dialog_title_invalid_ip">Invalid IP address</string>
+    <string name="dialog_title_media_preparation_failed">Media preparation failed</string>
 
     <string name="dialog_message_party_full">The party you are trying to connect is full</string>
-    <string name="dialog_message_party_no_longer_exists">The host has left the party</string>
+    <string name="dialog_message_party_closed">The party has been closed because the host left, unfortunately you have to start again</string>
     <string name="dialog_message_client_left">A client left the party, unfortunately you have to start again</string>
-    <string name="dialog_message_warning">Are you sure you want to go back? You\'ll have to start again</string>
+    <string name="dialog_message_back_confirmation">If you quit, the party will be closed, and you\'ll have to start again</string>
+    <string name="dialog_message_invalid_uri">The selected uri is invalid, please try again</string>
+    <string name="dialog_message_invalid_ip">It seems that you are not connected to a Wi-Fi network, please check it out and try again later</string>
 
     <!-- Snackbar strings -->
     <string name="snackbar_text_invalid_ip">Please insert a valid IP address</string>
-
 </resources>

@@ -2,6 +2,8 @@ package it.unipd.dei.es.screenparty.network;
 
 import android.os.Handler;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +16,8 @@ import java.util.List;
 
 public class NetworkUtils {
 
+    public static final String SPACE_CHAR_ENCODING = "%20";
+    public static final String INVALID_IP = "0.0.0.0";
     private final static int CHUNK_SIZE = 8192;
 
     public static void send(final NetworkMessage message, final Socket socket, final Handler handler) {
@@ -24,9 +28,9 @@ public class NetworkUtils {
                 catch(IOException e) { handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e); }
             }
         }).start();
-
     }
 
+    @NotNull
     public static String getIPAddress(boolean useIPv4) {
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -48,13 +52,22 @@ public class NetworkUtils {
                 }
             }
         } catch (Exception ignored) { }
-        return "0.0.0.0";
+        return INVALID_IP;
     }
 
-    public static void transferFile(List<Socket> sockets, InputStream fileInputStream) throws IOException {
+    @NotNull
+    public static String encodeDeviceName(@NotNull String deviceName) {
+        return deviceName.trim().replaceAll("\\s", SPACE_CHAR_ENCODING);
+    }
+
+    @NotNull
+    public static String decodeDeviceName(@NotNull String deviceName) {
+        return deviceName.trim().replaceAll(SPACE_CHAR_ENCODING, " ");
+    }
+
+    public static void transferFile(@NotNull List<Socket> sockets, InputStream fileInputStream) throws IOException {
         List<OutputStream> outputStreams = new ArrayList<>();
         for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
-
         byte[] chunk = new byte[CHUNK_SIZE];
         int k;
         while((k = fileInputStream.read(chunk)) != -1)
@@ -63,7 +76,7 @@ public class NetworkUtils {
         fileInputStream.close();
     }
 
-    public static void receiveFile(Socket socket, OutputStream fileOutputStream, long size) throws IOException {
+    public static void receiveFile(@NotNull Socket socket, OutputStream fileOutputStream, long size) throws IOException {
         InputStream inputStream = socket.getInputStream();
         byte[] chunk = new byte[CHUNK_SIZE];
         int bytes, k;

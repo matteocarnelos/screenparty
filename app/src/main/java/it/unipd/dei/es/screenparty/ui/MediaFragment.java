@@ -1,10 +1,8 @@
 package it.unipd.dei.es.screenparty.ui;
 
 import android.content.DialogInterface;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,12 +15,13 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.MediaController;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -30,11 +29,14 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MediaSyncController;
+import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
@@ -45,18 +47,47 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
     public final int NOTCH_MINIMUM_HEIGHT = 24;
+
     private TextureView textureView;
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
-    private MediaSyncController mMediaController;
+    private MediaSyncController mediaSyncController;
     private MediaModifier mediaModifier;
+    private Dialogs dialogs = new Dialogs();
+
     private PartyManager partyManager = PartyManager.getInstance();
-    private float mediaHeight;
-    private float mediaWidth;
+    private NavController navController;
+
     private float statusBarHeight;
 
-    private NavController navController;
-    private Dialogs dialogs = new Dialogs();
+    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            dialogs.showBackConfirmationDialog();
+        }
+    };
+
+    private ViewTreeObserver.OnWindowFocusChangeListener windowFocusChangeListener = new ViewTreeObserver.OnWindowFocusChangeListener() {
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            hideSystemUI();
+        }
+    };
+
+    private View.OnTouchListener touchListener = new View.OnTouchListener() {
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
+                toggleMediaControlsVisibility();
+            return true;
+        }
+    };
+
+    private void goToStart() {
+        partyManager.stop();
+        requireView().getViewTreeObserver().removeOnWindowFocusChangeListener(windowFocusChangeListener);
+        showSystemUI();
+        navController.popBackStack(R.id.startFragment, false);
+    }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -74,12 +105,15 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     mediaPlayer.seekTo(pos);
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
+                    mediaPlayer.pause();
                     dialogs.showClientLeftDialog();
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
+                    mediaPlayer.pause();
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
+                    mediaPlayer.pause();
                     dialogs.showCommunicationFailedDialog((String) msg.obj);
                     break;
                 default:
@@ -88,29 +122,22 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
-    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
-        @Override
-        public void handleOnBackPressed() {
-            dialogs.showBackConfirmationDialog();
-        }
-    };
-
-    private void goBack() {
-        partyManager.stop();
-        navController.popBackStack(R.id.startFragment, false);
-    }
-
     private class Dialogs {
 
-        private void showBackConfirmationDialog() {
+        private void showMediaPreparationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_warning)
-                    .setMessage(R.string.dialog_message_warning)
-                    .setPositiveButton(R.string.dialog_button_cancel, null)
-                    .setNegativeButton(R.string.dialog_button_go_back, new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.dialog_title_media_preparation_failed)
+                    .setMessage(message)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goToStart();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     }).show();
         }
@@ -122,31 +149,31 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     }).show();
         }
 
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.dialog_title_party_no_longer_exists)
-                    .setMessage(R.string.dialog_message_party_no_longer_exists)
+                    .setTitle(R.string.dialog_title_party_closed)
+                    .setMessage(R.string.dialog_message_party_closed)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     }).show();
         }
@@ -158,69 +185,35 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            goBack();
+                            goToStart();
                         }
                     })
                     .show();
         }
+
+        private void showBackConfirmationDialog() {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_back_confirmation)
+                    .setMessage(R.string.dialog_message_back_confirmation)
+                    .setPositiveButton(R.string.dialog_button_cancel, null)
+                    .setNegativeButton(R.string.dialog_button_quit, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goToStart();
+                        }
+                    }).show();
+        }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        partyManager.setEventsHandler(handler);
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_media, container, false);
-        mediaModifier = new MediaModifier();
-        textureView = view.findViewById(R.id.textureView);
-        textureView.setSurfaceTextureListener(this);
-        mediaPlayer = new MediaPlayer();
-        mediaController = new MediaController(getContext());
-        mMediaController = new MediaSyncController(mediaPlayer);
-        view.getViewTreeObserver().addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onWindowFocusChanged(boolean hasFocus) {
-                hideSystemUI();
-            }
-        });
-        view.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null) {
-                    toggleMediaControlsVisibility();
-
-                }
-                return true;
-            }
-        });
-        Rect rectangle = new Rect();
-        requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
-        statusBarHeight = rectangle.top / partyManager.getPartyParams().getScreenParams().getYdpi();
-        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        navController = Navigation.findNavController(view);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
+        ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
+        if(actionBar != null) actionBar.hide();
         View decorView = requireActivity().getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -232,11 +225,63 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     private void showSystemUI() {
-        View decorView = requireActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
+        if(actionBar != null) actionBar.show();
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Creates the MediaController for the textureView.
+     */
+    private void enableMediaController() {
+        mediaController.setMediaPlayer(mediaSyncController);
+        mediaController.setAnchorView(textureView);
+        mediaController.setEnabled(true);
+        mediaController.show();
+    }
+
+    /**
+     * Switches the state (visible or not) of the media controller.
+     */
+    private void toggleMediaControlsVisibility() {
+        if (mediaController.isShowing()) mediaController.hide();
+        else mediaController.show();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        partyManager.setEventsHandler(handler);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+    }
+
+    @Override
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_media, container, false);
+
+        mediaModifier = new MediaModifier();
+        textureView = view.findViewById(R.id.textureView);
+        textureView.setSurfaceTextureListener(this);
+        mediaPlayer = new MediaPlayer();
+        mediaController = new MediaController(getContext());
+        mediaSyncController = new MediaSyncController(mediaPlayer);
+
+        view.getViewTreeObserver().addOnWindowFocusChangeListener(windowFocusChangeListener);
+        view.setOnTouchListener(touchListener);
+
+        int statusBarHeightPixels = MediaUtils.getStatusBarHeightPixels(requireActivity().getWindow());
+        statusBarHeight = statusBarHeightPixels / partyManager.getPartyParams().getScreenParams().getYdpi();
+
+        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        navController = Navigation.findNavController(view);
     }
 
     /**
@@ -249,32 +294,29 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
      * @param height  The height of the surface.
      * @throws IllegalArgumentException If the set data source doesn't exist.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) throws IllegalArgumentException {
         Surface surfaceTexture = new Surface(surface);
         try {
             mediaPlayer.setDataSource(requireContext(), partyManager.getPartyParams().getMediaParams().getUri());
             mediaPlayer.setSurface(surfaceTexture);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mediaHeight = mp.getVideoHeight();
-                mediaWidth = mp.getVideoWidth();
                 if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
+
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
-                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
+
+                float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
+                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio));
                 if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
-                    mMediaControllerEnable();
+                    enableMediaController();
                 else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
             }
         });
@@ -315,17 +357,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
-
-    /**
-     * Creates the MediaController for the textureView.
-     */
-    private void mMediaControllerEnable() {
-        mediaController.setMediaPlayer(mMediaController);
-        mediaController.setAnchorView(textureView);
-        mediaController.setEnabled(true);
-        mediaController.show();
-    }
-
     @Override
     public void onPause() {
         if (mediaPlayer != null && mediaPlayer.isPlaying())
@@ -336,8 +367,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     @Override
     public void onResume() {
         hideSystemUI();
-        if (mediaPlayer != null)
-            mediaPlayer.start();
+        if (mediaPlayer != null) mediaPlayer.start();
         super.onResume();
     }
 
@@ -348,19 +378,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        showSystemUI();
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().show();
         super.onDestroy();
-    }
-
-    /**
-     * Switches the state (visible or not) of the media controller.
-     */
-    private void toggleMediaControlsVisibility() {
-        if (mediaController.isShowing()) {
-            mediaController.hide();
-        } else {
-            mediaController.show();
-        }
     }
 }
