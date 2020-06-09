@@ -245,7 +245,12 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
      * Switches the state (visible or not) of the media controller.
      */
     private void toggleMediaControlsVisibility() {
-        if(mediaController.isShowing()) mediaController.hide();
+        if (mediaController.isShowing()) {
+            mediaController.hide();
+            View decorView = requireActivity().getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
         else mediaController.show();
     }
 
