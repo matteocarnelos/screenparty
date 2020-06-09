@@ -35,6 +35,7 @@ import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaParams;
 import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
+import it.unipd.dei.es.screenparty.network.NetworkUtils;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyUtils;
 
@@ -83,6 +84,16 @@ public class ClientFragment extends Fragment {
                 connectButton.setEnabled(false);
                 setStateConnecting();
                 partyManager.startAsClient(ip);
+            }
+        }
+    };
+
+    View.OnFocusChangeListener hostIpFieldListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus) {
+                String ip = NetworkUtils.getIPAddress(true);
+                hostIpField.getEditText().setText(ip.substring(0, ip.lastIndexOf('.') + 1));
             }
         }
     };
@@ -256,6 +267,7 @@ public class ClientFragment extends Fragment {
         snackbarView.setBackground(new ColorDrawable(getResources().getColor(R.color.black_800)));
 
         connectButton.setOnClickListener(nextButtonListener);
+        hostIpField.getEditText().setOnFocusChangeListener(hostIpFieldListener);
 
         String deviceName = PartyUtils.getDeviceName(requireActivity().getContentResolver());
         partyManager.getPartyParams().setDeviceName(deviceName);

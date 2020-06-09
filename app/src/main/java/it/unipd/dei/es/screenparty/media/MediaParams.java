@@ -22,14 +22,6 @@ public class MediaParams {
         return uri;
     }
 
-    public int getMediaWidth() {
-        return mediaWidth;
-    }
-
-    public int getMediaHeight() {
-        return mediaHeight;
-    }
-
     public float getAspectRatio() {
         return (float)mediaWidth / (float)mediaHeight;
     }
