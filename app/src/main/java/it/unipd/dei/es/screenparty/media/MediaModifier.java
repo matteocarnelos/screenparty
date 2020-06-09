@@ -6,11 +6,19 @@ import android.util.Log;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
 /**
- * Class made to modify the content of a TextureView.
+ * Class used to modify a media.
+ * It uses the matrix's transformation to modify the media.
  */
 public class MediaModifier {
     private final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
 
+    /**
+     * Sets the matrix transformation given the party parameters.
+     *
+     * @param partyParams Params of the device.
+     * @param aspectRatio Aspect ratio of the video.
+     * @return Matrix containing the transformation.
+     */
     public Matrix prepareScreen(PartyParams partyParams, float aspectRatio) {
         Matrix matrix = new Matrix();
         PartyParams.Position position = partyParams.getPosition();
@@ -28,76 +36,89 @@ public class MediaModifier {
         Log.d(MEDIA_MODIFIER_TAG, "Dpi x: " + xDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Dpi y: " + yDpi);
         Log.d(MEDIA_MODIFIER_TAG, "Video aspect ratio: " + aspectRatio);
-//        scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight,matrix);
         switch (position) {
             case LEFT:
                 Matrix leftMatrix = new Matrix();
-                scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, leftMatrix);
-                scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, leftMatrix);
-                Log.d(MEDIA_MODIFIER_TAG, "translation: " + ((-frameHeight * aspectRatio) + frameWidth));
-                return xTranslateTexture(((-frameHeight * aspectRatio) + frameWidth) * xDpi, leftMatrix);
+                centerMatrix(frameHeight, yDpi, screenHeight, leftMatrix);
+                scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, leftMatrix);
+                return horizontalMatrixTranslation(((-frameHeight * aspectRatio) + frameWidth) * xDpi, leftMatrix);
             case CENTER:
                 Matrix centralMatrix = new Matrix();
-                scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, centralMatrix);
-                scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, centralMatrix);
-                return xTranslateTexture(-xDpi * (frameHeight * aspectRatio - screenWidth) / 2, centralMatrix);
+                centerMatrix(frameHeight, yDpi, screenHeight, centralMatrix);
+                scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, centralMatrix);
+                return horizontalMatrixTranslation(-xDpi * (frameHeight * aspectRatio - screenWidth) / 2, centralMatrix);
             case RIGHT:
                 Matrix rightMatrix = new Matrix();
-                scaleCenteredTextureHeight(frameHeight, yDpi, screenHeight, rightMatrix);
-                scaleTextureWidth((frameHeight * aspectRatio) / screenWidth, rightMatrix);
-                return xTranslateTexture((screenWidth - frameWidth) * xDpi, rightMatrix);
-
+                centerMatrix(frameHeight, yDpi, screenHeight, rightMatrix);
+                scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, rightMatrix);
+                return horizontalMatrixTranslation((screenWidth - frameWidth) * xDpi, rightMatrix);
         }
         return matrix;
     }
 
 
     /**
+     * Scales and translates the matrix keeping the media centered to the screen.
+     *
      * @param frameHeight  Number of inches to be shown.
-     * @param screenYDpi   The yDpi of the device's screen.
+     * @param screenYDpi   The y density pixel of the device's screen.
      * @param screenHeight Number of inches of the screen's height.
-     * @return Matrix.
+     * @return Matrix containing the transformation.
      */
-    public Matrix scaleCenteredTextureHeight(float frameHeight, float screenYDpi, float screenHeight, Matrix matrix) {
+    public Matrix centerMatrix(float frameHeight, float screenYDpi, float screenHeight, Matrix matrix) {
         float yScalingRate = frameHeight / screenHeight;
         float yTranslation = screenYDpi * (screenHeight - frameHeight) / 2;
-        scaleTextureHeight(yScalingRate, matrix);
-        yTranslateTexture(yTranslation, matrix);
+        scaleMatrixVertically(yScalingRate, matrix);
+        verticalMatrixTranslation(yTranslation, matrix);
         Log.d(MEDIA_MODIFIER_TAG, "Scaling height: " + frameHeight / screenHeight);
         Log.d(MEDIA_MODIFIER_TAG, "Translation Height: " + (screenYDpi * (screenHeight - frameHeight) / 2));
         return matrix;
     }
 
+
     /**
-     * Scales the width of the content of the TextureView.
+     * Scales the matrix horizontally scaleX times.
      *
      * @param scaleX The time to multiply the width of the video.
-     * @return The modified Matrix.
+     * @return Matrix containing the transformation.
      */
-    public Matrix scaleTextureWidth(float scaleX, Matrix matrix) {
+    public Matrix scaleMatrixHorizontally(float scaleX, Matrix matrix) {
         matrix.preScale(scaleX, 1);
         return matrix;
     }
 
     /**
-     * Scales the height of the content of the TextureView.
+     * Scales the matrix vertically scaleY times.
      *
-     * @param scaleY The time to multiply the width of the video.
-     * @return The modified Matrix.
+     * @param scaleY Number of times to scale the matrix.
+     * @return Matrix containing the transformation.
      */
-    public Matrix scaleTextureHeight(float scaleY, Matrix matrix) {
+    public Matrix scaleMatrixVertically(float scaleY, Matrix matrix) {
         matrix.preScale(1, scaleY);
         return matrix;
     }
 
-
-    public Matrix yTranslateTexture(float pyTranslation, Matrix matrix) {
-        //The "-" it's used because it make the translation from bottom to top.
+    /**
+     * Translates the matrix vertically of pyTranslation pixels.
+     *
+     * @param pyTranslation Number of pixel for the translation.
+     * @param matrix        Matrix to be translated.
+     * @return Matrix containing the transformation.
+     */
+    public Matrix verticalMatrixTranslation(float pyTranslation, Matrix matrix) {
+        //Use "-" to make the translation from bottom to top.
         matrix.postTranslate(0, pyTranslation);
         return matrix;
     }
 
-    public Matrix xTranslateTexture(float pxTranslation, Matrix matrix) {
+    /**
+     * Translates the matrix horizontally of pxTranslation pixels.
+     *
+     * @param pxTranslation Number of pixel for the translation
+     * @param matrix        Matrix to be translated.
+     * @return Matrix containing the transformation.
+     */
+    public Matrix horizontalMatrixTranslation(float pxTranslation, Matrix matrix) {
         //Use -pxTranslation to translate from left to right
         matrix.postTranslate(pxTranslation, 0);
         return matrix;
