@@ -1,7 +1,6 @@
 package it.unipd.dei.es.screenparty.ui;
 
 import android.content.DialogInterface;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -37,13 +36,12 @@ import java.io.IOException;
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MediaSyncController;
+import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
-
-// TODO: Use width and height obtained with MediaParams
 
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
@@ -60,8 +58,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private PartyManager partyManager = PartyManager.getInstance();
     private NavController navController;
 
-    private float mediaHeight;
-    private float mediaWidth;
     private float statusBarHeight;
 
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
@@ -274,9 +270,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
         view.getViewTreeObserver().addOnWindowFocusChangeListener(windowFocusChangeListener);
         view.setOnTouchListener(touchListener);
-        Rect rectangle = new Rect();
-        requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
-        statusBarHeight = rectangle.top / partyManager.getPartyParams().getScreenParams().getYdpi();
+
+        int statusBarHeightPixels = MediaUtils.getStatusBarHeightPixels(requireActivity().getWindow());
+        statusBarHeight = statusBarHeightPixels / partyManager.getPartyParams().getScreenParams().getYdpi();
 
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
 
@@ -309,8 +305,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mediaHeight = mp.getVideoHeight();
-                mediaWidth = mp.getVideoWidth();
                 if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
 
@@ -319,7 +313,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
 
-                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
+                float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
+                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio));
                 if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     enableMediaController();
                 else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));

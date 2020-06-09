@@ -3,8 +3,10 @@ package it.unipd.dei.es.screenparty.media;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.view.Window;
 
 import androidx.fragment.app.Fragment;
 
@@ -22,8 +24,7 @@ public class MediaUtils {
         retriever.setDataSource(context, uri);
         Bitmap bitmap = retriever.getFrameAtTime();
         retriever.release();
-        float aspectRatio = (float)bitmap.getWidth() / (float)bitmap.getHeight();
-        return new MediaParams(uri, aspectRatio);
+        return new MediaParams(uri, bitmap.getWidth(), bitmap.getHeight());
     }
 
     public static void openMediaPicker(@NotNull Fragment fragment) {
@@ -35,5 +36,11 @@ public class MediaUtils {
         Intent chooserIntent = Intent.createChooser(fileIntent, fragment.getResources().getString(R.string.media_utils_intent_select_video));
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { galleryIntent });
         fragment.startActivityForResult(chooserIntent, SELECT_MEDIA_REQUEST_CODE);
+    }
+
+    public static int getStatusBarHeightPixels(@NotNull Window window) {
+        Rect rectangle = new Rect();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        return rectangle.top;
     }
 }

@@ -5,23 +5,33 @@ import android.net.Uri;
 public class MediaParams {
 
     private Uri uri;
-    private float aspectRatio;
+    private int mediaWidth;
+    private int mediaHeight;
     private float frameWidth;
     private float frameHeight;
 
     public MediaParams() { }
 
-    public MediaParams(Uri uri, float aspectRatio) {
+    public MediaParams(Uri uri, int mediaWidth, int mediaHeight) {
         this.uri = uri;
-        this.aspectRatio = aspectRatio;
+        this.mediaWidth = mediaWidth;
+        this.mediaHeight = mediaHeight;
     }
 
     public Uri getUri() {
         return uri;
     }
 
+    public int getMediaWidth() {
+        return mediaWidth;
+    }
+
+    public int getMediaHeight() {
+        return mediaHeight;
+    }
+
     public float getAspectRatio() {
-        return aspectRatio;
+        return (float)mediaWidth / (float)mediaHeight;
     }
 
     public float getFrameWidth() {
