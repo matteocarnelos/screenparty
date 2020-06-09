@@ -66,7 +66,7 @@
     <string name="dialog_message_party_full">The party you are trying to connect is full</string>
     <string name="dialog_message_party_closed">The party has been closed because the host left, unfortunately you have to start again</string>
     <string name="dialog_message_client_left">A client left the party, unfortunately you have to start again</string>
-    <string name="dialog_message_back_confirmation">By quitting the party will be closed, and you\'ll have to start again</string>
+    <string name="dialog_message_back_confirmation">If you quit, the party will be closed, and you\'ll have to start again</string>
     <string name="dialog_message_invalid_uri">The selected uri is invalid, please try again</string>
     <string name="dialog_message_invalid_ip">It seems that you are not connected to a Wi-Fi network, please check it out and try again later</string>
 

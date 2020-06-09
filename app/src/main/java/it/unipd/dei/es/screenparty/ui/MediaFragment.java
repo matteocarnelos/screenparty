@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +21,7 @@ import android.widget.MediaController;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -71,8 +70,25 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
+    private ViewTreeObserver.OnWindowFocusChangeListener windowFocusChangeListener = new ViewTreeObserver.OnWindowFocusChangeListener() {
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            hideSystemUI();
+        }
+    };
+
+    private View.OnTouchListener touchListener = new View.OnTouchListener() {
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
+                toggleMediaControlsVisibility();
+            return true;
+        }
+    };
+
     private void goToStart() {
         partyManager.stop();
+        requireView().getViewTreeObserver().removeOnWindowFocusChangeListener(windowFocusChangeListener);
+        showSystemUI();
         navController.popBackStack(R.id.startFragment, false);
     }
 
@@ -92,12 +108,15 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     mediaPlayer.seekTo(pos);
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
+                    mediaPlayer.pause();
                     dialogs.showClientLeftDialog();
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
+                    mediaPlayer.pause();
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
+                    mediaPlayer.pause();
                     dialogs.showCommunicationFailedDialog((String) msg.obj);
                     break;
                 default:
@@ -195,8 +214,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
+        ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
+        if(actionBar != null) actionBar.hide();
         View decorView = requireActivity().getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -208,6 +228,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     private void showSystemUI() {
+        ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
+        if(actionBar != null) actionBar.show();
         View decorView = requireActivity().getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -240,7 +262,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -253,27 +274,13 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         mediaController = new MediaController(getContext());
         mediaSyncController = new MediaSyncController(mediaPlayer);
 
-        view.getViewTreeObserver().addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onWindowFocusChanged(boolean hasFocus) {
-                hideSystemUI();
-            }
-        });
-        view.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
-                    toggleMediaControlsVisibility();
-                return true;
-            }
-        });
+        view.getViewTreeObserver().addOnWindowFocusChangeListener(windowFocusChangeListener);
+        view.setOnTouchListener(touchListener);
         Rect rectangle = new Rect();
         requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
         statusBarHeight = rectangle.top / partyManager.getPartyParams().getScreenParams().getYdpi();
 
         Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
-
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
 
         return view;
     }
@@ -293,7 +300,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
      * @param height  The height of the surface.
      * @throws IllegalArgumentException If the set data source doesn't exist.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) throws IllegalArgumentException {
         Surface surfaceTexture = new Surface(surface);
@@ -303,7 +309,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         } catch (IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mediaHeight = mp.getVideoHeight();
@@ -380,8 +385,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        showSystemUI();
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().show();
         super.onDestroy();
     }
 }
