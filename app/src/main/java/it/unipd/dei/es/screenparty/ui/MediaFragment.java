@@ -76,7 +76,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
+            if(event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
                 toggleMediaControlsVisibility();
             return true;
         }
@@ -92,7 +92,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
+            switch(msg.what) {
                 case NetworkEvents.Client.HOST_PLAY:
                     mediaPlayer.start();
                     break;
@@ -245,7 +245,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
      * Switches the state (visible or not) of the media controller.
      */
     private void toggleMediaControlsVisibility() {
-        if (mediaController.isShowing()) mediaController.hide();
+        if(mediaController.isShowing()) mediaController.hide();
         else mediaController.show();
     }
 
@@ -300,12 +300,12 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         try {
             mediaPlayer.setDataSource(requireContext(), partyManager.getPartyParams().getMediaParams().getUri());
             mediaPlayer.setSurface(surfaceTexture);
-        } catch (IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
+        } catch(IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
+                if(statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
 
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
@@ -315,9 +315,14 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
                 float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio));
-                if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     enableMediaController();
                 else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
+                if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT)
+                    mediaPlayer.setVolume(0, 1);
+                else if(partyManager.getPartyParams().getPosition() == PartyParams.Position.LEFT)
+                    mediaPlayer.setVolume(1, 0);
+                else mediaPlayer.setVolume(1, 1);
             }
         });
     }
@@ -359,7 +364,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     @Override
     public void onPause() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying())
+        if(mediaPlayer != null && mediaPlayer.isPlaying())
             mediaPlayer.pause();
         super.onPause();
     }
@@ -367,13 +372,13 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     @Override
     public void onResume() {
         hideSystemUI();
-        if (mediaPlayer != null) mediaPlayer.start();
+        if(mediaPlayer != null) mediaPlayer.start();
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
-        if (mediaPlayer != null) {
+        if(mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;

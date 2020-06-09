@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +24,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import it.unipd.dei.es.screenparty.R;
+import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
-
-// TODO: Center arrows in screen
 
 public class PrepareFragment extends Fragment {
 
@@ -152,18 +150,6 @@ public class PrepareFragment extends Fragment {
         }
     }
 
-    public int getStatusBarHeight() {
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if(resourceId > 0) return getResources().getDimensionPixelSize(resourceId);
-        return 0;
-    }
-
-    public int getNavigationBarHeight() {
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if(resourceId > 0) return getResources().getDimensionPixelSize(resourceId);
-        return 0;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,23 +182,8 @@ public class PrepareFragment extends Fragment {
         }
 
         ConstraintLayout.LayoutParams leftArrowLayoutParams = (ConstraintLayout.LayoutParams)leftArrowIcon.getLayoutParams();
-        leftArrowLayoutParams.bottomMargin += getStatusBarHeight();
-        leftArrowLayoutParams.topMargin += getNavigationBarHeight();
-        //leftArrowIcon.setLayoutParams(leftArrowLayoutParams);
-
-        ConstraintLayout.LayoutParams rightArrowLayoutParams = (ConstraintLayout.LayoutParams)rightArrowIcon.getLayoutParams();
-        rightArrowLayoutParams.bottomMargin += getStatusBarHeight();
-        rightArrowLayoutParams.topMargin += getNavigationBarHeight();
-        //rightArrowIcon.setLayoutParams(rightArrowLayoutParams);
-
-        Log.d("SCREENPARTY_DIMENS", "Nav bar dimen: " + getNavigationBarHeight());
-        Log.d("SCREENPARTY_DIMENS", "Stat bar dimen: " + getStatusBarHeight());
-
-        Log.d("SCREENPARTY_DIMENS", "Left arrow layout params (bottom margin): " + leftArrowLayoutParams.bottomMargin);
-        Log.d("SCREENPARTY_DIMENS", "Left arrow layout params (top margin): " + leftArrowLayoutParams.topMargin);
-
-        Log.d("SCREENPARTY_DIMENS", "Right arrow layout params (bottom margin): " + rightArrowLayoutParams.bottomMargin);
-        Log.d("SCREENPARTY_DIMENS", "Right arrow layout params (top margin): " + rightArrowLayoutParams.topMargin);
+        leftArrowLayoutParams.topMargin += MediaUtils.getNavigationBarHeightPixels(requireActivity());
+        leftArrowIcon.setLayoutParams(leftArrowLayoutParams);
 
         return view;
     }
