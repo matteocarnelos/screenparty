@@ -16,6 +16,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.MediaController;
 
 import androidx.activity.OnBackPressedCallback;
@@ -230,11 +231,8 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private void showSystemUI() {
         ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
         if(actionBar != null) actionBar.show();
-        View decorView = requireActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.VISIBLE);
     }
 
     /**
