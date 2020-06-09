@@ -34,7 +34,7 @@ import java.io.IOException;
 
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
-import it.unipd.dei.es.screenparty.media.MyMediaController;
+import it.unipd.dei.es.screenparty.media.MediaSyncController;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
@@ -44,16 +44,16 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
     private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
+    public final int NOTCH_MINIMUM_HEIGHT = 24;
     private TextureView textureView;
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
-    private MyMediaController mMediaController;
+    private MediaSyncController mMediaController;
     private MediaModifier mediaModifier;
     private PartyManager partyManager = PartyManager.getInstance();
     private float mediaHeight;
     private float mediaWidth;
     private float statusBarHeight;
-    public final int notchMinimumHeight = 24;
 
     private NavController navController;
     private Dialogs dialogs = new Dialogs();
@@ -187,7 +187,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         textureView.setSurfaceTextureListener(this);
         mediaPlayer = new MediaPlayer();
         mediaController = new MediaController(getContext());
-        mMediaController = new MyMediaController(mediaPlayer);
+        mMediaController = new MediaSyncController(mediaPlayer);
         view.getViewTreeObserver().addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -265,7 +265,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             public void onPrepared(MediaPlayer mp) {
                 mediaHeight = mp.getVideoHeight();
                 mediaWidth = mp.getVideoWidth();
-                if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > notchMinimumHeight)
+                if (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
                     partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
