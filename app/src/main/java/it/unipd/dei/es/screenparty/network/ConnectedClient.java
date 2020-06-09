@@ -8,6 +8,7 @@ import it.unipd.dei.es.screenparty.party.ScreenParams;
 public class ConnectedClient extends PartyParams {
 
     private Socket socket;
+    private boolean ready = false;
 
     ConnectedClient(Socket socket, PartyParams.Position position, float width, float height) {
         super(new ScreenParams(width, height));
@@ -17,5 +18,13 @@ public class ConnectedClient extends PartyParams {
 
     public Socket getSocket() {
         return socket;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }

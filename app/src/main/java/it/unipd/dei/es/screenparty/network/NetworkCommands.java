@@ -14,5 +14,6 @@ public final class NetworkCommands {
 
     public static final class Client {
         public static final String JOIN = "JOIN";
+        public static final String READY = "READY";
     }
 }

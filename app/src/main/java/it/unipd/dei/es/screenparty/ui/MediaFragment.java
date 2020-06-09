@@ -35,8 +35,11 @@ import java.io.IOException;
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MyMediaController;
+import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
+import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
+import it.unipd.dei.es.screenparty.party.PartyParams;
 
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
@@ -64,6 +67,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     break;
                 case NetworkEvents.Client.HOST_PAUSE:
                     mediaPlayer.pause();
+                    mediaPlayer.seekTo((int)msg.obj);
                     break;
                 case NetworkEvents.Client.HOST_SEEK:
                     int pos = (int)msg.obj;
@@ -268,9 +272,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
-                mediaPlayer.start();
-                //if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     mMediaControllerEnable();
+                else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
             }
         });
     }

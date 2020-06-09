@@ -29,8 +29,12 @@ public class MyMediaController implements MediaController.MediaPlayerControl {
 
     @Override
     public void pause() {
-        partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
         mMediaPlayer.pause();
+        NetworkMessage message = new NetworkMessage.Builder()
+                .setCommand(NetworkCommands.Host.PAUSE)
+                .addArgument(String.valueOf(getCurrentPosition()))
+                .build();
+        partyManager.sendMessage(message);
     }
 
     @Override
