@@ -3,6 +3,8 @@ package it.unipd.dei.es.screenparty.media;
 import android.graphics.Matrix;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
 /**
@@ -10,6 +12,7 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
  * It uses the matrix's transformation to modify the media.
  */
 public class MediaModifier {
+
     private static final String MEDIA_MODIFIER_TAG = "MEDIA_MODIFIER";
 
     /**
@@ -19,7 +22,7 @@ public class MediaModifier {
      * @param aspectRatio Aspect ratio of the video.
      * @return Matrix containing the transformation.
      */
-    public Matrix prepareScreen(PartyParams partyParams, float aspectRatio) {
+    public Matrix prepareScreen(@NotNull PartyParams partyParams, float aspectRatio) {
         Matrix matrix = new Matrix();
         PartyParams.Position position = partyParams.getPosition();
         float screenWidth = partyParams.getScreenParams().getWidth();
@@ -83,7 +86,7 @@ public class MediaModifier {
      * @param scaleX The time to multiply the width of the video.
      * @return Matrix containing the transformation.
      */
-    public Matrix scaleMatrixHorizontally(float scaleX, Matrix matrix) {
+    public Matrix scaleMatrixHorizontally(float scaleX, @NotNull Matrix matrix) {
         matrix.preScale(scaleX, 1);
         return matrix;
     }
@@ -94,7 +97,7 @@ public class MediaModifier {
      * @param scaleY Number of times to scale the matrix.
      * @return Matrix containing the transformation.
      */
-    public Matrix scaleMatrixVertically(float scaleY, Matrix matrix) {
+    public Matrix scaleMatrixVertically(float scaleY, @NotNull Matrix matrix) {
         matrix.preScale(1, scaleY);
         return matrix;
     }
@@ -106,8 +109,8 @@ public class MediaModifier {
      * @param matrix        Matrix to be translated.
      * @return Matrix containing the transformation.
      */
-    public Matrix verticalMatrixTranslation(float pyTranslation, Matrix matrix) {
-        //Use "-" to make the translation from bottom to top.
+    public Matrix verticalMatrixTranslation(float pyTranslation, @NotNull Matrix matrix) {
+        // Use "-" to make the translation from bottom to top.
         matrix.postTranslate(0, pyTranslation);
         return matrix;
     }
@@ -119,8 +122,8 @@ public class MediaModifier {
      * @param matrix        Matrix to be translated.
      * @return Matrix containing the transformation.
      */
-    public Matrix horizontalMatrixTranslation(float pxTranslation, Matrix matrix) {
-        //Use -pxTranslation to translate from left to right
+    public Matrix horizontalMatrixTranslation(float pxTranslation, @NotNull Matrix matrix) {
+        // Use -pxTranslation to translate from left to right
         matrix.postTranslate(pxTranslation, 0);
         return matrix;
     }
