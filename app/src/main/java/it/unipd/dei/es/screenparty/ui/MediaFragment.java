@@ -61,16 +61,16 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch(msg.what) {
+            switch (msg.what) {
                 case NetworkEvents.Client.HOST_PLAY:
                     mediaPlayer.start();
                     break;
                 case NetworkEvents.Client.HOST_PAUSE:
                     mediaPlayer.pause();
-                    mediaPlayer.seekTo((int)msg.obj);
+                    mediaPlayer.seekTo((int) msg.obj);
                     break;
                 case NetworkEvents.Client.HOST_SEEK:
-                    int pos = (int)msg.obj;
+                    int pos = (int) msg.obj;
                     mediaPlayer.seekTo(pos);
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
@@ -80,9 +80,10 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
-                    dialogs.showCommunicationFailedDialog((String)msg.obj);
+                    dialogs.showCommunicationFailedDialog((String) msg.obj);
                     break;
-                default: super.handleMessage(msg);
+                default:
+                    super.handleMessage(msg);
             }
         }
     };
@@ -208,7 +209,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         Rect rectangle = new Rect();
         requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
         statusBarHeight = rectangle.top / partyManager.getPartyParams().getScreenParams().getYdpi();
-        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + statusBarHeight);
+        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
         ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
         return view;
     }
@@ -272,7 +273,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
                 Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), mediaWidth / mediaHeight));
-                if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                if (partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     mMediaControllerEnable();
                 else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
             }
@@ -334,6 +335,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     @Override
     public void onResume() {
+        hideSystemUI();
         if (mediaPlayer != null)
             mediaPlayer.start();
         super.onResume();
