@@ -1,3 +1,5 @@
+<p style="align:center"><img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" /></p>
+
 # Screen Party
 
 **_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen.
