@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png">
+  <img src="banner.png">
 </p>
 
 <h3 align="center"><i>"Screen is not the limit"</i></h3>
