@@ -39,3 +39,7 @@ At this stage, the three devices must be aligned as shown by the arrows, which w
 
 ### Playback phase
 At this stage, the devices should all be playing the video simultaneously. The playback controls are avaible on the host's screen.
+
+--- 
+
+_App created by Matteo Carnelos, Pardeep Kumar and Alessandro Fano for the course of Embedded Systems Programming in the University of Padua, AY 2019/2020._
