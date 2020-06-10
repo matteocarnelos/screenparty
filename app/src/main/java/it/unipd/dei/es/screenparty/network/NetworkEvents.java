@@ -12,6 +12,8 @@ public final class NetworkEvents {
         public static final int CLIENT_JOINED = 12;
         public static final int PARTY_READY = 13;
         public static final int CLIENT_LEFT = 14;
+        public static final int CLIENT_EXIT_PLAYER = 15;
+        public static final int CLIENT_ENTER_PLAYER = 16;
     }
 
     public static final class Client {

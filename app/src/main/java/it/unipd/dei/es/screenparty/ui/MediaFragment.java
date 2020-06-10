@@ -22,6 +22,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -59,6 +60,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private NavController navController;
 
     private float statusBarHeight;
+    private AlertDialog temporaryPauseAlertDialog;
+    private boolean exitedPlayer = false;
+    private boolean partyOpened = true;
 
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -109,11 +113,20 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
                     mediaPlayer.pause();
+                    partyOpened = false;
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
                     mediaPlayer.pause();
                     dialogs.showCommunicationFailedDialog((String) msg.obj);
+                    break;
+                case NetworkEvents.Host.CLIENT_EXIT_PLAYER:
+                    mediaPlayer.pause();
+                    dialogs.showClientExitPlayerDialog();
+                    break;
+                case NetworkEvents.Host.CLIENT_ENTER_PLAYER:
+                    temporaryPauseAlertDialog.dismiss();
+                    mediaPlayer.start();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -175,6 +188,25 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                             goToStart();
                         }
                     }).show();
+        }
+
+        private void showClientExitPlayerDialog() {
+            temporaryPauseAlertDialog = new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.dialog_title_client_exit_player)
+                    .setMessage(R.string.dialog_message_client_exit_player)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            goToStart();
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_button_quit, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goToStart();
+                        }
+                    }).create();
+            temporaryPauseAlertDialog.show();
         }
 
         private void showCommunicationFailedDialog(String message) {
@@ -368,15 +400,26 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     @Override
     public void onPause() {
-        if(mediaPlayer != null && mediaPlayer.isPlaying())
+        if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+            if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
+            else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.EXIT_PLAYER));
             mediaPlayer.pause();
+            exitedPlayer = true;
+        }
         super.onPause();
     }
 
     @Override
     public void onResume() {
         hideSystemUI();
-        if(mediaPlayer != null) mediaPlayer.start();
+        if(mediaPlayer != null && exitedPlayer) {
+            if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
+            else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.ENTER_PLAYER));
+            if(partyOpened) mediaPlayer.start();
+            exitedPlayer = false;
+        }
         super.onResume();
     }
 

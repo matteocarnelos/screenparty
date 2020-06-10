@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public class ClientFragment extends Fragment {
             if(!ip.matches(IP_PATTERN_STRING)) invalidIpSnackbar.show();
             else {
                 connectButton.setEnabled(false);
+                hostIpField.getEditText().setInputType(InputType.TYPE_NULL);
                 setStateConnecting();
                 partyManager.startAsClient(ip);
             }
@@ -91,7 +93,7 @@ public class ClientFragment extends Fragment {
     View.OnFocusChangeListener hostIpFieldListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus) {
+            if(hasFocus && hostIpField.getEditText().getText().toString().isEmpty()) {
                 String ip = NetworkUtils.getIPAddress(true);
                 hostIpField.getEditText().setText(ip.substring(0, ip.lastIndexOf('.') + 1));
             }
@@ -220,6 +222,7 @@ public class ClientFragment extends Fragment {
 
     private void resetState() {
         connectButton.setEnabled(true);
+        hostIpField.getEditText().setInputType(InputType.TYPE_CLASS_TEXT);
         clientConnectedLabel.setText("");
         clientSpinner.setVisibility(View.INVISIBLE);
         clientConnectedIcon.setVisibility(View.INVISIBLE);

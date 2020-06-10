@@ -22,25 +22,47 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     @Override
     public void start() {
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
-
-        mediaPlayer.start();
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        mediaPlayer.start();
+                    }
+                },
+                10
+        );
     }
 
     @Override
     public void pause() {
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
-
-        mediaPlayer.pause();
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        mediaPlayer.pause();
+                    }
+                },
+                10
+        );
     }
 
     @Override
-    public void seekTo(int pos) {
+    public void seekTo(final int pos) {
         NetworkMessage message = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Host.SEEK)
                 .addArgument(String.valueOf(pos))
                 .build();
         partyManager.sendMessage(message);
-        mediaPlayer.seekTo(pos);
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        mediaPlayer.seekTo(pos);
+                    }
+                },
+                10
+        );
     }
 
     @Override

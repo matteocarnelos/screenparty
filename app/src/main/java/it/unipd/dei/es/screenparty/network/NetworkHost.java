@@ -174,20 +174,28 @@ public class NetworkHost extends Thread {
                     return;
                 }
 
-                if(message.getCommand().equals(NetworkCommands.Client.READY)) {
-                    client.setReady(true);
-                    boolean allReady = true;
-                    for(ClientWorker worker : workers) allReady &= worker.client.isReady();
-                    if(allReady){
-                        broadcast(new NetworkMessage("DUMMY"));
-                        try { sleep(100); }
-                        catch (InterruptedException ignored) { return; }
+                switch(message.getCommand()) {
+                    case NetworkCommands.Client.READY:
+                        client.setReady(true);
+                        boolean allReady = true;
+                        for(ClientWorker worker : workers) allReady &= worker.client.isReady();
+                        if(allReady) {
+                            broadcast(new NetworkMessage(NetworkCommands.Host.PLAY));
+                            handler.obtainMessage(NetworkEvents.Client.HOST_PLAY).sendToTarget();
+                        }
+                        break;
+                    case NetworkCommands.Client.EXIT_PLAYER:
+                        broadcast(new NetworkMessage(NetworkCommands.Host.PAUSE));
+                        handler.obtainMessage(NetworkEvents.Host.CLIENT_EXIT_PLAYER).sendToTarget();
+                        break;
+                    case NetworkCommands.Client.ENTER_PLAYER:
                         broadcast(new NetworkMessage(NetworkCommands.Host.PLAY));
-                    }
-                    handler.obtainMessage(NetworkEvents.Client.HOST_PLAY).sendToTarget();
+                        handler.obtainMessage(NetworkEvents.Host.CLIENT_ENTER_PLAYER).sendToTarget();
+                        break;
+                    default:
+                        NetworkMessage response = new NetworkMessage(NetworkCommands.Host.UNKNOWN);
+                        NetworkUtils.send(response, socket, handler);
                 }
-                NetworkMessage response = new NetworkMessage(NetworkCommands.Host.UNKNOWN);
-                NetworkUtils.send(response, socket, handler);
             }
         }
     }

@@ -63,6 +63,7 @@
     <string name="dialog_title_media_error">Media error</string>
     <string name="dialog_title_invalid_ip">Invalid IP address</string>
     <string name="dialog_title_media_preparation_failed">Media preparation failed</string>
+    <string name="dialog_title_client_exit_player">Video temporary paused</string>
 
     <string name="dialog_message_party_full">The party you are trying to connect is full</string>
     <string name="dialog_message_party_closed">The party has been closed because the host left, unfortunately you have to start again</string>
@@ -70,6 +71,7 @@
     <string name="dialog_message_back_confirmation">If you quit, the party will be closed, and you\'ll have to start again</string>
     <string name="dialog_message_invalid_uri">The selected uri is invalid, please try again</string>
     <string name="dialog_message_invalid_ip">It seems that you are not connected to a Wi-Fi network, please check it out and try again later</string>
+    <string name="dialog_message_client_exit_player">Video temporary paused because a client exited the player, you can wait him to be back or quit the party</string>
 
     <!-- Snackbar strings -->
     <string name="snackbar_text_invalid_ip">Please insert a valid IP address</string>
