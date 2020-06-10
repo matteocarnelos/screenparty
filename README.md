@@ -9,7 +9,7 @@
 **_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen.
 
 ## Requirements
-In order to use ScreenParty, there are a two requirements that must be fulfilled:
+In order to use ScreenParty, there are a three requirements that must be fulfilled:
 
   * All three devices must be connected to the same Wi-Fi network.
   * All three devices must have in storage the video you want to play
