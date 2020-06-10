@@ -12,6 +12,7 @@ public class PartyParams {
     private String deviceName;
     private ScreenParams screenParams;
     private MediaParams mediaParams = new MediaParams();
+    private boolean partyReady = false;
 
     public PartyParams(ScreenParams screenParams) {
         this.screenParams = screenParams;
@@ -37,6 +38,10 @@ public class PartyParams {
         return mediaParams;
     }
 
+    public boolean isPartyReady() {
+        return partyReady;
+    }
+
     public void setRole(Role role) {
         this.role = role;
         if(role == Role.HOST) this.position = Position.CENTER;
@@ -54,5 +59,9 @@ public class PartyParams {
 
     public void setMediaParams(MediaParams mediaParams) {
         this.mediaParams = mediaParams;
+    }
+
+    public void setPartyReady(boolean partyReady) {
+        this.partyReady = partyReady;
     }
 }

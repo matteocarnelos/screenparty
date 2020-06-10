@@ -58,12 +58,10 @@ public class HostFragment extends Fragment {
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
 
-    private boolean partyReady = false;
-
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            if(partyReady) dialogs.showBackConfirmationDialog();
+            if(partyManager.getPartyParams().isPartyReady()) dialogs.showBackConfirmationDialog();
             else goBack();
         }
     };
@@ -103,7 +101,6 @@ public class HostFragment extends Fragment {
                     clientListChanged((List<ConnectedClient>)msg.obj);
                     break;
                 case NetworkEvents.Host.PARTY_READY:
-                    partyReady = true;
                     for(ImageView deviceIcon : deviceIcons)
                         deviceIcon.setVisibility(View.VISIBLE);
                     for(ProgressBar deviceSpinner : deviceSpinners)
@@ -116,7 +113,11 @@ public class HostFragment extends Fragment {
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
                     nextButton.setEnabled(false);
-                    if(partyReady) dialogs.showClientLeftDialog();
+                    if(partyManager.getPartyParams().isPartyReady()) {
+                        partyManager.restart();
+                        clientListChanged(new ArrayList<ConnectedClient>());
+                        dialogs.showClientLeftDialog();
+                    }
                     else clientListChanged((List<ConnectedClient>)msg.obj);
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
@@ -222,20 +223,7 @@ public class HostFragment extends Fragment {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_left)
                     .setMessage(R.string.dialog_message_client_left)
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            partyManager.restart();
-                            clientListChanged(new ArrayList<ConnectedClient>());
-                        }
-                    })
-                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            partyManager.restart();
-                            clientListChanged(new ArrayList<ConnectedClient>());
-                        }
-                    }).show();
+                    .setPositiveButton(R.string.dialog_button_ok, null).show();
         }
 
         private void showCommunicationFailedDialog(String message) {

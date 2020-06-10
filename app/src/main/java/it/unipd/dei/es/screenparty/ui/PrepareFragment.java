@@ -65,6 +65,7 @@ public class PrepareFragment extends Fragment {
         public void handleMessage(@NonNull Message msg) {
             switch(msg.what) {
                 case NetworkEvents.Host.CLIENT_LEFT:
+                    partyManager.stop();
                     dialogs.showClientLeftDialog();
                     break;
                 case NetworkEvents.Client.HOST_LEFT:

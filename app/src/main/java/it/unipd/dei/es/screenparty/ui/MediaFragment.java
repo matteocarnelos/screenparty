@@ -59,7 +59,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     private AlertDialog temporaryPauseAlertDialog;
     private boolean exitedPlayer = false;
-    private boolean partyOpened = true;
 
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -112,7 +111,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     break;
                 case NetworkEvents.Client.HOST_LEFT:
                     mediaPlayer.pause();
-                    partyOpened = false;
                     dialogs.showHostLeftDialog();
                     break;
                 case NetworkEvents.COMMUNICATION_FAILED:
@@ -404,7 +402,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                 partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
             else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.ENTER_PLAYER));
-            if(partyOpened) mediaPlayer.start();
+            if(partyManager.getPartyParams().isPartyReady()) mediaPlayer.start();
             exitedPlayer = false;
         }
         super.onResume();

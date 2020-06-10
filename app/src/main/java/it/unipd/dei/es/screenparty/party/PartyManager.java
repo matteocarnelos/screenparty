@@ -56,9 +56,14 @@ public class PartyManager {
     public void restart() {
         if(partyParams.getRole() == PartyParams.Role.HOST) {
             host.interrupt();
+            try { host.join(); }
+            catch(InterruptedException ignored) { return; }
             startAsHost();
-        } else {
+        }
+        else {
             client.interrupt();
+            try { client.join(); }
+            catch(InterruptedException ignored) { return; }
             startAsClient(client.getHostIp());
         }
     }
