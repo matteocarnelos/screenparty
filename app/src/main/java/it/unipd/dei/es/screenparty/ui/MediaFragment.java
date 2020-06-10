@@ -47,7 +47,6 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
     private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
-    public final int NOTCH_MINIMUM_HEIGHT = 24;
 
     private TextureView textureView;
     private MediaPlayer mediaPlayer;
@@ -307,11 +306,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         view.getViewTreeObserver().addOnWindowFocusChangeListener(windowFocusChangeListener);
         view.setOnTouchListener(touchListener);
 
-        int statusBarHeightPixels = MediaUtils.getStatusBarHeightPixels(requireActivity().getWindow());
-        statusBarHeight = statusBarHeightPixels / partyManager.getPartyParams().getScreenParams().getYdpi();
-
-        Log.d(MEDIA_FRAGMENT_TAG, "status bar: " + (statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi()));
-
         return view;
     }
 
@@ -341,14 +335,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                if(statusBarHeight * partyManager.getPartyParams().getScreenParams().getYdpi() > NOTCH_MINIMUM_HEIGHT)
-                    partyManager.getPartyParams().getScreenParams().setHeight((partyManager.getPartyParams().getScreenParams().getHeight() - statusBarHeight));
-
+                partyManager.getPartyParams().getScreenParams().setHeight((textureView.getHeight()/partyManager.getPartyParams().getScreenParams().getYdpi()));
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
-                Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoHeight()));
-                Log.d(MEDIA_FRAGMENT_TAG, String.valueOf(mp.getVideoWidth()));
-
                 float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
                 textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio));
                 if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
