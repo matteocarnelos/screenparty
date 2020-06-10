@@ -7,7 +7,7 @@
     <string name="connected_icon_description">[connected icon]</string>
 
     <!-- StartFragment strings -->
-    <string name="welcome_label_text">Welcome to Screen Party!</string>
+    <string name="welcome_label_text">Welcome to ScreenParty!</string>
     <string name="description_label_text">With ScreenParty you can watch videos with your friends by sharing the screen of your phones.</string>
     <string name="instructions_label_text">To get started, you can either create a new party or join an existing one.</string>
     <string name="host_button_text">Host a new party</string>
