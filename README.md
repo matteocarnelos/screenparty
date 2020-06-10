@@ -1,8 +1,6 @@
 # Screen Party
-Share screen across devices.
 
-## Description
-**_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen
+**_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen.
 
 ## Requirements
 In order to use ScreenParty, there are a two requirements that must be fulfilled:
@@ -31,7 +29,7 @@ After the IP address have been typed, the _Connect_ button will highlight. By pr
 At this point you must wait for the host to proceed.
 
 ### Alignment phase
-At this stage, the three devices must be aligned as shown by the arrows, which will appear on the side of the screen. The host will always be in the central position. In the host device's screen will appear a _Start!_ button. By pressing it, all three devices will start play the video
+At this stage, the three devices must be aligned as shown by the arrows, which will appear on the side of the screen. The host will always be in the central position. In the host device's screen will appear a _Start!_ button. By pressing it, all three devices will start play the video.
 
 ### Playback phase
 At this stage, the devices should all be playing the video simultaneously. The playback controls are avaible on the host's screen.
