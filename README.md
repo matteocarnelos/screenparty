@@ -1,7 +1,7 @@
 <h1 align="center">Screen Party</h1>
 
 <p align="center">
-  <img width="460" height="300" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
+  <img width="200" height="200" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
 </p>
 
 ## Description
