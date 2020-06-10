@@ -1,6 +1,8 @@
 <p align="center">
-  <img height="300" src="logo.png">
+  <img src="logo.png">
 </p>
+
+<h3 align="center"><i>"Screen is not the limit"</i></h3>
 
 # ScreenParty
 
@@ -13,7 +15,7 @@ In order to use ScreenParty, there are a two requirements that must be fulfilled
   * All three devices must have in storage the video you want to play
   * Video formats are limited to the [MediaPlayer supported formats](https://developer.android.com/guide/topics/media/media-formats#video-codecs).
 
-There are no restriction to the aspect ratio of the video, although better results are achieved with a 16:9 ratio.
+There are no restrictions to the aspect ratio of the video, although better results are achieved with a 16:9 ratio.
 ## Usage
 As you start **_ScreenParty_** you have two options: you can either [host a new party](#host_a_new_party) or you can [join an existing one](#join_an_existing_party).
 In both cases the users must select the video to play, so make sure you select the same video on all three devices.
