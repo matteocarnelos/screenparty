@@ -1,4 +1,6 @@
-<p style="align:center"><img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" /></p>
+<p align="center">
+  <img width="200" height="200" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
+</p>
 
 # Screen Party
 
