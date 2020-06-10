@@ -1,10 +1,8 @@
-<h1 align="center">Screen Party</h1>
-
 <p align="center">
   <img width="200" height="200" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
 </p>
 
-## Description
+# ScreenParty
 
 **_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen.
 
