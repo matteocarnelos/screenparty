@@ -80,8 +80,10 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null)
+            if(event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null) {
                 toggleMediaControlsVisibility();
+                hideSystemUI();
+            }
             return true;
         }
     };
@@ -253,6 +255,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        requireActivity().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void showSystemUI() {
@@ -276,12 +281,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
      * Switches the state (visible or not) of the media controller.
      */
     private void toggleMediaControlsVisibility() {
-        if (mediaController.isShowing()) {
-            mediaController.hide();
-            View decorView = requireActivity().getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
+        if(mediaController.isShowing()) mediaController.hide();
         else mediaController.show();
     }
 
