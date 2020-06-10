@@ -2,6 +2,8 @@
   <img src="logo.png">
 </p>
 
+<h3 align="center"><i>"One screen it's not the limit"</i></h3>
+
 # ScreenParty
 
 **_ScreenParty_** is an app that allows you to align three Android smartphones and use their screens as one whole single screen.
