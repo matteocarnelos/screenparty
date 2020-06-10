@@ -2,7 +2,7 @@
   <img src="logo.png">
 </p>
 
-<h3 align="center"><i>"One screen it's not the limit"</i></h3>
+<h3 align="center"><i>"Screen it's not the limit"</i></h3>
 
 # ScreenParty
 
