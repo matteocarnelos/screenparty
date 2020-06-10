@@ -37,7 +37,6 @@ import java.io.IOException;
 import it.unipd.dei.es.screenparty.R;
 import it.unipd.dei.es.screenparty.media.MediaModifier;
 import it.unipd.dei.es.screenparty.media.MediaSyncController;
-import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
@@ -58,7 +57,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private PartyManager partyManager = PartyManager.getInstance();
     private NavController navController;
 
-    private float statusBarHeight;
     private AlertDialog temporaryPauseAlertDialog;
     private boolean exitedPlayer = false;
     private boolean partyOpened = true;
