@@ -22,7 +22,7 @@ public class MediaModifier {
      * @param aspectRatio Aspect ratio of the video.
      * @return Matrix containing the transformation.
      */
-    public Matrix prepareScreen(@NotNull PartyParams partyParams, float aspectRatio) {
+    public Matrix prepareScreen(@NotNull PartyParams partyParams, float aspectRatio,float notchBar) {
         Matrix matrix = new Matrix();
         PartyParams.Position position = partyParams.getPosition();
         float screenWidth = partyParams.getScreenParams().getWidth();
@@ -44,17 +44,17 @@ public class MediaModifier {
         switch (position) {
             case LEFT:
                 Matrix leftMatrix = new Matrix();
-                centerMatrix(frameHeight, yDpi, screenHeight, leftMatrix);
+                centerMatrix(frameHeight, yDpi, screenHeight,notchBar, leftMatrix);
                 scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, leftMatrix);
                 return horizontalMatrixTranslation(((-frameHeight * aspectRatio) + frameWidth) * xDpi, leftMatrix);
             case CENTER:
                 Matrix centralMatrix = new Matrix();
-                centerMatrix(frameHeight, yDpi, screenHeight, centralMatrix);
+                centerMatrix(frameHeight, yDpi, screenHeight,notchBar, centralMatrix);
                 scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, centralMatrix);
                 return horizontalMatrixTranslation(-xDpi * (frameHeight * aspectRatio - screenWidth) / 2, centralMatrix);
             case RIGHT:
                 Matrix rightMatrix = new Matrix();
-                centerMatrix(frameHeight, yDpi, screenHeight, rightMatrix);
+                centerMatrix(frameHeight, yDpi, screenHeight,notchBar, rightMatrix);
                 scaleMatrixHorizontally((frameHeight * aspectRatio) / screenWidth, rightMatrix);
                 return horizontalMatrixTranslation((screenWidth - frameWidth) * xDpi, rightMatrix);
         }
@@ -69,13 +69,13 @@ public class MediaModifier {
      * @param screenHeight Number of inches of the screen's height.
      * @return Matrix containing the transformation.
      */
-    public Matrix centerMatrix(float frameHeight, float screenYDpi, float screenHeight, Matrix matrix) {
+    public Matrix centerMatrix(float frameHeight, float screenYDpi, float screenHeight,float notchBar, Matrix matrix) {
         float yScalingRate = frameHeight / screenHeight;
-        float yTranslation = screenYDpi * (screenHeight - frameHeight) / 2;
+        float yTranslation = (screenYDpi * (screenHeight - frameHeight-notchBar) /2);
         scaleMatrixVertically(yScalingRate, matrix);
         verticalMatrixTranslation(yTranslation, matrix);
         Log.d(MEDIA_MODIFIER_TAG, "Scaling height: " + frameHeight / screenHeight);
-        Log.d(MEDIA_MODIFIER_TAG, "Translation Height: " + (screenYDpi * (screenHeight - frameHeight) / 2));
+        Log.d(MEDIA_MODIFIER_TAG, "Translation Height: " + ((screenYDpi * (screenHeight - frameHeight) /2)-notchBar));
         return matrix;
     }
 

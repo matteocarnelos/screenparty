@@ -47,6 +47,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
 
     private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
 
+    private float notchBar=0;
     private TextureView textureView;
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
@@ -331,11 +332,16 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                partyManager.getPartyParams().getScreenParams().setHeight((textureView.getHeight()/partyManager.getPartyParams().getScreenParams().getYdpi()));
+                if(textureView.getHeight()/partyManager.getPartyParams().getScreenParams().getYdpi()<partyManager.getPartyParams().getScreenParams().getHeight()) {
+                    notchBar=(partyManager.getPartyParams().getScreenParams().getHeight()*partyManager.getPartyParams().getScreenParams().getYdpi()-textureView.getHeight())/
+                    partyManager.getPartyParams().getScreenParams().getYdpi();
+                    partyManager.getPartyParams().getScreenParams().setHeight((textureView.getHeight() / partyManager.getPartyParams().getScreenParams().getYdpi()));
+                    Log.d(MEDIA_FRAGMENT_TAG,"Notch Bar: "+notchBar);
+                }
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
                 Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
                 float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
-                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio));
+                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio,notchBar));
                 if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                     enableMediaController();
                 else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
