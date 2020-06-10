@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200" height="200" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
+  <img height="400" src="logo.png">
 </p>
 
 # ScreenParty
