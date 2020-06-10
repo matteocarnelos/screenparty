@@ -140,8 +140,7 @@ public class NetworkClient extends Thread {
                     handler.obtainMessage(NetworkEvents.Client.HOST_PLAY).sendToTarget();
                     break;
                 case NetworkCommands.Host.PAUSE:
-                    int pausePos = Integer.parseInt(message.getArgument(0));
-                    handler.obtainMessage(NetworkEvents.Client.HOST_PAUSE, pausePos).sendToTarget();
+                    handler.obtainMessage(NetworkEvents.Client.HOST_PAUSE).sendToTarget();
                     break;
                 case NetworkCommands.Host.SEEK:
                     int seekPos = Integer.parseInt(message.getArgument(0));

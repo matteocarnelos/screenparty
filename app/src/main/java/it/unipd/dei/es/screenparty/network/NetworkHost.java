@@ -178,7 +178,12 @@ public class NetworkHost extends Thread {
                     client.setReady(true);
                     boolean allReady = true;
                     for(ClientWorker worker : workers) allReady &= worker.client.isReady();
-                    if(allReady)broadcast(new NetworkMessage(NetworkCommands.Host.PLAY));
+                    if(allReady){
+                        broadcast(new NetworkMessage("DUMMY"));
+                        try { sleep(100); }
+                        catch (InterruptedException ignored) { return; }
+                        broadcast(new NetworkMessage(NetworkCommands.Host.PLAY));
+                    }
                     handler.obtainMessage(NetworkEvents.Client.HOST_PLAY).sendToTarget();
                 }
                 NetworkMessage response = new NetworkMessage(NetworkCommands.Host.UNKNOWN);

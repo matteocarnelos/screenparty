@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -47,6 +48,7 @@ public class PrepareFragment extends Fragment {
 
     private void goToStart() {
         partyManager.stop();
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         navController.popBackStack(R.id.startFragment, false);
     }
 
@@ -155,6 +157,7 @@ public class PrepareFragment extends Fragment {
         super.onCreate(savedInstanceState);
         partyManager.setEventsHandler(handler);
         requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override

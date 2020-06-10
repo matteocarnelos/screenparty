@@ -98,7 +98,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     break;
                 case NetworkEvents.Client.HOST_PAUSE:
                     mediaPlayer.pause();
-                    mediaPlayer.seekTo((int) msg.obj);
                     break;
                 case NetworkEvents.Client.HOST_SEEK:
                     int pos = (int) msg.obj;
@@ -388,6 +387,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onDestroy();
     }
 }

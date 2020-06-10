@@ -22,17 +22,15 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     @Override
     public void start() {
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
+
         mediaPlayer.start();
     }
 
     @Override
     public void pause() {
+        partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
+
         mediaPlayer.pause();
-        NetworkMessage message = new NetworkMessage.Builder()
-                .setCommand(NetworkCommands.Host.PAUSE)
-                .addArgument(String.valueOf(getCurrentPosition()))
-                .build();
-        partyManager.sendMessage(message);
     }
 
     @Override
