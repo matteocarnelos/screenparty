@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="400" src="logo.png">
+  <img height="300" src="logo.png">
 </p>
 
 # ScreenParty
