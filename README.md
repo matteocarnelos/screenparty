@@ -23,8 +23,8 @@ After the other two devices have succesfully joined your party, the _Next_ butto
 
 ### Join an existing party
 As you select _Join an existing party_, after choosing the video to play, you will see:
-  * an input text bar. The IP address of the host device must be inserted here.
-  * the _Connect_ button.
+  * An input text bar. The IP address of the host device must be inserted here.
+  * The _Connect_ button.
 After the IP address have been typed, the _Connect_ button will highlight. By pressing it, if the address is correct, under the text bar will be displayed "Connected!". 
 At this point you must wait for the host to proceed.
 
