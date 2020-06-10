@@ -52,6 +52,7 @@
     <string name="dialog_button_retry">Retry</string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_quit">Quit</string>
+    <string name="dialog_button_open_settings">Open settings</string>
 
     <string name="dialog_title_join_failed">Join failed</string>
     <string name="dialog_title_party_full">Party full</string>
