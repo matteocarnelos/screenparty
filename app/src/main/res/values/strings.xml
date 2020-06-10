@@ -1,6 +1,6 @@
 <resources>
     <!-- App strings -->
-    <string name="app_name">Screen Party</string>
+    <string name="app_name">ScreenParty</string>
     <string name="step1_text">Step 1</string>
     <string name="step2_text">Step 2</string>
     <string name="device_icon_description">[device icon]</string>
