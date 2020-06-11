@@ -343,17 +343,17 @@ public class HostFragment extends Fragment {
     }
 
     /**
-     * Set the state of the device card as waiting, that is:
+     * Set the state of the device card as waiting, that is: <br>
      * - The label of the {@link TextView} at the index {@param index} of the deviceNameLabels
-     *   {@link List<TextView>} shows the default text "Waiting".
+     *   {@link List<TextView>} shows the default text "Waiting". <br>
      * - The label of the {@link TextView} at the index {@param index} of the deviceInfoLabels
-     *   {@link List<TextView>} shows the default text "".
+     *   {@link List<TextView>} shows the default text "". <br>
      * - The visibility of the {@link ProgressBar} at the index {@param index} of the deviceSpinners
-     *   {@link List<ProgressBar>} is set as visible.
+     *   {@link List<ProgressBar>} is set as visible. <br>
      * - The visibility of the {@link ImageView} at the index {@param index} of the deviceIcons
-     *   {@link List<ImageView>} is set as not visible.
+     *   {@link List<ImageView>} is set as not visible. <br>
      * - The visibility of the {@link ImageView} at the index {@param index} of the
-     *   deviceConnectedIcons {@link List<ImageView>} is set as not visible.
+     *   deviceConnectedIcons {@link List<ImageView>} is set as not visible. <br>
      * @param index: The index of the connected device in the deviceNameLabels
      * {@link List<TextView>}.
      */
@@ -363,6 +363,10 @@ public class HostFragment extends Fragment {
         deviceSpinners.get(index).setVisibility(View.VISIBLE);
         deviceIcons.get(index).setVisibility(View.INVISIBLE);
         deviceConnectedIcons.get(index).setVisibility(View.INVISIBLE);
+    }
+
+    private void openMediaPicker() {
+        MediaUtils.openMediaPicker(this);
     }
 
     @Override
@@ -415,10 +419,6 @@ public class HostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
         openMediaPicker();
-    }
-
-    private void openMediaPicker() {
-        MediaUtils.openMediaPicker(this);
     }
 
     @Override
