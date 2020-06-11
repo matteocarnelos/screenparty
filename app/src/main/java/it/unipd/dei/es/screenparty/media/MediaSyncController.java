@@ -12,6 +12,8 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
  */
 public class MediaSyncController implements MediaController.MediaPlayerControl {
 
+    private static final int COMMAND_DELAY = 10;
+
     private PartyManager partyManager = PartyManager.getInstance();
     private MediaPlayer mediaPlayer;
 
@@ -33,7 +35,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
                         mediaPlayer.start();
                     }
                 },
-                10
+                COMMAND_DELAY
         );
     }
 
@@ -48,7 +50,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
                         mediaPlayer.pause();
                     }
                 },
-                10
+                COMMAND_DELAY
         );
     }
 
@@ -67,7 +69,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
                         mediaPlayer.seekTo(pos);
                     }
                 },
-                10
+                COMMAND_DELAY
         );
     }
 
