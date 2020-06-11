@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import it.unipd.dei.es.screenparty.R;
 
 /**
- * Manages the StartFragment fragment.
+ * Manage the StartFragment fragment.
  */
 public class StartFragment extends Fragment {
 

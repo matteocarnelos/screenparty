@@ -65,7 +65,7 @@ public class MediaModifier {
     }
 
     /**
-     * Scales and translates the matrix keeping the media centered to the screen.
+     * Scale and translates the matrix keeping the media centered to the screen.
      * @param frameHeight Number of inches to be shown.
      * @param screenYDpi The y density pixel of the device's screen.
      * @param screenHeight Number of inches of the screen's height.
@@ -82,7 +82,7 @@ public class MediaModifier {
 
 
     /**
-     * Scales the matrix horizontally scaleX times.
+     * Scale the matrix horizontally scaleX times.
      * @param scaleX The time to multiply the width of the video.
      */
     public void scaleMatrixHorizontally(float scaleX, @NotNull Matrix matrix) {
@@ -90,7 +90,7 @@ public class MediaModifier {
     }
 
     /**
-     * Scales the matrix vertically scaleY times.
+     * Scale the matrix vertically scaleY times.
      * @param scaleY Number of times to scale the matrix.
      */
     public void scaleMatrixVertically(float scaleY, @NotNull Matrix matrix) {
@@ -98,7 +98,7 @@ public class MediaModifier {
     }
 
     /**
-     * Translates the matrix vertically of pyTranslation pixels.
+     * Translate the matrix vertically of pyTranslation pixels.
      * @param pyTranslation Number of pixel for the translation.
      * @param matrix Matrix to be translated.
      */
@@ -108,7 +108,7 @@ public class MediaModifier {
     }
 
     /**
-     * Translates the matrix horizontally of pxTranslation pixels.
+     * Translate the matrix horizontally of pxTranslation pixels.
      * @param pxTranslation Number of pixel for the translation
      * @param matrix Matrix to be translated.
      */

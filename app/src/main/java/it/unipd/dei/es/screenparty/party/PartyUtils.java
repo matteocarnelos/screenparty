@@ -20,7 +20,7 @@ public class PartyUtils {
     private static final String UNKNOWN_DEVICE_NAME = "Unknown";
 
     /**
-     * Sets the height and width of the screen to be shown on the host and on all the clients.
+     * Set the height and width of the screen to be shown on the host and on all the clients.
      * The height and the width are set according to 3 cases.
      * @param hostParam The params of the Host device.
      * @param clientsParams List containing the media params of the clients.

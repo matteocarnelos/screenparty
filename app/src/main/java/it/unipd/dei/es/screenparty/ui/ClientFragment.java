@@ -44,7 +44,7 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * Manages the ClientFragment fragment.
+ * Manage the ClientFragment fragment.
  */
 public class ClientFragment extends Fragment {
 
@@ -63,7 +63,7 @@ public class ClientFragment extends Fragment {
     private PartyManager partyManager = PartyManager.getInstance();
 
     /**
-     * Manages the event of the back button being pressed.
+     * Manage the event of the back button being pressed.
      */
     OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -154,12 +154,12 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Manages the Dialog's windows.
+     * Manage the Dialog's windows.
      */
     private class Dialogs {
 
         /**
-         * Shows the "Media Error" dialog window.
+         * Show the "Media Error" dialog window.
          */
         private void showInvalidUriDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -186,7 +186,7 @@ public class ClientFragment extends Fragment {
         }
 
         /**
-         * Shows the "Join Failed" dialog window.
+         * Show the "Join Failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showJoinFailedDialog(String message) {
@@ -208,7 +208,7 @@ public class ClientFragment extends Fragment {
         }
 
         /**
-         * Shows the "Party Full" dialog window.
+         * Show the "Party Full" dialog window.
          */
         private void showPartyFullDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -219,7 +219,7 @@ public class ClientFragment extends Fragment {
         }
 
         /**
-         * Shows the "Host Left" dialog window.
+         * Show the "Host Left" dialog window.
          */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -240,7 +240,7 @@ public class ClientFragment extends Fragment {
         }
 
         /**
-         * Shows the "Communication Failed" dialog window.
+         * Show the "Communication Failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showCommunicationFailedDialog(String message) {

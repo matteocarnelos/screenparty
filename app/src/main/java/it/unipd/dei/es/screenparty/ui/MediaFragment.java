@@ -44,7 +44,7 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
 /**
- * Manages the MediaFragment fragment.
+ * Manage the MediaFragment fragment.
  */
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
@@ -65,7 +65,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private boolean exitedPlayer = false;
 
     /**
-     * Manages the event of the back button being pressed.
+     * Manage the event of the back button being pressed.
      */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -75,7 +75,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     };
 
     /**
-     * Hides the UI on focus changed.
+     * Hide the UI on focus changed.
      */
     private ViewTreeObserver.OnWindowFocusChangeListener windowFocusChangeListener = new ViewTreeObserver.OnWindowFocusChangeListener() {
         @Override
@@ -85,7 +85,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     };
 
     /**
-     * Displays the UI as the screen is pressed.
+     * Display the UI as the screen is pressed.
      */
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View v, MotionEvent event) {
@@ -125,7 +125,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     };
 
     /**
-     * Navigates back to the {@link StartFragment}.
+     * Navigate back to the {@link StartFragment}.
      */
     private void goToStart() {
         partyManager.stop();
@@ -135,7 +135,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Behaves accordingly to the {@link NetworkEvents} related to the received {@link Message}.
+     * Behave accordingly to the {@link NetworkEvents} related to the received {@link Message}.
      */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -179,12 +179,12 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     };
 
     /**
-     * Manages the Dialog's windows.
+     * Manage the Dialog's windows.
      */
     private class Dialogs {
 
         /**
-         * Shows the "Media preparation failed" dialog window.
+         * Show the "Media preparation failed" dialog window.
          */
         private void showMediaPreparationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
@@ -205,7 +205,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
 
         /**
-         * Shows the "Client left" dialog window.
+         * Show the "Client left" dialog window.
          */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -226,7 +226,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
 
         /**
-         * Shows the "Party Closed" dialog window.
+         * Show the "Party Closed" dialog window.
          */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -247,7 +247,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
 
         /**
-         * Shows the "Video temporary paused" dialog window.
+         * Show the "Video temporary paused" dialog window.
          */
         private void showClientExitPlayerDialog() {
             temporaryPauseAlertDialog = new MaterialAlertDialogBuilder(requireContext())
@@ -269,7 +269,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
 
         /**
-         * Shows the "Communication failed" dialog window.
+         * Show the "Communication failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showCommunicationFailedDialog(String message) {
@@ -292,7 +292,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
 
         /**
-         * Shows the "Are you sure?" dialog window.
+         * Show the "Are you sure?" dialog window.
          */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -309,7 +309,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Hides the system UI.
+     * Hide the system UI.
      */
     private void hideSystemUI() {
         ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
@@ -328,7 +328,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Shows the system UI.
+     * Show the system UI.
      */
     private void showSystemUI() {
         ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
@@ -338,7 +338,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Sets and show the MediaController for the textureView.
+     * Set and show the MediaController for the textureView.
      */
     private void enableMediaController() {
         mediaController.setMediaPlayer(mediaSyncController);
@@ -348,7 +348,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Switches the state (visible or not) of the media controller.
+     * Switch the state (visible or not) of the media controller.
      */
     private void toggleMediaControlsVisibility() {
         if(mediaController.isShowing()) mediaController.hide();

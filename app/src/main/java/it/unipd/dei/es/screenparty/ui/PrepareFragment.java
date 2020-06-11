@@ -33,7 +33,7 @@ import it.unipd.dei.es.screenparty.party.PartyParams;
 import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 /**
- * Manages the PrepareFragment fragment.
+ * Manage the PrepareFragment fragment.
  */
 public class PrepareFragment extends Fragment {
 
@@ -43,7 +43,7 @@ public class PrepareFragment extends Fragment {
     private PartyManager partyManager = PartyManager.getInstance();
 
     /**
-     * Manages the event of the back button being pressed.
+     * Manage the event of the back button being pressed.
      */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -53,7 +53,7 @@ public class PrepareFragment extends Fragment {
     };
 
     /**
-     * Navigates back to the {@link StartFragment}.
+     * Navigate back to the {@link StartFragment}.
      */
     private void goToStart() {
         partyManager.stop();
@@ -74,7 +74,7 @@ public class PrepareFragment extends Fragment {
     };
 
     /**
-     * Behaves accordingly to the {@link NetworkEvents} related to the received {@link Message}.
+     * Behave accordingly to the {@link NetworkEvents} related to the received {@link Message}.
      */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -99,12 +99,12 @@ public class PrepareFragment extends Fragment {
     };
 
     /**
-     * Manages the Dialog's windows.
+     * Manage the Dialog's windows.
      */
     private class Dialogs {
 
         /**
-         * Shows the "Client left" dialog window.
+         * Show the "Client left" dialog window.
          */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -125,7 +125,7 @@ public class PrepareFragment extends Fragment {
         }
 
         /**
-         * Shows the "Party closed" dialog window.
+         * Show the "Party closed" dialog window.
          */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -146,7 +146,7 @@ public class PrepareFragment extends Fragment {
         }
 
         /**
-         * Shows the "Communication failed" dialog window.
+         * Show the "Communication failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showCommunicationFailedDialog(String message) {
@@ -169,7 +169,7 @@ public class PrepareFragment extends Fragment {
         }
 
         /**
-         * Shows the "Are you sure?" dialog window.
+         * Show the "Are you sure?" dialog window.
          */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())

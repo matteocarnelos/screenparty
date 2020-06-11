@@ -14,12 +14,12 @@ public class MediaParams {
     private float frameHeight;
 
     /**
-     * Creates an empty {@link MediaParams}
+     * Create an empty {@link MediaParams}
      */
     public MediaParams() { }
 
     /**
-     * Creates a new {@link MediaParams} with the given params
+     * Create a new {@link MediaParams} with the given params
      * @param uri The media's uri.
      * @param mediaWidth The media's width in pixel.
      * @param mediaHeight The media's Height in pixel.

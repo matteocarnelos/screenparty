@@ -22,7 +22,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     }
 
     /**
-     *Plays the video in the current device and send the command to the others.
+     *Play the video in the current device and send the command to the others.
      * In the current device the video is played with a small delay
      */
     @Override
@@ -40,7 +40,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     }
 
     /**
-     *Pauses the video in the current device and send the command to the others.
+     *Pause the video in the current device and send the command to the others.
      */
     @Override
     public void pause() {
@@ -57,7 +57,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
     }
 
     /**
-     * Seeks to specified time position in the current device and send the command to the others.
+     * Seek to specified time position in the current device and send the command to the others.
      * @param pos
      */
     @Override

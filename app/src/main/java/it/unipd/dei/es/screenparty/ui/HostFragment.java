@@ -45,7 +45,7 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * Manages the HostFragment fragment.
+ * Manage the HostFragment fragment.
  */
 public class HostFragment extends Fragment {
 
@@ -62,7 +62,7 @@ public class HostFragment extends Fragment {
     private PartyManager partyManager = PartyManager.getInstance();
 
     /**
-     * Manages the event of the back button being pressed.
+     * Manage the event of the back button being pressed.
      */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
@@ -94,7 +94,7 @@ public class HostFragment extends Fragment {
     };
 
     /**
-     * Updates the state of the {@link HostFragment} accordingly to the {@link NetworkEvents}
+     * Update the state of the {@link HostFragment} accordingly to the {@link NetworkEvents}
      * related to the received {@link Message}.
      */
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -147,12 +147,12 @@ public class HostFragment extends Fragment {
     };
 
     /**
-     * Manages the Dialog's windows.
+     * Manage the Dialog's windows.
      */
     private class Dialogs {
 
         /**
-         * Shows the "Media Error" dialog window.
+         * Show the "Media Error" dialog window.
          */
         private void showInvalidUriDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -179,7 +179,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Could not start the server" dialog window.
+         * Show the "Could not start the server" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showNotStartedDialog(String message) {
@@ -207,7 +207,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Invalid IP Address" dialog window.
+         * Show the "Invalid IP Address" dialog window.
          */
         private void showInvalidIPDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -235,7 +235,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Connection failed" dialog window.
+         * Show the "Connection failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showConnectionFailedDialog(String message) {
@@ -247,7 +247,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Join Failed" dialog window.
+         * Show the "Join Failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showJoinFailedDialog(String message) {
@@ -259,7 +259,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Client left" dialog window.
+         * Show the "Client left" dialog window.
          */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -269,7 +269,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Communication failed" dialog window.
+         * Show the "Communication failed" dialog window.
          * @param message: The message to be displayed in the dialog window.
          */
         private void showCommunicationFailedDialog(String message) {
@@ -292,7 +292,7 @@ public class HostFragment extends Fragment {
         }
 
         /**
-         * Shows the "Back confirmation" dialog window.
+         * Show the "Back confirmation" dialog window.
          */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
@@ -309,7 +309,7 @@ public class HostFragment extends Fragment {
     }
 
     /**
-     * Updates the list of the connected devices when a new device is connected.
+     * Update the list of the connected devices when a new device is connected.
      * @param clients: list of the connected devices.
      */
     private void clientListChanged(List<ConnectedClient> clients) {

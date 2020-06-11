@@ -1,7 +1,7 @@
 package it.unipd.dei.es.screenparty.party;
 
 /**
- * Stores both horizontal and vertical dimensions and pixel density of the screen of a device.
+ * Store both horizontal and vertical dimensions and pixel density of the screen of a device.
  */
 public class ScreenParams {
 

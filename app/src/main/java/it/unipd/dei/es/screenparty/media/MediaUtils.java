@@ -35,7 +35,7 @@ public class MediaUtils {
     }
 
     /**
-     * Opens a window to select the video to be played.
+     * Open a window to select the video to be played.
      * @param fragment Fragment needed to start the activity.
      */
     public static void openMediaPicker(@NotNull Fragment fragment) {
