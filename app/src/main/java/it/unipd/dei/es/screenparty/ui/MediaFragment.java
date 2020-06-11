@@ -98,6 +98,33 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     };
 
     /**
+     * Listen for when the mediaPlayer {@link MediaPlayer} is done preparing.
+     */
+    private MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+            if(textureView.getHeight()/partyManager.getPartyParams().getScreenParams().getYdpi()<partyManager.getPartyParams().getScreenParams().getHeight()) {
+                notchBar=(partyManager.getPartyParams().getScreenParams().getHeight()*partyManager.getPartyParams().getScreenParams().getYdpi()-textureView.getHeight())/
+                        partyManager.getPartyParams().getScreenParams().getYdpi();
+                partyManager.getPartyParams().getScreenParams().setHeight((textureView.getHeight() / partyManager.getPartyParams().getScreenParams().getYdpi()));
+                Log.d(MEDIA_FRAGMENT_TAG,"Notch Bar: "+notchBar);
+            }
+            Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
+            Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
+            float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
+            textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio,notchBar));
+            if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
+                enableMediaController();
+            else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
+            if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT)
+                mediaPlayer.setVolume(0, 1);
+            else if(partyManager.getPartyParams().getPosition() == PartyParams.Position.LEFT)
+                mediaPlayer.setVolume(1, 0);
+            else mediaPlayer.setVolume(1, 1);
+        }
+    };
+
+    /**
      * Navigates back to the {@link StartFragment}.
      */
     private void goToStart() {
@@ -367,45 +394,16 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         } catch(IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
         mediaPlayer.prepareAsync();
 
-        /**
-         * Listen for when the mediaPlayer {@link MediaPlayer} is done preparing.
-         */
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                if(textureView.getHeight()/partyManager.getPartyParams().getScreenParams().getYdpi()<partyManager.getPartyParams().getScreenParams().getHeight()) {
-                    notchBar=(partyManager.getPartyParams().getScreenParams().getHeight()*partyManager.getPartyParams().getScreenParams().getYdpi()-textureView.getHeight())/
-                    partyManager.getPartyParams().getScreenParams().getYdpi();
-                    partyManager.getPartyParams().getScreenParams().setHeight((textureView.getHeight() / partyManager.getPartyParams().getScreenParams().getYdpi()));
-                    Log.d(MEDIA_FRAGMENT_TAG,"Notch Bar: "+notchBar);
-                }
-                Log.d(MEDIA_FRAGMENT_TAG, "Texture height: " + textureView.getHeight());
-                Log.d(MEDIA_FRAGMENT_TAG, "Texture width: " + textureView.getWidth());
-                float aspectRatio = partyManager.getPartyParams().getMediaParams().getAspectRatio();
-                textureView.setTransform(mediaModifier.prepareScreen(partyManager.getPartyParams(), aspectRatio,notchBar));
-                if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
-                    enableMediaController();
-                else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.READY));
-                if(partyManager.getPartyParams().getPosition() == PartyParams.Position.RIGHT)
-                    mediaPlayer.setVolume(0, 1);
-                else if(partyManager.getPartyParams().getPosition() == PartyParams.Position.LEFT)
-                    mediaPlayer.setVolume(1, 0);
-                else mediaPlayer.setVolume(1, 1);
-            }
-        });
+        mediaPlayer.setOnPreparedListener(preparedListener);
     }
-
 
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    }
-
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return false;
     }
-
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
