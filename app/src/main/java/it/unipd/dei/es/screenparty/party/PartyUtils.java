@@ -58,12 +58,22 @@ public class PartyUtils {
         }
     }
 
+    /**
+     * Get the name of the device. This method returns the name that the user has given to the device.
+     * @param contentResolver The {@link ContentResolver} needed for accessing device information.
+     * @return A string containing the name of the device.
+     */
     public static String getDeviceName(ContentResolver contentResolver) {
         String deviceName = Settings.Secure.getString(contentResolver, "bluetooth_name");
         if(deviceName == null) return UNKNOWN_DEVICE_NAME;
         return deviceName;
     }
 
+    /**
+     * Get the navigation bar height in pixel of the device.
+     * @param activity The {@link Activity} used for accessing device information.
+     * @return The height in pixels.
+     */
     public static int getNavigationBarHeightPixels(@NotNull Activity activity) {
         Rect rectangle = new Rect();
         DisplayMetrics displayMetrics = new DisplayMetrics();
