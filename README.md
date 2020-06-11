@@ -17,7 +17,7 @@ In order to use ScreenParty, there are a three requirements that must be fulfill
 
 There are no restrictions to the aspect ratio of the video, although better results are achieved with a 16:9 ratio.
 ## Usage
-As you start **_ScreenParty_** you have two options: you can either [host a new party](#host_a_new_party) or you can [join an existing one](#join_an_existing_party).
+As you start **_ScreenParty_** you have two options: you can either host a new party or you can join an existing one.
 In both cases the users must select the video to play, so make sure you select the same video on all three devices.
 
 ### Host a new party
@@ -25,7 +25,7 @@ As you select _Host a new party_, after choosing the video to play, you will see
   * Your IP address. This address will be used by other devides to join your party.
   * An overview of the connected devices.
   * The _Next_ button.
-After the other two devices have succesfully joined your party, the _Next_ button will highlight. By pressing it, all three devices will proceed to the [alignment phase](#alignment_phase).
+After the other two devices have succesfully joined your party, the _Next_ button will highlight. By pressing it, all three devices will proceed to the alignment phase.
 
 ### Join an existing party
 As you select _Join an existing party_, after choosing the video to play, you will see:
