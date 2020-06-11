@@ -319,19 +319,19 @@ public class HostFragment extends Fragment {
     }
 
     /**
-     * Set the state of the device card as ready, that is:
-     * - The label of the {@link TextView} at the index {@param index} of the deviceNameLabels
-     *   {@link List<TextView>} shows the name of the connected device.
-     * - The label of the {@link TextView} at the index {@param index} of the deviceInfoLabels
-     *   {@link List<TextView>} shows "Ready".
-     * - The visibility of the {@link ProgressBar} at the index {@param index} of the
-     *   deviceSpinners {@link List<ProgressBar>} is set as not visible.
-     * - The visibility of the {@link ImageView} at the index {@param index} of the deviceIcons
-     *   {@link List<ImageView>} is set as visible.
-     * - The visibility of the {@link ImageView} at the index {@param index} of the
-     *   deviceConnectedIcons {@link List<ImageView>} is set as visible.
+     * Set the state of the device card as ready, that is:<br>
+     * - The label of the {@link TextView} at the given index of the deviceNameLabels
+     *   {@link List<TextView>} shows the name of the connected device. <br>
+     * - The label of the {@link TextView} at the given index of the deviceInfoLabels
+     *   {@link List<TextView>} shows "Ready".<br>
+     * - The visibility of the {@link ProgressBar} at the given index of the
+     *   deviceSpinners {@link List<ProgressBar>} is set as not visible.<br>
+     * - The visibility of the {@link ImageView} at the given index of the deviceIcons
+     *   {@link List<ImageView>} is set as visible.<br>
+     * - The visibility of the {@link ImageView} at the given index of the
+     *   deviceConnectedIcons {@link List<ImageView>} is set as visible.<br>
      * @param index: The index of the connected device in the deviceNameLabels
-     * {@link List<TextView>}.
+     * {@link List<TextView>}.<br>
      * @param name: The name of the connected device.
      */
     private void setCardReady(int index, String name) {
@@ -344,15 +344,15 @@ public class HostFragment extends Fragment {
 
     /**
      * Set the state of the device card as waiting, that is: <br>
-     * - The label of the {@link TextView} at the index {@param index} of the deviceNameLabels
+     * - The label of the {@link TextView} at the given index of the deviceNameLabels
      *   {@link List<TextView>} shows the default text "Waiting". <br>
-     * - The label of the {@link TextView} at the index {@param index} of the deviceInfoLabels
+     * - The label of the {@link TextView} at the given index of the deviceInfoLabels
      *   {@link List<TextView>} shows the default text "". <br>
-     * - The visibility of the {@link ProgressBar} at the index {@param index} of the deviceSpinners
+     * - The visibility of the {@link ProgressBar} at the given index of the deviceSpinners
      *   {@link List<ProgressBar>} is set as visible. <br>
-     * - The visibility of the {@link ImageView} at the index {@param index} of the deviceIcons
+     * - The visibility of the {@link ImageView} at the given index of the deviceIcons
      *   {@link List<ImageView>} is set as not visible. <br>
-     * - The visibility of the {@link ImageView} at the index {@param index} of the
+     * - The visibility of the {@link ImageView} at the given index of the
      *   deviceConnectedIcons {@link List<ImageView>} is set as not visible. <br>
      * @param index: The index of the connected device in the deviceNameLabels
      * {@link List<TextView>}.

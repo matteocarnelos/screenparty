@@ -16,10 +16,17 @@ import org.jetbrains.annotations.NotNull;
 
 import it.unipd.dei.es.screenparty.R;
 
+/**
+ * Manages the StartFragment fragment.
+ */
 public class StartFragment extends Fragment {
 
     private NavController navController;
 
+    /**
+     * Listen for the hostButton {@link Button} to be pressed. When this happens, it navigates
+     * to the {@link HostFragment} fragment.
+     */
     private View.OnClickListener hostButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -27,6 +34,10 @@ public class StartFragment extends Fragment {
         }
     };
 
+    /**
+     * Listen for the joinButton {@link Button} to be pressed. When this happens, it navigates
+     * to the {@link ClientFragment} fragment.
+     */
     private View.OnClickListener joinButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

@@ -43,6 +43,9 @@ import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
+/**
+ * Manages the MediaFragment fragment.
+ */
 public class MediaFragment extends Fragment implements TextureView.SurfaceTextureListener {
 
     private final String MEDIA_FRAGMENT_TAG = "MEDIA_FRAGMENT";
@@ -61,6 +64,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     private AlertDialog temporaryPauseAlertDialog;
     private boolean exitedPlayer = false;
 
+    /**
+     * Manages the event of the back button being pressed.
+     */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -68,6 +74,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
+    /**
+     * Hides the UI on focus changed.
+     */
     private ViewTreeObserver.OnWindowFocusChangeListener windowFocusChangeListener = new ViewTreeObserver.OnWindowFocusChangeListener() {
         @Override
         public void onWindowFocusChanged(boolean hasFocus) {
@@ -75,6 +84,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
+    /**
+     * Displays the UI as the screen is pressed.
+     */
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction() == MotionEvent.ACTION_DOWN && mediaController != null) {
@@ -85,6 +97,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
+    /**
+     * Navigates back to the {@link StartFragment}.
+     */
     private void goToStart() {
         partyManager.stop();
         requireView().getViewTreeObserver().removeOnWindowFocusChangeListener(windowFocusChangeListener);
@@ -92,6 +107,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         navController.popBackStack(R.id.startFragment, false);
     }
 
+    /**
+     * Behaves accordingly to the {@link NetworkEvents} related to the received {@link Message}.
+     */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -133,8 +151,14 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     };
 
+    /**
+     * Manages the Dialog's windows.
+     */
     private class Dialogs {
 
+        /**
+         * Shows the "Media preparation failed" dialog window.
+         */
         private void showMediaPreparationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_media_preparation_failed)
@@ -153,6 +177,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     }).show();
         }
 
+        /**
+         * Shows the "Client left" dialog window.
+         */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_left)
@@ -171,6 +198,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     }).show();
         }
 
+        /**
+         * Shows the "Party Closed" dialog window.
+         */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_party_closed)
@@ -189,6 +219,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     }).show();
         }
 
+        /**
+         * Shows the "Video temporary paused" dialog window.
+         */
         private void showClientExitPlayerDialog() {
             temporaryPauseAlertDialog = new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_exit_player)
@@ -208,6 +241,10 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             temporaryPauseAlertDialog.show();
         }
 
+        /**
+         * Shows the "Communication failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_communication_failed)
@@ -227,6 +264,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     .show();
         }
 
+        /**
+         * Shows the "Are you sure?" dialog window.
+         */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_back_confirmation)
@@ -241,6 +281,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         }
     }
 
+    /**
+     * Hides the system UI.
+     */
     private void hideSystemUI() {
         ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
         if(actionBar != null) actionBar.hide();
@@ -257,6 +300,9 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Shows the system UI.
+     */
     private void showSystemUI() {
         ActionBar actionBar = ((AppCompatActivity)requireActivity()).getSupportActionBar();
         if(actionBar != null) actionBar.show();
@@ -330,6 +376,10 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             mediaPlayer.setSurface(surfaceTexture);
         } catch(IOException e) { dialogs.showMediaPreparationFailedDialog(e.getLocalizedMessage()); }
         mediaPlayer.prepareAsync();
+
+        /**
+         * Listen for when the mediaPlayer {@link MediaPlayer} is done preparing.
+         */
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
