@@ -62,7 +62,7 @@ public class NetworkHost extends Thread {
      * Close all the connections to the clients and close the server socket.
      */
     private void closeConnections() {
-        partyManager.getPartyParams().setPartyReady(false);
+        partyManager.setPartyReady(false);
         try { serverSocket.close(); }
         catch(IOException e) { Log.w(NETWORK_HOST_TAG, e.toString()); }
         for(ClientWorker worker : workers) worker.interrupt();
@@ -142,7 +142,7 @@ public class NetworkHost extends Thread {
                                     .build();
                             NetworkUtils.send(message, client.getSocket(), handler);
                         }
-                        partyManager.getPartyParams().setPartyReady(true);
+                        partyManager.setPartyReady(true);
                         handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
                     }
                 } else {
@@ -212,9 +212,9 @@ public class NetworkHost extends Thread {
                 // Invoke events according to received messages
                 switch(message.getCommand()) {
                     case NetworkCommands.Client.READY:
-                        client.setReady(true);
+                        client.setReadyToPlay(true);
                         boolean allReady = true;
-                        for(ClientWorker worker : workers) allReady &= worker.client.isReady();
+                        for(ClientWorker worker : workers) allReady &= worker.client.isReadyToPlay();
                         if(allReady) {
                             broadcast(new NetworkMessage(NetworkCommands.Host.PLAY));
                             handler.obtainMessage(NetworkEvents.Client.HOST_PLAY).sendToTarget();

@@ -71,7 +71,7 @@ public class NetworkClient extends Thread {
      * Close the connection to the host.
      */
     private void closeConnection() {
-        partyManager.getPartyParams().setPartyReady(false);
+        partyManager.setPartyReady(false);
         try { if(host != null) host.close(); }
         catch(IOException e) { Log.w(NETWORK_CLIENT_TAG, e.toString()); }
     }

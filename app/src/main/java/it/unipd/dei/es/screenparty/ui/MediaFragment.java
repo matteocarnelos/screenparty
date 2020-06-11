@@ -459,7 +459,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
             if(partyManager.getPartyParams().getRole() == PartyParams.Role.HOST)
                 partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
             else partyManager.sendMessage(new NetworkMessage(NetworkCommands.Client.ENTER_PLAYER));
-            if(partyManager.getPartyParams().isPartyReady()) mediaPlayer.start();
+            if(partyManager.isPartyReady()) mediaPlayer.start();
             exitedPlayer = false;
         }
         super.onResume();

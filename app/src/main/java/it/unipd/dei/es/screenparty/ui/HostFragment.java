@@ -67,7 +67,7 @@ public class HostFragment extends Fragment {
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            if(partyManager.getPartyParams().isPartyReady()) dialogs.showBackConfirmationDialog();
+            if(partyManager.isPartyReady()) dialogs.showBackConfirmationDialog();
             else goBack();
         }
     };
@@ -131,7 +131,7 @@ public class HostFragment extends Fragment {
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
                     nextButton.setEnabled(false);
-                    if(partyManager.getPartyParams().isPartyReady()) {
+                    if(partyManager.isPartyReady()) {
                         partyManager.restart();
                         clientListChanged(new ArrayList<ConnectedClient>());
                         dialogs.showClientLeftDialog();

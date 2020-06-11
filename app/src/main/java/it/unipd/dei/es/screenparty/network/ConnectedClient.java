@@ -12,7 +12,7 @@ import it.unipd.dei.es.screenparty.party.ScreenParams;
 public class ConnectedClient extends PartyParams {
 
     private Socket socket;
-    private boolean ready = false;
+    private boolean readyToPlay = false;
 
     /**
      * Create a new {@link ConnectedClient}.
@@ -39,15 +39,15 @@ public class ConnectedClient extends PartyParams {
      * Tell if a client is ready for playing the media.
      * @return True if the client is ready, false otherwise.
      */
-    public boolean isReady() {
-        return ready;
+    public boolean isReadyToPlay() {
+        return readyToPlay;
     }
 
     /**
      * Set the ready state of the client.
-     * @param ready A boolean that indicates the state.
+     * @param readyToPlay A boolean that indicates the state.
      */
-    public void setReady(boolean ready) {
-        this.ready = ready;
+    public void setReadyToPlay(boolean readyToPlay) {
+        this.readyToPlay = readyToPlay;
     }
 }
