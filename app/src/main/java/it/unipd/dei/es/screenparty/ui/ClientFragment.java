@@ -290,6 +290,13 @@ public class ClientFragment extends Fragment {
         waitHostLabel.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Open the MediaPicker to select a video
+     */
+    private void openMediaPicker() {
+        MediaUtils.openMediaPicker(this);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -329,13 +336,6 @@ public class ClientFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
         openMediaPicker();
-    }
-
-    /**
-     * Open the MediaPicker to select a video.
-     */
-    private void openMediaPicker() {
-        MediaUtils.openMediaPicker(this);
     }
 
     @Override
