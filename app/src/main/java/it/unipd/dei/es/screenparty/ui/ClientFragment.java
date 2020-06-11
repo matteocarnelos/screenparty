@@ -61,11 +61,11 @@ public class ClientFragment extends Fragment {
 
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
-
+    
+    /**
+     * Manages the event of the back button being pressed.
+     */
     OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
-        /**
-         * Manages the event of the back button being pressed.
-         */
         @Override
         public void handleOnBackPressed() {
             goBack();
@@ -82,7 +82,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Listen for the back button to be pressed
+     * Listen for the back button to be pressed.
      */
     View.OnClickListener nextButtonListener = new View.OnClickListener() {
         @Override
@@ -106,7 +106,7 @@ public class ClientFragment extends Fragment {
     /**
      * Listen for when the user enter the edit mode of the hostIpField TextInputLayout.
      * When it happens, the two most significant byte of the local IP address are written
-     * as decimal separated by a dot
+     * as decimal separated by a dot.
      */
     View.OnFocusChangeListener hostIpFieldListener = new View.OnFocusChangeListener() {
         @Override
