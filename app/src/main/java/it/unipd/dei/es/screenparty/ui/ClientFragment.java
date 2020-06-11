@@ -61,7 +61,7 @@ public class ClientFragment extends Fragment {
 
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
-    
+
     /**
      * Manages the event of the back button being pressed.
      */
