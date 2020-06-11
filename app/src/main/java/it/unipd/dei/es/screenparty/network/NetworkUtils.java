@@ -5,21 +5,26 @@ import android.os.Handler;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class containing all the necessary utilities for the network.
+ */
 public class NetworkUtils {
 
-    public static final String SPACE_CHAR_ENCODING = "%20";
+    public static final String SEP_ENCODING = "%20";
     public static final String INVALID_IP = "0.0.0.0";
-    private final static int CHUNK_SIZE = 8192;
 
+    /**
+     * Send a {@link NetworkMessage} to the given {@link Socket}.
+     * @param message The {@link NetworkMessage} object to send.
+     * @param socket The {@link Socket} to use for the communication.
+     * @param handler The {@link Handler} for the handling of communication events.
+     */
     public static void send(final NetworkMessage message, final Socket socket, final Handler handler) {
         new Thread(new Runnable() {
             @Override
@@ -30,6 +35,12 @@ public class NetworkUtils {
         }).start();
     }
 
+    /**
+     * Get the IP address of the device.
+     * @param useIPv4 Set it to true in order to obtain the IPv4 address, otherwise the IPv6 address
+     *                will be returned.
+     * @return A string containing the ip address.
+     */
     @NotNull
     public static String getIPAddress(boolean useIPv4) {
         try {
@@ -55,34 +66,25 @@ public class NetworkUtils {
         return INVALID_IP;
     }
 
+    /**
+     * Encode the device name for transmission over the network. In particular, substitute every
+     * occurrence of the character used as the separator with the encoded version.
+     * @param deviceName The device name as a string.
+     * @return The encoded string.
+     */
     @NotNull
     public static String encodeDeviceName(@NotNull String deviceName) {
-        return deviceName.trim().replaceAll("\\s", SPACE_CHAR_ENCODING);
+        return deviceName.trim().replaceAll(NetworkMessage.SEP, SEP_ENCODING);
     }
 
+    /**
+     * Decode the given device name received from the network, in particular substitute every
+     * encoded separator character with the original separator character.
+     * @param deviceName The encoded device name.
+     * @return The original device name.
+     */
     @NotNull
     public static String decodeDeviceName(@NotNull String deviceName) {
-        return deviceName.trim().replaceAll(SPACE_CHAR_ENCODING, " ");
-    }
-
-    public static void transferFile(@NotNull List<Socket> sockets, InputStream fileInputStream) throws IOException {
-        List<OutputStream> outputStreams = new ArrayList<>();
-        for(Socket socket : sockets) outputStreams.add(socket.getOutputStream());
-        byte[] chunk = new byte[CHUNK_SIZE];
-        int k;
-        while((k = fileInputStream.read(chunk)) != -1)
-            for(OutputStream outputStream : outputStreams)
-                outputStream.write(chunk, 0, k);
-        fileInputStream.close();
-    }
-
-    public static void receiveFile(@NotNull Socket socket, OutputStream fileOutputStream, long size) throws IOException {
-        InputStream inputStream = socket.getInputStream();
-        byte[] chunk = new byte[CHUNK_SIZE];
-        int bytes, k;
-        for(bytes = 0; (k = inputStream.read(chunk)) != -1 && bytes < size; bytes += k) {
-            fileOutputStream.write(chunk, 0, k);
-        }
-        fileOutputStream.close();
+        return deviceName.trim().replaceAll(SEP_ENCODING, NetworkMessage.SEP);
     }
 }

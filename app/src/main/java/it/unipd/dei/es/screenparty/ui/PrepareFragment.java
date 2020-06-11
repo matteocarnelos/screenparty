@@ -25,12 +25,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import it.unipd.dei.es.screenparty.R;
-import it.unipd.dei.es.screenparty.media.MediaUtils;
 import it.unipd.dei.es.screenparty.network.NetworkCommands;
 import it.unipd.dei.es.screenparty.network.NetworkEvents;
 import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
+import it.unipd.dei.es.screenparty.party.PartyUtils;
 
 public class PrepareFragment extends Fragment {
 
@@ -186,7 +186,7 @@ public class PrepareFragment extends Fragment {
         }
 
         ConstraintLayout.LayoutParams leftArrowLayoutParams = (ConstraintLayout.LayoutParams)leftArrowIcon.getLayoutParams();
-        leftArrowLayoutParams.topMargin += MediaUtils.getNavigationBarHeightPixels(requireActivity());
+        leftArrowLayoutParams.topMargin += PartyUtils.getNavigationBarHeightPixels(requireActivity());
         leftArrowIcon.setLayoutParams(leftArrowLayoutParams);
 
         return view;

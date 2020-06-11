@@ -16,6 +16,9 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 import it.unipd.dei.es.screenparty.party.PartyUtils;
 
+/**
+ * Thread for the managing of connections from the host to the client.
+ */
 public class NetworkHost extends Thread {
 
     private static final String NETWORK_HOST_TAG = "NETWORK_HOST";
@@ -30,19 +33,34 @@ public class NetworkHost extends Thread {
     private List<ConnectedClient> clients = new ArrayList<>();
     private List<ClientWorker> workers = new ArrayList<>();
 
+    /**
+     * Create a new {@link NetworkHost}.
+     * @param handler The {@link Handler} object that receives events.
+     */
     public NetworkHost(Handler handler) {
         this.handler = handler;
     }
 
+    /**
+     * Set the events handler.
+     * @param handler The {@link Handler} object that receives events.
+     */
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
+    /**
+     * Broadcast the given {@link NetworkMessage} to all the connected clients.
+     * @param message The {@link NetworkMessage} object to send.
+     */
     public void broadcast(NetworkMessage message) {
         for(ConnectedClient client : clients)
             NetworkUtils.send(message, client.getSocket(), handler);
     }
 
+    /**
+     * Close all the connections to the clients and close the server socket.
+     */
     private void closeConnections() {
         partyManager.getPartyParams().setPartyReady(false);
         try { serverSocket.close(); }
@@ -59,23 +77,23 @@ public class NetworkHost extends Thread {
 
     @Override
     public void run() {
+        // Open the server socket
         try { serverSocket = new ServerSocket(SERVER_PORT); }
         catch(IOException e) {
             handler.obtainMessage(NetworkEvents.Host.NOT_STARTED, e.getLocalizedMessage()).sendToTarget();
             return;
         }
 
+        String ip = NetworkUtils.getIPAddress(true);
+        if(ip.equals(NetworkUtils.INVALID_IP)) ip = null;
+        handler.obtainMessage(NetworkEvents.Host.WAITING_DEVICES, ip).sendToTarget();
+
         while(true) {
             Socket socket;
             InputStream inputStream;
             NetworkMessage request;
 
-            if(clients.size() < MAX_CLIENTS) {
-                String ip = NetworkUtils.getIPAddress(true);
-                if(ip.equals(NetworkUtils.INVALID_IP)) ip = null;
-                handler.obtainMessage(NetworkEvents.Host.WAITING_DEVICES, ip).sendToTarget();
-            }
-
+            // Accept client connections
             try {
                 socket = serverSocket.accept();
                 inputStream = socket.getInputStream();
@@ -85,8 +103,8 @@ public class NetworkHost extends Thread {
                 continue;
             }
 
+            // Read client request
             Scanner scanner = new Scanner(inputStream);
-
             try { request = NetworkMessage.parseString(scanner.nextLine()); }
             catch(NoSuchElementException e) {
                 if(isInterrupted()) return;
@@ -95,6 +113,7 @@ public class NetworkHost extends Thread {
             }
 
             if(request.getCommand().equals(NetworkCommands.Client.JOIN)) {
+                // Accept client if there is space
                 if(clients.size() < MAX_CLIENTS) {
                     float width = Float.parseFloat(request.getArgument(0));
                     float height = Float.parseFloat(request.getArgument(1));
@@ -111,6 +130,7 @@ public class NetworkHost extends Thread {
 
                     handler.obtainMessage(NetworkEvents.Host.CLIENT_JOINED, clients).sendToTarget();
 
+                    // Once reached the maximum number of clients, send party parameters
                     if(clients.size() == MAX_CLIENTS) {
                         PartyUtils.computeFrameDimensions(partyManager.getPartyParams(), clients);
                         for(ConnectedClient client : clients) {
@@ -126,6 +146,7 @@ public class NetworkHost extends Thread {
                         handler.obtainMessage(NetworkEvents.Host.PARTY_READY, clients).sendToTarget();
                     }
                 } else {
+                    // Deny access if the party is full
                     NetworkMessage response = new NetworkMessage(NetworkCommands.Host.FULL);
                     NetworkUtils.send(response, socket, handler);
                 }
@@ -136,12 +157,29 @@ public class NetworkHost extends Thread {
         }
     }
 
+    /**
+     * Worker thread for the managing of communications with a single connected client. Thread
+     * started from the main {@link NetworkHost} thread.
+     */
     private class ClientWorker extends Thread {
 
         ConnectedClient client;
 
+        /**
+         * Create a new {@link ClientWorker}.
+         * @param client The {@link ConnectedClient} to track.
+         */
         ClientWorker(ConnectedClient client) {
             this.client = client;
+        }
+
+        /**
+         * Close the connection to the tracked client.
+         */
+        void closeConnection() {
+            try { client.getSocket().close(); }
+            catch(IOException e) { Log.w(NETWORK_HOST_TAG, e.toString()); }
+            clients.remove(client);
         }
 
         @Override
@@ -150,18 +188,13 @@ public class NetworkHost extends Thread {
             closeConnection();
         }
 
-        private void closeConnection() {
-            try { client.getSocket().close(); }
-            catch(IOException e) { Log.w(NETWORK_HOST_TAG, e.toString()); }
-            clients.remove(client);
-        }
-
         @Override
         public void run() {
             Socket socket = client.getSocket();
             InputStream inputStream;
             NetworkMessage message;
 
+            // Enter the communication loop, listen for messages
             while(true) {
                 try {
                     inputStream = socket.getInputStream();
@@ -176,6 +209,7 @@ public class NetworkHost extends Thread {
                     return;
                 }
 
+                // Invoke events according to received messages
                 switch(message.getCommand()) {
                     case NetworkCommands.Client.READY:
                         client.setReady(true);

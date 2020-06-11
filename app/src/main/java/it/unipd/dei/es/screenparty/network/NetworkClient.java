@@ -12,6 +12,9 @@ import java.net.Socket;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
+/**
+ * Thread for the managing of connections from the client to the host.
+ */
 public class NetworkClient extends Thread {
 
     private static final String NETWORK_CLIENT_TAG = "NETWORK_CLIENT";
@@ -22,27 +25,51 @@ public class NetworkClient extends Thread {
     private Socket host;
     private String hostIp;
 
+    /**
+     * Create a new {@link NetworkClient}.
+     * @param handler The {@link Handler} object that receives events.
+     */
     public NetworkClient(Handler handler) {
         this.handler = handler;
     }
 
-    public String getHostIp() {
-        return hostIp;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
-    public void send(NetworkMessage message) {
-        NetworkUtils.send(message, host, handler);
-    }
-
+    /**
+     * Start the thread. The thread will immediately try to connect to the host at the given IP
+     * address.
+     * @param hostIp A string representing the IP address of the host.
+     */
     public void start(String hostIp) {
         this.hostIp = hostIp;
         super.start();
     }
 
+    /**
+     * Get the previously set ip of the host.
+     * @return A string representing the IP of the host.
+     */
+    public String getHostIp() {
+        return hostIp;
+    }
+
+    /**
+     * Set the events handler.
+     * @param handler The {@link Handler} object that receives events.
+     */
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    /**
+     * Send a {@link NetworkMessage} to the host.
+     * @param message The {@link NetworkMessage} object to send.
+     */
+    public void send(NetworkMessage message) {
+        NetworkUtils.send(message, host, handler);
+    }
+
+    /**
+     * Close the connection to the host.
+     */
     private void closeConnection() {
         partyManager.getPartyParams().setPartyReady(false);
         try { if(host != null) host.close(); }
@@ -60,6 +87,7 @@ public class NetworkClient extends Thread {
         InputStream inputStream;
         NetworkMessage response;
 
+        // Try to open the socket
         try {
             host = new Socket(hostIp, NetworkHost.SERVER_PORT);
             inputStream = host.getInputStream();
@@ -73,6 +101,7 @@ public class NetworkClient extends Thread {
 
         String deviceName = NetworkUtils.encodeDeviceName(partyManager.getPartyParams().getDeviceName());
 
+        // Send the join request
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getWidth()))
@@ -83,6 +112,7 @@ public class NetworkClient extends Thread {
 
         handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
 
+        // Wait the response
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try { String line = reader.readLine();
             if(line == null) {
@@ -101,6 +131,7 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        // Analyze the response
         if(response.getCommand().equals(NetworkCommands.Host.OK)) {
             PartyParams.Position position = PartyParams.Position.valueOf(response.getArgument(0));
             float frameWidth = Float.parseFloat(response.getArgument(1));
@@ -114,6 +145,7 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        // Enter the command loop, receive host commands.
         while(true) {
             NetworkMessage message;
             try {

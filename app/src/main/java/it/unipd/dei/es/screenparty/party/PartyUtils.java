@@ -1,7 +1,10 @@
 package it.unipd.dei.es.screenparty.party;
 
+import android.app.Activity;
 import android.content.ContentResolver;
+import android.graphics.Rect;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,5 +62,13 @@ public class PartyUtils {
         String deviceName = Settings.Secure.getString(contentResolver, "bluetooth_name");
         if(deviceName == null) return UNKNOWN_DEVICE_NAME;
         return deviceName;
+    }
+
+    public static int getNavigationBarHeightPixels(@NotNull Activity activity) {
+        Rect rectangle = new Rect();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+        return displayMetrics.heightPixels - (rectangle.top + rectangle.height());
     }
 }
