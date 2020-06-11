@@ -139,7 +139,7 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Manages the Dialogs windows.
+     * Manages the Dialog's windows.
      */
     private class Dialogs {
 
@@ -266,7 +266,7 @@ public class ClientFragment extends Fragment {
      * Set the state of the ClientFragment fragment as Connecting, that is:
      *  - The clientConnectedLabel TextView shows "Connecting...".
      *  - The clientSpinner ProgressBar is visible.
-     *  - The clientConnectedIcon ImageView is not visible
+     *  - The clientConnectedIcon ImageView is not visible.
      *  - The connectButton Button is disabled.
      */
     private void setStateConnecting() {
@@ -280,7 +280,7 @@ public class ClientFragment extends Fragment {
      * Set the state of the ClientFragment fragment as Connected, that is:
      *  - The clientConnectedLabel TextView shows "Connected!".
      *  - The clientSpinner ProgressBar is not visible.
-     *  - The clientConnectedIcon ImageView is visible
+     *  - The clientConnectedIcon ImageView is visible.
      *  - The connectButton Button is disabled.
      */
     private void setStateConnected() {
@@ -332,7 +332,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Open the MediaPicker to select a video
+     * Open the MediaPicker to select a video.
      */
     private void openMediaPicker() {
         MediaUtils.openMediaPicker(this);
