@@ -64,6 +64,8 @@
     <string name="dialog_title_invalid_ip">Invalid IP address</string>
     <string name="dialog_title_media_preparation_failed">Media preparation failed</string>
     <string name="dialog_title_client_exit_player">Video temporary paused</string>
+    <string name="dialog_title_could_not_start_the_server">Could not start the server</string>
+
 
     <string name="dialog_message_party_full">The party you are trying to connect is full</string>
     <string name="dialog_message_party_closed">The party has been closed because the host left, unfortunately you have to start again</string>

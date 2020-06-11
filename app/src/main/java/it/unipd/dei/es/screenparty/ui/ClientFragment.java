@@ -73,8 +73,8 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Used to navigate back to the previous fragment ({@link StartFragment}) upon pressing the back button
-     * on the navigation bar or in the top left corner of the screen.
+     * Used to navigate back to the previous fragment ({@link StartFragment}) upon pressing the
+     * back button on the navigation bar or in the top left corner of the screen.
      */
     private void goBack() {
         partyManager.stop();
@@ -104,7 +104,7 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Listen for when the user enter the edit mode of the hostIpField TextInputLayout.
+     * Listen for when the user enter the edit mode of the hostIpField {@link TextInputLayout}.
      * When it happens, the two most significant byte of the local IP address are written
      * as decimal separated by a dot.
      */
@@ -119,8 +119,8 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Set the state of the fragment accordingly to the NetworkEvents
-     * related to the received message.
+     * Set the state of the fragment accordingly to the {@link NetworkEvents}
+     * related to the received {@link Message}.
      */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -264,8 +264,8 @@ public class ClientFragment extends Fragment {
 
     /**
      * Reset the state of the {@link ClientFragment} fragment, that is:
-     *  - The hostIpField TextInputLayout is cleared.
-     *  - The connectButton Button is enabled.
+     *  - The hostIpField {@link TextInputLayout} is cleared.
+     *  - The connectButton {@link Button} is enabled.
      *  - No label, spinner or icon are shown.
      */
     private void resetState() {
@@ -279,10 +279,10 @@ public class ClientFragment extends Fragment {
 
     /**
      * Set the state of the {@link ClientFragment} fragment as Connecting, that is:
-     *  - The clientConnectedLabel TextView shows "Connecting...".
-     *  - The clientSpinner ProgressBar is visible.
-     *  - The clientConnectedIcon ImageView is not visible.
-     *  - The connectButton Button is disabled.
+     *  - The clientConnectedLabel {@link TextView} shows "Connecting...".
+     *  - The clientSpinner {@link ProgressBar} is visible.
+     *  - The clientConnectedIcon {@link ImageView} is not visible.
+     *  - The connectButton {@link Button} is disabled.
      */
     private void setStateConnecting() {
         clientConnectedLabel.setText(R.string.client_connected_label_connecting);
@@ -293,10 +293,10 @@ public class ClientFragment extends Fragment {
 
     /**
      * Set the state of the {@link ClientFragment} fragment as Connected, that is:
-     *  - The clientConnectedLabel TextView shows "Connected!".
-     *  - The clientSpinner ProgressBar is not visible.
-     *  - The clientConnectedIcon ImageView is visible.
-     *  - The connectButton Button is disabled.
+     *  - The clientConnectedLabel {@link TextView} shows "Connected!".
+     *  - The clientSpinner {@link ProgressBar} is not visible.
+     *  - The clientConnectedIcon {@link ImageView} is visible.
+     *  - The connectButton {@link Button} is disabled.
      */
     private void setStateConnected() {
         clientConnectedLabel.setText(R.string.client_connected_label_connected);

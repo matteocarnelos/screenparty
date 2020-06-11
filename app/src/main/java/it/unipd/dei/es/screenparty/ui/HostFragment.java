@@ -44,6 +44,9 @@ import it.unipd.dei.es.screenparty.party.PartyUtils;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Manages the HostFragment fragment.
+ */
 public class HostFragment extends Fragment {
 
     private TextView hostIpLabel;
@@ -58,6 +61,9 @@ public class HostFragment extends Fragment {
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
 
+    /**
+     * Manages the event of the back button being pressed.
+     */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -66,11 +72,19 @@ public class HostFragment extends Fragment {
         }
     };
 
+    /**
+     * Used to navigate back to the previous fragment ({@link StartFragment}) upon pressing the back
+     * button on the navigation bar or in the top left corner of the screen.
+     */
     private void goBack() {
         partyManager.stop();
         navController.popBackStack();
     }
 
+    /**
+     * Listen for the nextButton {@link Button} to be pressed.
+     * When this happens it navigates to the next fragment ({@link PrepareFragment}).
+     */
     private View.OnClickListener nextButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -79,6 +93,10 @@ public class HostFragment extends Fragment {
         }
     };
 
+    /**
+     * Updates the state of the {@link HostFragment} accordingly to the {@link NetworkEvents}
+     * related to the received {@link Message}.
+     */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -128,8 +146,14 @@ public class HostFragment extends Fragment {
         }
     };
 
+    /**
+     * Manages the Dialog's windows.
+     */
     private class Dialogs {
 
+        /**
+         * Shows the "Media Error" dialog window.
+         */
         private void showInvalidUriDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_media_error)
@@ -154,9 +178,13 @@ public class HostFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Could not start the server" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showNotStartedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Could not start the server")
+                    .setTitle(R.string.dialog_title_could_not_start_the_server)
                     .setMessage(message)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
@@ -178,6 +206,9 @@ public class HostFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Invalid IP Address" dialog window.
+         */
         private void showInvalidIPDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_invalid_ip)
@@ -203,6 +234,10 @@ public class HostFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Connection failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showConnectionFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_communication_failed)
@@ -211,6 +246,10 @@ public class HostFragment extends Fragment {
                     .show();
         }
 
+        /**
+         * Shows the "Join Failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_join_failed)
@@ -219,6 +258,9 @@ public class HostFragment extends Fragment {
                     .show();
         }
 
+        /**
+         * Shows the "Client left" dialog window.
+         */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_left)
@@ -226,6 +268,10 @@ public class HostFragment extends Fragment {
                     .setPositiveButton(R.string.dialog_button_ok, null).show();
         }
 
+        /**
+         * Shows the "Communication failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_communication_failed)
@@ -245,6 +291,9 @@ public class HostFragment extends Fragment {
                     .show();
         }
 
+        /**
+         * Shows the "Back confirmation" dialog window.
+         */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_back_confirmation)
@@ -259,12 +308,32 @@ public class HostFragment extends Fragment {
         }
     }
 
+    /**
+     * Updates the list of the connected devices when a new device is connected.
+     * @param clients: list of the connected devices.
+     */
     private void clientListChanged(List<ConnectedClient> clients) {
         for(int i = 1; i <= 2; i++) setCardWaiting(i);
         for(int i = 0; i < clients.size(); i++)
             setCardReady(i + 1, clients.get(i).getDeviceName());
     }
 
+    /**
+     * Set the state of the device card as ready, that is:
+     * - The label of the {@link TextView} at the index {@param index} of the deviceNameLabels
+     *   {@link List<TextView>} shows the name of the connected device.
+     * - The label of the {@link TextView} at the index {@param index} of the deviceInfoLabels
+     *   {@link List<TextView>} shows "Ready".
+     * - The visibility of the {@link ProgressBar} at the index {@param index} of the
+     *   deviceSpinners {@link List<ProgressBar>} is set as not visible.
+     * - The visibility of the {@link ImageView} at the index {@param index} of the deviceIcons
+     *   {@link List<ImageView>} is set as visible.
+     * - The visibility of the {@link ImageView} at the index {@param index} of the
+     *   deviceConnectedIcons {@link List<ImageView>} is set as visible.
+     * @param index: The index of the connected device in the deviceNameLabels
+     * {@link List<TextView>}.
+     * @param name: The name of the connected device.
+     */
     private void setCardReady(int index, String name) {
         deviceNameLabels.get(index).setText(name);
         deviceInfoLabels.get(index).setText(R.string.device_info_label_ready);
@@ -273,6 +342,21 @@ public class HostFragment extends Fragment {
         deviceConnectedIcons.get(index).setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Set the state of the device card as waiting, that is:
+     * - The label of the {@link TextView} at the index {@param index} of the deviceNameLabels
+     *   {@link List<TextView>} shows the default text "Waiting".
+     * - The label of the {@link TextView} at the index {@param index} of the deviceInfoLabels
+     *   {@link List<TextView>} shows the default text "".
+     * - The visibility of the {@link ProgressBar} at the index {@param index} of the deviceSpinners
+     *   {@link List<ProgressBar>} is set as visible.
+     * - The visibility of the {@link ImageView} at the index {@param index} of the deviceIcons
+     *   {@link List<ImageView>} is set as not visible.
+     * - The visibility of the {@link ImageView} at the index {@param index} of the
+     *   deviceConnectedIcons {@link List<ImageView>} is set as not visible.
+     * @param index: The index of the connected device in the deviceNameLabels
+     * {@link List<TextView>}.
+     */
     private void setCardWaiting(int index) {
         deviceNameLabels.get(index).setText("");
         deviceInfoLabels.get(index).setText("");
