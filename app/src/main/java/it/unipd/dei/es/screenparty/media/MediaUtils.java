@@ -12,10 +12,19 @@ import org.jetbrains.annotations.NotNull;
 
 import it.unipd.dei.es.screenparty.R;
 
+/**
+ * Utility class for the Media package.
+ */
 public class MediaUtils {
 
     public static final int SELECT_MEDIA_REQUEST_CODE = 0;
 
+    /**
+     * Retrieve the {@link MediaParams} of the selected video.
+     * @param context Context needed for media meta data retriever.
+     * @param uri The media's uri.
+     * @return MediaParams of the selected video.
+     */
     @NotNull
     public static MediaParams analyzeMedia(Context context, Uri uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -25,6 +34,10 @@ public class MediaUtils {
         return new MediaParams(uri, bitmap.getWidth(), bitmap.getHeight());
     }
 
+    /**
+     * Opens a window to select the video to be played.
+     * @param fragment Fragment needed to start the activity.
+     */
     public static void openMediaPicker(@NotNull Fragment fragment) {
         Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
         fileIntent.setType("video/*");
