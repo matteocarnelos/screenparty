@@ -365,6 +365,9 @@ public class HostFragment extends Fragment {
         deviceConnectedIcons.get(index).setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Open the MediaPicker to select a video.
+     */
     private void openMediaPicker() {
         MediaUtils.openMediaPicker(this);
     }

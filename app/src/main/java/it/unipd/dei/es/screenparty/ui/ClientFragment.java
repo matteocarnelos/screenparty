@@ -82,9 +82,9 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Listen for the back button to be pressed.
+     * Listen for the connectButton {@link Button} to be pressed.
      */
-    View.OnClickListener nextButtonListener = new View.OnClickListener() {
+    View.OnClickListener connectButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             View view = requireActivity().getCurrentFocus();
@@ -338,7 +338,7 @@ public class ClientFragment extends Fragment {
         textView.setTextColor(getResources().getColor(R.color.white_50));
         snackbarView.setBackground(new ColorDrawable(getResources().getColor(R.color.black_800)));
 
-        connectButton.setOnClickListener(nextButtonListener);
+        connectButton.setOnClickListener(connectButtonListener);
         hostIpField.getEditText().setOnFocusChangeListener(hostIpFieldListener);
 
         String deviceName = PartyUtils.getDeviceName(requireActivity().getContentResolver());
