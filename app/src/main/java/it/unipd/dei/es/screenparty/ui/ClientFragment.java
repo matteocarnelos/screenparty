@@ -63,6 +63,9 @@ public class ClientFragment extends Fragment {
     private PartyManager partyManager = PartyManager.getInstance();
 
     OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        /**
+         * Manages the event of the back button being pressed.
+         */
         @Override
         public void handleOnBackPressed() {
             goBack();
@@ -71,13 +74,16 @@ public class ClientFragment extends Fragment {
 
     /**
      * Used to navigate back to the previous fragment (StartFragment) upon pressing the back button
-     * on the navigation bar or on the top left corner of the screen.
+     * on the navigation bar or in the top left corner of the screen.
      */
     private void goBack() {
         partyManager.stop();
         navController.popBackStack();
     }
 
+    /**
+     * Listen for the back button to be pressed
+     */
     View.OnClickListener nextButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -97,6 +103,11 @@ public class ClientFragment extends Fragment {
         }
     };
 
+    /**
+     * Listen for when the user enter the edit mode of the hostIpField TextInputLayout.
+     * When it happens, the two most significant byte of the local IP address are written
+     * as decimal separated by a dot
+     */
     View.OnFocusChangeListener hostIpFieldListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
@@ -107,6 +118,10 @@ public class ClientFragment extends Fragment {
         }
     };
 
+    /**
+     * Set the state of the fragment accordingly to the NetworkEvents
+     * related to the received message.
+     */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NotNull Message msg) {
