@@ -4,42 +4,76 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 
+/**
+ * Thread for the managing of connections from the client to the host.
+ */
 public class NetworkClient extends Thread {
+
+    private static final String NETWORK_CLIENT_TAG = "NETWORK_CLIENT";
 
     private PartyManager partyManager = PartyManager.getInstance();
     private Handler handler;
-    private File filesDir;
 
     private Socket host;
     private String hostIp;
 
-    public NetworkClient(Handler handler, File filesDir) {
+    /**
+     * Create a new {@link NetworkClient}.
+     * @param handler The {@link Handler} object that receives events.
+     */
+    public NetworkClient(Handler handler) {
         this.handler = handler;
-        this.filesDir = filesDir;
     }
 
+    /**
+     * Start the thread. The thread will immediately try to connect to the host at the given IP
+     * address.
+     * @param hostIp A string representing the IP address of the host.
+     */
+    public void start(String hostIp) {
+        this.hostIp = hostIp;
+        super.start();
+    }
+
+    /**
+     * Get the previously set ip of the host.
+     * @return A string representing the IP of the host.
+     */
     public String getHostIp() {
         return hostIp;
     }
 
+    /**
+     * Set the events handler.
+     * @param handler The {@link Handler} object that receives events.
+     */
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    /**
+     * Send a {@link NetworkMessage} to the host.
+     * @param message The {@link NetworkMessage} object to send.
+     */
     public void send(NetworkMessage message) {
         NetworkUtils.send(message, host, handler);
     }
 
-    public void start(String hostIp) {
-        this.hostIp = hostIp;
-        super.start();
+    /**
+     * Close the connection to the host.
+     */
+    private void closeConnection() {
+        partyManager.setPartyReady(false);
+        try { if(host != null) host.close(); }
+        catch(IOException e) { Log.w(NETWORK_CLIENT_TAG, e.toString()); }
     }
 
     @Override
@@ -48,16 +82,12 @@ public class NetworkClient extends Thread {
         closeConnection();
     }
 
-    private void closeConnection() {
-        try { if(host != null) host.close(); }
-        catch(IOException e) { Log.d(PartyManager.LOG_TAG, e.toString()); }
-    }
-
     @Override
     public void run() {
         InputStream inputStream;
         NetworkMessage response;
 
+        // Try to open the socket
         try {
             host = new Socket(hostIp, NetworkHost.SERVER_PORT);
             inputStream = host.getInputStream();
@@ -69,8 +99,9 @@ public class NetworkClient extends Thread {
             return;
         }
 
-        String deviceName = partyManager.getPartyParams().getDeviceName().trim().replaceAll("\\s", "%20");
+        String deviceName = NetworkUtils.encodeDeviceName(partyManager.getPartyParams().getDeviceName());
 
+        // Send the join request
         NetworkMessage request = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Client.JOIN)
                 .addArgument(String.valueOf(partyManager.getPartyParams().getScreenParams().getWidth()))
@@ -79,10 +110,19 @@ public class NetworkClient extends Thread {
                 .build();
         NetworkUtils.send(request, host, handler);
 
-        handler.obtainMessage(NetworkEvents.Client.PARTY_CONNECTING).sendToTarget();
+        handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
 
+        // Wait the response
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try { response = NetworkMessage.parseString(reader.readLine()); }
+        try { String line = reader.readLine();
+            if(line == null) {
+                if(!isInterrupted()) {
+                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                    closeConnection();
+                }
+                return;
+            }
+            response = NetworkMessage.parseString(line); }
         catch(IOException e) {
             if(!isInterrupted()) {
                 handler.obtainMessage(NetworkEvents.JOIN_FAILED, e.getLocalizedMessage()).sendToTarget();
@@ -91,40 +131,37 @@ public class NetworkClient extends Thread {
             return;
         }
 
+        // Analyze the response
         if(response.getCommand().equals(NetworkCommands.Host.OK)) {
             PartyParams.Position position = PartyParams.Position.valueOf(response.getArgument(0));
             float frameWidth = Float.parseFloat(response.getArgument(1));
             float frameHeight = Float.parseFloat(response.getArgument(2));
-            String extension = response.getArgument(3);
-            long size = Long.parseLong(response.getArgument(4));
 
             partyManager.getPartyParams().setPosition(position);
             partyManager.getPartyParams().getMediaParams().setFrameWidth(frameWidth);
             partyManager.getPartyParams().getMediaParams().setFrameHeight(frameHeight);
-
-            handler.obtainMessage(NetworkEvents.Client.PARTY_JOINED).sendToTarget();
-
-            try {
-                OutputStream outputStream = new FileOutputStream(new File(filesDir, "data." + extension), false);
-                NetworkUtils.receiveFile(host, outputStream, size);
-            }
-            catch(IOException e) {
-                if(!interrupted())
-                    handler.obtainMessage(NetworkEvents.FILE_TRANSFER_FAILED, e.getLocalizedMessage()).sendToTarget();
-                return;
-            }
         } else {
             handler.obtainMessage(NetworkEvents.Client.PARTY_FULL).sendToTarget();
             return;
         }
 
+        // Enter the command loop, receive host commands.
         while(true) {
             NetworkMessage message;
-            try { message = NetworkMessage.parseString(reader.readLine()); }
+            try {
+                String line = reader.readLine();
+                if(line == null) {
+                    if(!isInterrupted()) {
+                        handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
+                        closeConnection();
+                    }
+                    return;
+                }
+                message = NetworkMessage.parseString(line);
+            }
             catch(IOException e) {
                 if(!isInterrupted()) {
-                    handler.obtainMessage(NetworkEvents.Client.HOST_LEFT).sendToTarget();
-                    closeConnection();
+                    handler.obtainMessage(NetworkEvents.COMMUNICATION_FAILED, e.getLocalizedMessage()).sendToTarget();
                 }
                 return;
             }
@@ -138,14 +175,9 @@ public class NetworkClient extends Thread {
                 case NetworkCommands.Host.PAUSE:
                     handler.obtainMessage(NetworkEvents.Client.HOST_PAUSE).sendToTarget();
                     break;
-                case NetworkCommands.Host.RESUME:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_RESUME).sendToTarget();
-                    break;
-                case NetworkCommands.Host.STOP:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_STOP).sendToTarget();
-                    break;
-                case NetworkCommands.EXIT:
-                    handler.obtainMessage(NetworkEvents.Client.HOST_EXIT).sendToTarget();
+                case NetworkCommands.Host.SEEK:
+                    int seekPos = Integer.parseInt(message.getArgument(0));
+                    handler.obtainMessage(NetworkEvents.Client.HOST_SEEK, seekPos).sendToTarget();
                     break;
             }
         }

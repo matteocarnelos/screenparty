@@ -10,6 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/alignment_icon"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:contentDescription="@string/alignment_icon_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/alignment_center"
+            app:layout_constraintBottom_toBottomOf="@+id/left_arrow_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/left_arrow_icon" />
+
         <TextView
             android:id="@+id/step2_label"
             android:layout_width="0dp"
@@ -45,14 +57,15 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_arrow_right_alt_24"
             android:tint="?attr/colorOnSurface"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/left_arrow_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/left_arrow_icon" />
 
         <ImageView
             android:id="@+id/left_arrow_icon"
             android:layout_width="75dp"
             android:layout_height="100dp"
+            android:layout_marginBottom="@dimen/top_bars_height"
             android:contentDescription="@string/left_arrow_icon_description"
             android:rotation="180"
             android:scaleType="centerCrop"
