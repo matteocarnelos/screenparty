@@ -11,8 +11,8 @@ public class ScreenParams {
     private float ydpi;
 
     /**
-     * Builder of ScreenParams. It sets the width and the heigth as indicated by the given
-     * parameters.
+     * Constructor of {@link ScreenParams}. Create a new {@link ScreenParams} and sets the width and
+     * the height as indicated by the given parameters.
      * @param width: The width of the screen.
      * @param height: The height of the screen.
      */
@@ -21,8 +21,9 @@ public class ScreenParams {
     }
 
     /**
-     * Builder of ScreenParams. it sets the width, the height, the horizontal pixel density and
-     * the vertical pixel density as indicated by the given parameters.
+     * Constructor of {@link ScreenParams}. Create a new {@link ScreenParams} and sets the width,
+     * the height, the horizontal pixel density and the vertical pixel density as indicated by the
+     * given parameters.
      * @param width: The width of the screen.
      * @param height: The height of the screen.
      * @param xdpi: The horizontal pixel density of the screen.
