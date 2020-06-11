@@ -32,6 +32,9 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.PartyParams;
 import it.unipd.dei.es.screenparty.party.PartyUtils;
 
+/**
+ * Manages the PrepareFragment fragment.
+ */
 public class PrepareFragment extends Fragment {
 
     private Dialogs dialogs = new Dialogs();
@@ -39,6 +42,9 @@ public class PrepareFragment extends Fragment {
     private NavController navController;
     private PartyManager partyManager = PartyManager.getInstance();
 
+    /**
+     * Manages the event of the back button being pressed.
+     */
     private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -46,12 +52,19 @@ public class PrepareFragment extends Fragment {
         }
     };
 
+    /**
+     * Navigates back to the {@link StartFragment}.
+     */
     private void goToStart() {
         partyManager.stop();
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         navController.popBackStack(R.id.startFragment, false);
     }
 
+    /**
+     * Listen for the Next button to be pressed. When this happens, it navigates to the
+     * {@link MediaFragment} fragment.
+     */
     private View.OnClickListener startButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -60,6 +73,9 @@ public class PrepareFragment extends Fragment {
         }
     };
 
+    /**
+     * Behaves accordingly to the {@link NetworkEvents} related to the received {@link Message}.
+     */
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -82,8 +98,14 @@ public class PrepareFragment extends Fragment {
         }
     };
 
+    /**
+     * Manages the Dialog's windows.
+     */
     private class Dialogs {
 
+        /**
+         * Shows the "Client left" dialog window.
+         */
         private void showClientLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_client_left)
@@ -102,6 +124,9 @@ public class PrepareFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Party closed" dialog window.
+         */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_party_closed)
@@ -120,6 +145,10 @@ public class PrepareFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Communication failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_communication_failed)
@@ -139,6 +168,9 @@ public class PrepareFragment extends Fragment {
                     .show();
         }
 
+        /**
+         * Shows the "Are you sure?" dialog window.
+         */
         private void showBackConfirmationDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_back_confirmation)

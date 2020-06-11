@@ -19,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.ScreenParams;
 
+/**
+ * Main activity. Starting point of the app.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String README_URL = "https://github.com/MatteoCarnelos/screenparty/blob/master/README.md";
