@@ -43,6 +43,9 @@ import it.unipd.dei.es.screenparty.party.PartyUtils;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Manages the ClientFragment fragment.
+ */
 public class ClientFragment extends Fragment {
 
     private static final String IP_PATTERN_STRING = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
@@ -66,6 +69,10 @@ public class ClientFragment extends Fragment {
         }
     };
 
+    /**
+     * Used to navigate back to the previous fragment (StartFragment) upon pressing the back button
+     * on the navigation bar or on the top left corner of the screen.
+     */
     private void goBack() {
         partyManager.stop();
         navController.popBackStack();
@@ -131,8 +138,14 @@ public class ClientFragment extends Fragment {
         }
     };
 
+    /**
+     * Manages the Dialogs windows.
+     */
     private class Dialogs {
 
+        /**
+         * Shows the "Media Error" dialog window.
+         */
         private void showInvalidUriDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_media_error)
@@ -157,6 +170,10 @@ public class ClientFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Join Failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showJoinFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_join_failed)
@@ -175,6 +192,9 @@ public class ClientFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Party Full" dialog window.
+         */
         private void showPartyFullDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_party_full)
@@ -183,6 +203,9 @@ public class ClientFragment extends Fragment {
                     .show();
         }
 
+        /**
+         * Shows the "Host Left" dialog window.
+         */
         private void showHostLeftDialog() {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_party_closed)
@@ -201,6 +224,10 @@ public class ClientFragment extends Fragment {
                     }).show();
         }
 
+        /**
+         * Shows the "Communication Failed" dialog window.
+         * @param message: The message to be displayed in the dialog window.
+         */
         private void showCommunicationFailedDialog(String message) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_title_communication_failed)
@@ -220,6 +247,12 @@ public class ClientFragment extends Fragment {
         }
     }
 
+    /**
+     * Reset the state of the ClientFragment fragment, that is:
+     *  - The hostIpField TextInputLayout is cleared.
+     *  - The connectButton Button is enabled.
+     *  - No label, spinner or icon are shown.
+     */
     private void resetState() {
         connectButton.setEnabled(true);
         hostIpField.getEditText().setInputType(InputType.TYPE_CLASS_TEXT);
@@ -229,6 +262,13 @@ public class ClientFragment extends Fragment {
         waitHostLabel.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Set the state of the ClientFragment fragment as Connecting, that is:
+     *  - The clientConnectedLabel TextView shows "Connecting...".
+     *  - The clientSpinner ProgressBar is visible.
+     *  - The clientConnectedIcon ImageView is not visible
+     *  - The connectButton Button is disabled.
+     */
     private void setStateConnecting() {
         clientConnectedLabel.setText(R.string.client_connected_label_connecting);
         clientSpinner.setVisibility(View.VISIBLE);
@@ -236,6 +276,13 @@ public class ClientFragment extends Fragment {
         waitHostLabel.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Set the state of the ClientFragment fragment as Connected, that is:
+     *  - The clientConnectedLabel TextView shows "Connected!".
+     *  - The clientSpinner ProgressBar is not visible.
+     *  - The clientConnectedIcon ImageView is visible
+     *  - The connectButton Button is disabled.
+     */
     private void setStateConnected() {
         clientConnectedLabel.setText(R.string.client_connected_label_connected);
         clientSpinner.setVisibility(View.INVISIBLE);
@@ -284,6 +331,9 @@ public class ClientFragment extends Fragment {
         openMediaPicker();
     }
 
+    /**
+     * Open the MediaPicker to select a video
+     */
     private void openMediaPicker() {
         MediaUtils.openMediaPicker(this);
     }
