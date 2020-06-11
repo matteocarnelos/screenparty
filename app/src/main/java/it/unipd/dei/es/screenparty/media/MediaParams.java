@@ -31,7 +31,7 @@ public class MediaParams {
     }
 
     /**
-     * Gets the uri of the media.
+     * Get the uri of the media.
      * @return The uri of the media.
      */
     public Uri getUri() {
@@ -39,7 +39,7 @@ public class MediaParams {
     }
 
     /**
-     * Gets the aspect ratio of the media.
+     * Get the aspect ratio of the media.
      * @return The aspect ratio of the media.
      */
     public float getAspectRatio() {
@@ -47,7 +47,7 @@ public class MediaParams {
     }
 
     /**
-     * Gets the frame width of the media.
+     * Get the frame width of the media.
      * @return The frame width of the media.
      */
     public float getFrameWidth() {
@@ -55,7 +55,7 @@ public class MediaParams {
     }
 
     /**
-     *Gets the frame height of the media.
+     *Get the frame height of the media.
      * @return The frame height of the media.
      */
     public float getFrameHeight() {
@@ -63,7 +63,7 @@ public class MediaParams {
     }
 
     /**
-     *Sets the frame width of the media.
+     *Set the frame width of the media.
      * @param frameWidth The new frame width.
      */
     public void setFrameWidth(float frameWidth) {
@@ -71,7 +71,7 @@ public class MediaParams {
     }
 
     /**
-     *Sets the frame height of the media.
+     *Set the frame height of the media.
      * @param frameHeight The new frame height.
      */
     public void setFrameHeight(float frameHeight) {

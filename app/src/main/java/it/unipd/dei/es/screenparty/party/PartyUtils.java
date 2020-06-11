@@ -12,10 +12,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Utility class for the party package.
+ */
 public class PartyUtils {
 
     private static final String UNKNOWN_DEVICE_NAME = "Unknown";
 
+    /**
+     * Sets the height and width of the screen to be shown on the host and on all the clients.
+     * The height and the width are set according to 3 cases.
+     * @param hostParam The params of the Host device.
+     * @param clientsParams List containing the media params of the clients.
+     */
     public static void computeFrameDimensions(PartyParams hostParam, @NotNull List<? extends PartyParams> clientsParams) {
         float clientsTotalWidth = 0;
         for (PartyParams clientParams : clientsParams)
@@ -33,19 +42,21 @@ public class PartyUtils {
 
         float videoWidth = videoAspectRatio * videoHeight;
 
-        // Invoked when the calculated width of the video is within the width of the 3 screens, and the host's (central) screen
+        // Case1: invoked when the calculated width of the video is within the width of the 3 screens and the host's (central) screen
         if(videoWidth < hostParam.getScreenParams().getWidth() + clientsTotalWidth && videoHeight > clientsTotalWidth) {
             hostParam.getMediaParams().setFrameWidth(hostParam.getScreenParams().getWidth());
             for(PartyParams clientParams : clientsParams)
                 clientParams.getMediaParams().setFrameWidth((videoWidth - hostParam.getMediaParams().getFrameWidth()) / 2);
-        // Invoked when the calculated width it's lower than the host's (central's) screen
+
+        // Case2: Invoked when the calculated width it's lower than the host's (central's) screen
         } else if(videoWidth < hostParam.getScreenParams().getWidth()) {
             hostParam.getMediaParams().setFrameWidth(hostParam.getScreenParams().getWidth());
             hostParam.getMediaParams().setFrameHeight(hostParam.getScreenParams().getWidth()/videoAspectRatio);
             for (PartyParams clientParams : clientsParams)
                 clientParams.getMediaParams().setFrameWidth(0);
         }
-        // Invoked when the calculated width of the video it's greater than width of the 3 screens
+
+        // Case3: Invoked when the calculated width of the video it's greater than width of the 3 screens
         else if(videoWidth > hostParam.getScreenParams().getWidth() + clientsTotalWidth) {
             videoWidth = hostParam.getScreenParams().getWidth() + clientsTotalWidth;
             videoHeight = videoWidth / videoAspectRatio;

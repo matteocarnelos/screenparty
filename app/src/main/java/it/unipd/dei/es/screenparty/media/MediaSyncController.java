@@ -21,12 +21,12 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
         this.mediaPlayer = mediaPlayer;
     }
 
-    /* Start, pause and seekTo are executed with a small delay in the current device to compensate
-       the arrival time of the command to the other devices
-    */
+    /**
+     *Plays the video in the current device and send the command to the others.
+     * In the current device the video is played with a small delay
+     */
     @Override
     public void start() {
-        // Play the video in the current device and send the command to the others
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -39,9 +39,11 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
         );
     }
 
+    /**
+     *Pauses the video in the current device and send the command to the others.
+     */
     @Override
     public void pause() {
-        // Pause the video in the current device and send the command to the others
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -54,9 +56,12 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
         );
     }
 
+    /**
+     * Seeks to specified time position in the current device and send the command to the others.
+     * @param pos
+     */
     @Override
     public void seekTo(final int pos) {
-        // Seeks to specified time position in the current device and send the command to the others
         NetworkMessage message = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Host.SEEK)
                 .addArgument(String.valueOf(pos))
