@@ -311,7 +311,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     /**
-     * Creates the MediaController for the textureView.
+     * Sets and show the MediaController for the textureView.
      */
     private void enableMediaController() {
         mediaController.setMediaPlayer(mediaSyncController);
@@ -358,16 +358,6 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         navController = Navigation.findNavController(view);
     }
 
-    /**
-     * Invoked when a {@link TextureView}'s SurfaceTexture is ready for use.
-     * Prepare the media player and the media controller ready to be used.
-     *
-     * @param surface The surface returned by
-     *                {@link android.view.TextureView#getSurfaceTexture()}
-     * @param width   The width of the surface.
-     * @param height  The height of the surface.
-     * @throws IllegalArgumentException If the set data source doesn't exist.
-     */
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) throws IllegalArgumentException {
         Surface surfaceTexture = new Surface(surface);
@@ -405,37 +395,18 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
         });
     }
 
-    /**
-     * Invoked when the {@link SurfaceTexture}'s buffers size changed.
-     *
-     * @param surface The surface returned by
-     *                {@link android.view.TextureView#getSurfaceTexture()}.
-     * @param width   The new width of the surface.
-     * @param height  The new height of the surface.
-     */
+
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
     }
 
-    /**
-     * Invoked when the specified {@link SurfaceTexture} is about to be destroyed.
-     * If returns true, no rendering should happen inside the surface texture after this method
-     * is invoked. If returns false, the client needs to call {@link SurfaceTexture#release()}.
-     * Most applications should return true.
-     *
-     * @param surface The surface about to be destroyed
-     */
+
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return false;
     }
 
-    /**
-     * Invoked when the specified {@link SurfaceTexture} is updated through
-     * {@link SurfaceTexture#updateTexImage()}.
-     *
-     * @param surface The surface just updated
-     */
+
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }

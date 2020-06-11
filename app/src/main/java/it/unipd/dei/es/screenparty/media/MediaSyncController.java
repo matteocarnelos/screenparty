@@ -8,7 +8,7 @@ import it.unipd.dei.es.screenparty.network.NetworkMessage;
 import it.unipd.dei.es.screenparty.party.PartyManager;
 
 /**
- * Modified version of the MediaController class.
+ * Synchronize the media controller's commands among the device's.
  */
 public class MediaSyncController implements MediaController.MediaPlayerControl {
 
@@ -19,8 +19,12 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
         this.mediaPlayer = mediaPlayer;
     }
 
+    /* Start, pause and seekTo are executed with a small delay in the current device to compensate
+       the arrival time of the command to the other devices
+    */
     @Override
     public void start() {
+        // Play the video in the current device and send the command to the others
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PLAY));
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -35,6 +39,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
 
     @Override
     public void pause() {
+        // Pause the video in the current device and send the command to the others
         partyManager.sendMessage(new NetworkMessage(NetworkCommands.Host.PAUSE));
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -49,6 +54,7 @@ public class MediaSyncController implements MediaController.MediaPlayerControl {
 
     @Override
     public void seekTo(final int pos) {
+        // Seeks to specified time position in the current device and send the command to the others
         NetworkMessage message = new NetworkMessage.Builder()
                 .setCommand(NetworkCommands.Host.SEEK)
                 .addArgument(String.valueOf(pos))
