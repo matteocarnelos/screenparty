@@ -73,7 +73,7 @@ public class ClientFragment extends Fragment {
     };
 
     /**
-     * Used to navigate back to the previous fragment (StartFragment) upon pressing the back button
+     * Used to navigate back to the previous fragment ({@link StartFragment}) upon pressing the back button
      * on the navigation bar or in the top left corner of the screen.
      */
     private void goBack() {
@@ -263,7 +263,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Reset the state of the ClientFragment fragment, that is:
+     * Reset the state of the {@link ClientFragment} fragment, that is:
      *  - The hostIpField TextInputLayout is cleared.
      *  - The connectButton Button is enabled.
      *  - No label, spinner or icon are shown.
@@ -278,7 +278,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Set the state of the ClientFragment fragment as Connecting, that is:
+     * Set the state of the {@link ClientFragment} fragment as Connecting, that is:
      *  - The clientConnectedLabel TextView shows "Connecting...".
      *  - The clientSpinner ProgressBar is visible.
      *  - The clientConnectedIcon ImageView is not visible.
@@ -292,7 +292,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Set the state of the ClientFragment fragment as Connected, that is:
+     * Set the state of the {@link ClientFragment} fragment as Connected, that is:
      *  - The clientConnectedLabel TextView shows "Connected!".
      *  - The clientSpinner ProgressBar is not visible.
      *  - The clientConnectedIcon ImageView is visible.
