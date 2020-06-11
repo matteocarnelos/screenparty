@@ -75,4 +75,7 @@
 
     <!-- Snackbar strings -->
     <string name="snackbar_text_invalid_ip">Please insert a valid IP address</string>
+
+    <!-- Menu strings -->
+    <string name="help_menu_item_title">Help</string>
 </resources>

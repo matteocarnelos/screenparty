@@ -1,7 +1,10 @@
 package it.unipd.dei.es.screenparty;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +20,8 @@ import it.unipd.dei.es.screenparty.party.PartyManager;
 import it.unipd.dei.es.screenparty.party.ScreenParams;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String README_URL = "https://github.com/MatteoCarnelos/screenparty/blob/master/README.md";
 
     NavController navController;
 
@@ -43,11 +48,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_app_bar, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getOnBackPressedDispatcher().onBackPressed();
-            return true;
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                getOnBackPressedDispatcher().onBackPressed();
+                return true;
+            case R.id.help_menu_item:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(README_URL));
+                startActivity(browserIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 }
