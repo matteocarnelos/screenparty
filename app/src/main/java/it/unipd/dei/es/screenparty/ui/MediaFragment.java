@@ -107,6 +107,7 @@ public class MediaFragment extends Fragment implements TextureView.SurfaceTextur
                     mediaPlayer.seekTo(pos);
                     break;
                 case NetworkEvents.Host.CLIENT_LEFT:
+                    partyManager.stop();
                     mediaPlayer.pause();
                     dialogs.showClientLeftDialog();
                     break;
