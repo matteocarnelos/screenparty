@@ -42,4 +42,4 @@ At this stage, the devices should all be playing the video simultaneously. The p
 
 --- 
 
-_App created by Matteo Carnelos, Pardeep Kumar and Alessandro Fano for the course of Embedded Systems Programming in the University of Padua, AY 2019/2020._
+_App created by Matteo Carnelos, Pardeep Kumar and Alessandro Fano for the course of Embedded Systems Programming in the [University of Padua](https://www.unipd.it/), AY 2019/2020._
