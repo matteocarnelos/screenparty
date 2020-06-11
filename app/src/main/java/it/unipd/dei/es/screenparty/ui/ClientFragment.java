@@ -291,7 +291,7 @@ public class ClientFragment extends Fragment {
     }
 
     /**
-     * Open the MediaPicker to select a video
+     * Open the MediaPicker to select a video.
      */
     private void openMediaPicker() {
         MediaUtils.openMediaPicker(this);
